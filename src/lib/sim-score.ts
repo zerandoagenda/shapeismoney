@@ -38,8 +38,9 @@ export function calculateSimScore(answers: ScoreAnswers): SimScoreResult {
     return result;
   }, { construction: 0, capacity: 0, governance: 0, perception: 0, execution: 0 });
   const entries = Object.entries(pillars) as [PillarKey, number][];
-  const strongest = entries.reduce((best, entry) => entry[1] > best[1] ? entry : best, entries[0]);
-  const weakest = entries.reduce((worst, entry) => entry[1] < worst[1] ? entry : worst, entries[0]);
+  const initial: [PillarKey, number] = ["construction", pillars.construction];
+  const strongest = entries.reduce((best, entry) => entry[1] > best[1] ? entry : best, initial);
+  const weakest = entries.reduce((worst, entry) => entry[1] < worst[1] ? entry : worst, initial);
   const total = Math.round(entries.reduce((sum, entry) => sum + entry[1], 0) / entries.length);
   return {
     ...pillars,
