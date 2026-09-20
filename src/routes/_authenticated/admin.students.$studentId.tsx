@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export const Route = createFileRoute("/_authenticated/admin/students/$studentId")({ beforeLoad: requireStaff, component: Page });
+export const Route = createFileRoute("/_authenticated/admin/students/$studentId")({ beforeLoad: requireStaff, head: () => ({ meta: [{ title: "Detalhe do aluno — Administração SIM" }, { name: "description", content: "Acompanhamento individual de performance e protocolo." }, { property: "og:title", content: "Detalhe do aluno — Administração SIM" }, { property: "og:description", content: "Dados privados de acompanhamento do aluno." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: Page });
 type StudentData = { profile: Tables<"profiles">; score: Tables<"sim_scores"> | null; onboarding: Tables<"onboarding_responses"> | null; checkins: Tables<"daily_checkins">[]; sessions: Tables<"workout_sessions">[]; protocol: Tables<"protocols"> | null; program: Tables<"workout_programs"> | null; notes: Tables<"admin_notes">[]; exercises: Tables<"exercise_library">[] };
 type DraftExercise = { exercise_id: string; sets: number; reps: string; rest_seconds: number; target_rpe: number; notes: string };
 type DraftWorkout = { name: string; estimated_minutes: number; exercises: DraftExercise[] };
