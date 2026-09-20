@@ -192,6 +192,191 @@ export type Database = {
         }
         Relationships: []
       }
+      experience_interests: {
+        Row: {
+          created_at: string
+          experience_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_interests_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "member_experiences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_interests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_content_views: {
+        Row: {
+          content_id: string
+          id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          content_id: string
+          id?: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          content_id?: string
+          id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_content_views_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "member_contents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_content_views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_contents: {
+        Row: {
+          active: boolean
+          asset_path: string | null
+          body: string
+          category: string
+          content_type: string
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          duration_label: string | null
+          excerpt: string
+          eyebrow: string | null
+          featured: boolean
+          id: string
+          minimum_plan: Database["public"]["Enums"]["plan_code"]
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          asset_path?: string | null
+          body: string
+          category: string
+          content_type: string
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration_label?: string | null
+          excerpt: string
+          eyebrow?: string | null
+          featured?: boolean
+          id?: string
+          minimum_plan?: Database["public"]["Enums"]["plan_code"]
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          asset_path?: string | null
+          body?: string
+          category?: string
+          content_type?: string
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration_label?: string | null
+          excerpt?: string
+          eyebrow?: string | null
+          featured?: boolean
+          id?: string
+          minimum_plan?: Database["public"]["Enums"]["plan_code"]
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_contents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_experiences: {
+        Row: {
+          active: boolean
+          cover_url: string | null
+          created_at: string
+          description: string
+          id: string
+          location: string | null
+          minimum_plan: Database["public"]["Enums"]["plan_code"]
+          slug: string
+          starts_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          cover_url?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          location?: string | null
+          minimum_plan?: Database["public"]["Enums"]["plan_code"]
+          slug: string
+          starts_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string | null
+          minimum_plan?: Database["public"]["Enums"]["plan_code"]
+          slug?: string
+          starts_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       nutrition_meal_items: {
         Row: {
           calories: number | null
@@ -391,6 +576,222 @@ export type Database = {
             foreignKeyName: "onboarding_responses_profile_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      perception_actions: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          day_number: number
+          id: string
+          instruction: string
+          scan_id: string
+          title: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          day_number: number
+          id?: string
+          instruction: string
+          scan_id: string
+          title: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          day_number?: number
+          id?: string
+          instruction?: string
+          scan_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perception_actions_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "perception_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      perception_findings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          impact: string
+          recommendation: string
+          scan_id: string
+          sort_order: number
+          title: string
+          type: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          impact: string
+          recommendation: string
+          scan_id: string
+          sort_order?: number
+          title: string
+          type: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          impact?: string
+          recommendation?: string
+          scan_id?: string
+          sort_order?: number
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perception_findings_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "perception_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      perception_scan_images: {
+        Row: {
+          created_at: string
+          id: string
+          image_type: string
+          mime_type: string
+          scan_id: string
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_type: string
+          mime_type: string
+          scan_id: string
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_type?: string
+          mime_type?: string
+          scan_id?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perception_scan_images_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "perception_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      perception_scans: {
+        Row: {
+          admin_note: string | null
+          appearance_score: number | null
+          body_language_score: number | null
+          coherence_score: number | null
+          context: string
+          context_score: number | null
+          created_at: string
+          desired_signals: string[]
+          error_message: string | null
+          id: string
+          model: string | null
+          new_scan_requested_at: string | null
+          next_action: string | null
+          posture_score: number | null
+          presence_score: number | null
+          priority: string | null
+          provider: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["perception_scan_status"]
+          summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          appearance_score?: number | null
+          body_language_score?: number | null
+          coherence_score?: number | null
+          context: string
+          context_score?: number | null
+          created_at?: string
+          desired_signals?: string[]
+          error_message?: string | null
+          id?: string
+          model?: string | null
+          new_scan_requested_at?: string | null
+          next_action?: string | null
+          posture_score?: number | null
+          presence_score?: number | null
+          priority?: string | null
+          provider?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["perception_scan_status"]
+          summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          appearance_score?: number | null
+          body_language_score?: number | null
+          coherence_score?: number | null
+          context?: string
+          context_score?: number | null
+          created_at?: string
+          desired_signals?: string[]
+          error_message?: string | null
+          id?: string
+          model?: string | null
+          new_scan_requested_at?: string | null
+          next_action?: string | null
+          posture_score?: number | null
+          presence_score?: number | null
+          priority?: string | null
+          provider?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["perception_scan_status"]
+          summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perception_scans_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "perception_scans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -609,6 +1010,140 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      select_benefits: {
+        Row: {
+          active: boolean
+          coupon_code: string | null
+          created_at: string
+          description: string
+          ends_at: string | null
+          external_url: string | null
+          id: string
+          minimum_plan: Database["public"]["Enums"]["plan_code"]
+          partner_id: string
+          starts_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          coupon_code?: string | null
+          created_at?: string
+          description: string
+          ends_at?: string | null
+          external_url?: string | null
+          id?: string
+          minimum_plan?: Database["public"]["Enums"]["plan_code"]
+          partner_id: string
+          starts_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          coupon_code?: string | null
+          created_at?: string
+          description?: string
+          ends_at?: string | null
+          external_url?: string | null
+          id?: string
+          minimum_plan?: Database["public"]["Enums"]["plan_code"]
+          partner_id?: string
+          starts_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "select_benefits_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "select_partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      select_collections: {
+        Row: {
+          active: boolean
+          cover_url: string | null
+          created_at: string
+          description: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          cover_url?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      select_partners: {
+        Row: {
+          active: boolean
+          category: string
+          cover_url: string | null
+          created_at: string
+          description: string
+          featured: boolean
+          id: string
+          logo_url: string | null
+          name: string
+          slug: string
+          updated_at: string
+          why_selected: string
+        }
+        Insert: {
+          active?: boolean
+          category: string
+          cover_url?: string | null
+          created_at?: string
+          description: string
+          featured?: boolean
+          id?: string
+          logo_url?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+          why_selected: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          featured?: boolean
+          id?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+          why_selected?: string
+        }
+        Relationships: []
       }
       sim_scores: {
         Row: {
@@ -975,6 +1510,11 @@ export type Database = {
         | "manager"
         | "admin"
         | "admin_master"
+      perception_scan_status:
+        | "processing"
+        | "ai_completed"
+        | "reviewed"
+        | "failed"
       plan_code: "free" | "paid" | "plus" | "premium"
       protocol_status:
         | "data_received"
@@ -1118,6 +1658,12 @@ export const Constants = {
         "manager",
         "admin",
         "admin_master",
+      ],
+      perception_scan_status: [
+        "processing",
+        "ai_completed",
+        "reviewed",
+        "failed",
       ],
       plan_code: ["free", "paid", "plus", "premium"],
       protocol_status: [
