@@ -1,0 +1,8 @@
+import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { requireStaff } from "@/lib/admin-guard";
+import { supabase } from "@/integrations/supabase/client";
+import { AppShell } from "@/components/sim/AppShell";
+
+export const Route=createFileRoute("/_authenticated/admin/training/knowledge")({beforeLoad:requireStaff,head:()=>({meta:[{title:"Training Knowledge Base — SIM"},{name:"description",content:"Referências metodológicas oficiais de treino."},{property:"og:title",content:"Training Knowledge Base — SIM"},{property:"og:description",content:"Base metodológica oficial do Training Intelligence."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary"}]}),component:Page});
+function Page(){const[docs,setDocs]=useState<any[]>([]);useEffect(()=>{void supabase.from("training_knowledge_documents").select("*").order("is_primary",{ascending:false}).then(({data})=>setDocs(data??[]))},[]);return <AppShell admin><div className="mx-auto max-w-5xl px-5 py-10"><p className="sim-kicker">Money Brain · Training Intelligence</p><h1 className="mt-4 text-5xl">Knowledge Base</h1><div className="mt-10 space-y-5">{docs.map(doc=><article key={doc.id} className="border-y border-border py-7"><div className="flex justify-between gap-4"><div><p className="sim-kicker">{doc.document_type} · v{doc.version??"—"}</p><h2 className="mt-3 text-3xl">{doc.title}</h2></div>{doc.is_primary&&<span className="text-xs uppercase text-primary">Referência principal</span>}</div><p className="mt-5 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{doc.content}</p></article>)}</div></div></AppShell>}

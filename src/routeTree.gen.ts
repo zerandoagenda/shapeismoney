@@ -42,6 +42,9 @@ import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
+import { Route as AuthenticatedAdminTrainingIndexRouteImport } from './routes/_authenticated/admin.training.index'
+import { Route as AuthenticatedAdminTrainingStudentIdRouteImport } from './routes/_authenticated/admin.training.$studentId'
+import { Route as AuthenticatedAdminTrainingKnowledgeRouteImport } from './routes/_authenticated/admin.training.knowledge'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -223,6 +226,24 @@ const AuthenticatedAdminStudentsStudentIdRoute =
     path: '/$studentId',
     getParentRoute: () => AuthenticatedAdminStudentsRoute,
   } as any)
+const AuthenticatedAdminTrainingIndexRoute =
+  AuthenticatedAdminTrainingIndexRouteImport.update({
+    id: '/admin/training/',
+    path: '/admin/training/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminTrainingStudentIdRoute =
+  AuthenticatedAdminTrainingStudentIdRouteImport.update({
+    id: '/admin/training/$studentId',
+    path: '/admin/training/$studentId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminTrainingKnowledgeRoute =
+  AuthenticatedAdminTrainingKnowledgeRouteImport.update({
+    id: '/admin/training/knowledge',
+    path: '/admin/training/knowledge',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -256,7 +277,10 @@ export interface FileRoutesByFullPath {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
+  '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
+  '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
   '/admin/students/': typeof AuthenticatedAdminStudentsIndexRoute
+  '/admin/training/': typeof AuthenticatedAdminTrainingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -289,7 +313,10 @@ export interface FileRoutesByTo {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
+  '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
+  '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
   '/admin/students': typeof AuthenticatedAdminStudentsIndexRoute
+  '/admin/training': typeof AuthenticatedAdminTrainingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -325,7 +352,10 @@ export interface FileRoutesById {
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
+  '/_authenticated/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
+  '/_authenticated/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
   '/_authenticated/admin/students/': typeof AuthenticatedAdminStudentsIndexRoute
+  '/_authenticated/admin/training/': typeof AuthenticatedAdminTrainingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -361,7 +391,10 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/admin/'
     | '/admin/students/$studentId'
+    | '/admin/training/$studentId'
+    | '/admin/training/knowledge'
     | '/admin/students/'
+    | '/admin/training/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -394,7 +427,10 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/admin'
     | '/admin/students/$studentId'
+    | '/admin/training/$studentId'
+    | '/admin/training/knowledge'
     | '/admin/students'
+    | '/admin/training'
   id:
     | '__root__'
     | '/'
@@ -429,7 +465,10 @@ export interface FileRouteTypes {
     | '/_authenticated/members/$slug'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/students/$studentId'
+    | '/_authenticated/admin/training/$studentId'
+    | '/_authenticated/admin/training/knowledge'
     | '/_authenticated/admin/students/'
+    | '/_authenticated/admin/training/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -673,6 +712,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStudentsStudentIdRouteImport
       parentRoute: typeof AuthenticatedAdminStudentsRoute
     }
+    '/_authenticated/admin/training/': {
+      id: '/_authenticated/admin/training/'
+      path: '/admin/training'
+      fullPath: '/admin/training/'
+      preLoaderRoute: typeof AuthenticatedAdminTrainingIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/training/$studentId': {
+      id: '/_authenticated/admin/training/$studentId'
+      path: '/admin/training/$studentId'
+      fullPath: '/admin/training/$studentId'
+      preLoaderRoute: typeof AuthenticatedAdminTrainingStudentIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/training/knowledge': {
+      id: '/_authenticated/admin/training/knowledge'
+      path: '/admin/training/knowledge'
+      fullPath: '/admin/training/knowledge'
+      preLoaderRoute: typeof AuthenticatedAdminTrainingKnowledgeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -730,6 +790,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRouteWithChildren
   AuthenticatedAdminTasksRoute: typeof AuthenticatedAdminTasksRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminTrainingStudentIdRoute: typeof AuthenticatedAdminTrainingStudentIdRoute
+  AuthenticatedAdminTrainingKnowledgeRoute: typeof AuthenticatedAdminTrainingKnowledgeRoute
+  AuthenticatedAdminTrainingIndexRoute: typeof AuthenticatedAdminTrainingIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -758,6 +821,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRouteWithChildren,
   AuthenticatedAdminTasksRoute: AuthenticatedAdminTasksRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminTrainingStudentIdRoute:
+    AuthenticatedAdminTrainingStudentIdRoute,
+  AuthenticatedAdminTrainingKnowledgeRoute:
+    AuthenticatedAdminTrainingKnowledgeRoute,
+  AuthenticatedAdminTrainingIndexRoute: AuthenticatedAdminTrainingIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
