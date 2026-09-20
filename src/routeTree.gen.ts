@@ -22,6 +22,7 @@ import { Route as AuthenticatedNutritionRouteImport } from './routes/_authentica
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
+import { Route as AuthenticatedWeeklyReviewRouteImport } from './routes/_authenticated/weekly-review'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin.students'
 
 const IndexRoute = IndexRouteImport.update({
@@ -88,6 +89,12 @@ const AuthenticatedTrainingRoute = AuthenticatedTrainingRouteImport.update({
   path: '/training',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedWeeklyReviewRoute =
+  AuthenticatedWeeklyReviewRouteImport.update({
+    id: '/weekly-review',
+    path: '/weekly-review',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminStudentsRoute =
   AuthenticatedAdminStudentsRouteImport.update({
     id: '/students',
@@ -108,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/training': typeof AuthenticatedTrainingRoute
+  '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
 }
 export interface FileRoutesByTo {
@@ -123,6 +131,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/training': typeof AuthenticatedTrainingRoute
+  '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
 }
 export interface FileRoutesById {
@@ -140,6 +149,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
+  '/_authenticated/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
 }
 export interface FileRouteTypes {
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/training'
+    | '/weekly-review'
     | '/admin/students'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/training'
+    | '/weekly-review'
     | '/admin/students'
   id:
     | '__root__'
@@ -188,6 +200,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/_authenticated/training'
+    | '/_authenticated/weekly-review'
     | '/_authenticated/admin/students'
   fileRoutesById: FileRoutesById
 }
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrainingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/weekly-review': {
+      id: '/_authenticated/weekly-review'
+      path: '/weekly-review'
+      fullPath: '/weekly-review'
+      preLoaderRoute: typeof AuthenticatedWeeklyReviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/students': {
       id: '/_authenticated/admin/students'
       path: '/students'
@@ -322,6 +342,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
+  AuthenticatedWeeklyReviewRoute: typeof AuthenticatedWeeklyReviewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -333,6 +354,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
+  AuthenticatedWeeklyReviewRoute: AuthenticatedWeeklyReviewRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
