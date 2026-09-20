@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_id: string
+          client_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          client_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          client_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          metadata?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_audit_log_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_notes: {
         Row: {
           author_id: string
@@ -49,6 +97,252 @@ export type Database = {
           },
           {
             foreignKeyName: "admin_notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_notifications: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          id: string
+          message: string
+          notification_type: string
+          read_at: string | null
+          recipient_id: string
+          target_path: string | null
+          title: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          notification_type: string
+          read_at?: string | null
+          recipient_id: string
+          target_path?: string | null
+          title: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          notification_type?: string
+          read_at?: string | null
+          recipient_id?: string
+          target_path?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_notifications_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_tasks: {
+        Row: {
+          assignee_id: string | null
+          client_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_tasks_assignee_id_fkey"
+            columns: ["assignee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_tasks_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_tasks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_assignments: {
+        Row: {
+          active: boolean
+          assigned_by: string
+          assignment_role: string
+          client_id: string
+          created_at: string
+          id: string
+          staff_id: string
+        }
+        Insert: {
+          active?: boolean
+          assigned_by: string
+          assignment_role: string
+          client_id: string
+          created_at?: string
+          id?: string
+          staff_id: string
+        }
+        Update: {
+          active?: boolean
+          assigned_by?: string
+          assignment_role?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_assignments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_assignments_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_subscriptions: {
+        Row: {
+          billing_cycle: string | null
+          cancelled_at: string | null
+          created_at: string
+          created_by: string
+          id: string
+          plan: Database["public"]["Enums"]["plan_code"]
+          previous_plan: Database["public"]["Enums"]["plan_code"] | null
+          renewal_date: string | null
+          start_date: string | null
+          status: string
+          subscription_value: number | null
+          tracking_source: string
+          updated_at: string
+          updated_by: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          plan: Database["public"]["Enums"]["plan_code"]
+          previous_plan?: Database["public"]["Enums"]["plan_code"] | null
+          renewal_date?: string | null
+          start_date?: string | null
+          status?: string
+          subscription_value?: number | null
+          tracking_source?: string
+          updated_at?: string
+          updated_by: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          plan?: Database["public"]["Enums"]["plan_code"]
+          previous_plan?: Database["public"]["Enums"]["plan_code"] | null
+          renewal_date?: string | null
+          start_date?: string | null
+          status?: string
+          subscription_value?: number | null
+          tracking_source?: string
+          updated_at?: string
+          updated_by?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_subscriptions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_subscriptions_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -847,6 +1141,44 @@ export type Database = {
         }
         Relationships: []
       }
+      product_usage_events: {
+        Row: {
+          entity_id: string | null
+          event_type: string
+          id: string
+          metadata: Json
+          module: string
+          occurred_at: string
+          user_id: string
+        }
+        Insert: {
+          entity_id?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json
+          module: string
+          occurred_at?: string
+          user_id: string
+        }
+        Update: {
+          entity_id?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json
+          module?: string
+          occurred_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_usage_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_path: string | null
@@ -1510,6 +1842,8 @@ export type Database = {
         | "manager"
         | "admin"
         | "admin_master"
+        | "content"
+        | "analyst"
       perception_scan_status:
         | "processing"
         | "ai_completed"
@@ -1658,6 +1992,8 @@ export const Constants = {
         "manager",
         "admin",
         "admin_master",
+        "content",
+        "analyst",
       ],
       perception_scan_status: [
         "processing",
