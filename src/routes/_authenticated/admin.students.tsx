@@ -12,8 +12,10 @@ type Student = { id: string; first_name: string; last_name: string; plan: string
 function Page() {
   const [students, setStudents] = useState<Student[]>([]); const [query, setQuery] = useState("");
   useEffect(() => { void (async () => {
-    const { data: roles } = await supabase.from("user_roles").select("user_id").eq("role", "student");
-    const ids = (roles ?? []).map((role) => role.user_id); if (!ids.length) { setStudents([]); return; }
+    const { data: roles } = await supabase.from("user_roles").select("user_id,role");
+    const staffRoles = new Set(["coach","nutritionist","support","manager","admin","admin_master"]);
+    const staffIds = new Set((roles ?? []).filter((row)=>staffRoles.has(row.role)).map((row)=>row.user_id));
+    const ids = (roles ?? []).filter((row)=>row.role==="student"&&!staffIds.has(row.user_id)).map((row)=>row.user_id); if (!ids.length) { setStudents([]); return; }
     const [profiles, scores, protocols] = await Promise.all([
       supabase.from("profiles").select("id,first_name,last_name,plan,country").in("id", ids).order("created_at", { ascending: false }),
       supabase.from("sim_scores").select("user_id,total,created_at").in("user_id", ids).order("created_at", { ascending: false }),
