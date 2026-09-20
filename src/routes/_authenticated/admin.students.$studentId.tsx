@@ -40,11 +40,11 @@ type StudentData = {
   events: Tables<"crm_events">[];
   exercises: Tables<"exercise_library">[];
 };
-type DraftExercise = { id?: string; exercise_id: string; sets: number; reps: string; initial_load: number | null; rest_seconds: number; target_rpe: number | null; notes: string };
-type DraftWorkout = { id?: string; name: string; estimated_minutes: number; notes: string; exercises: DraftExercise[] };
-type DraftFood = { id?: string; food_name: string; quantity: number | null; unit: string; calories: number | null; protein: number | null; carbs: number | null; fat: number | null; notes: string };
-type DraftMeal = { id?: string; name: string; suggested_time: string; instructions: string; items: DraftFood[] };
-type NutritionDraft = { id?: string; title: string; objective: string; calorie_target: number | null; protein_target: number | null; carbs_target: number | null; fat_target: number | null; water_target_ml: number | null; notes: string; status: string; meals: DraftMeal[] };
+type DraftExercise = { id?: string | undefined; exercise_id: string; sets: number; reps: string; initial_load: number | null; rest_seconds: number; target_rpe: number | null; notes: string };
+type DraftWorkout = { id?: string | undefined; name: string; estimated_minutes: number; notes: string; exercises: DraftExercise[] };
+type DraftFood = { id?: string | undefined; food_name: string; quantity: number | null; unit: string; calories: number | null; protein: number | null; carbs: number | null; fat: number | null; notes: string };
+type DraftMeal = { id?: string | undefined; name: string; suggested_time: string; instructions: string; items: DraftFood[] };
+type NutritionDraft = { id?: string | undefined; title: string; objective: string; calorie_target: number | null; protein_target: number | null; carbs_target: number | null; fat_target: number | null; water_target_ml: number | null; notes: string; status: string; meals: DraftMeal[] };
 
 const emptyNutrition: NutritionDraft = { title: "Plano alimentar", objective: "", calorie_target: null, protein_target: null, carbs_target: null, fat_target: null, water_target_ml: null, notes: "", status: "draft", meals: [] };
 const statusLabels: Record<ProtocolStatus, string> = { data_received: "Dados recebidos", in_analysis: "Em análise", building: "Em construção", in_review: "Em revisão", approved: "Aprovado", published: "Publicado" };
