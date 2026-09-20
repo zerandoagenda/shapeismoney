@@ -12,8 +12,8 @@
 - [x] Validar segurança, isolamento e golden path completo
 
 ## ADMIN 3.0 — CEO PERFORMANCE COCKPIT
-- [ ] Criar fundação segura para finanças manuais, tarefas, notificações e auditoria
-- [ ] Implementar permissões administrativas por função e acesso integral do Admin Master
+- [x] Criar fundação segura para finanças manuais, tarefas, notificações e auditoria
+- [x] Implementar permissões administrativas por função e acesso integral do Admin Master
 - [ ] Construir CEO Overview com prioridades, negócio, receita, riscos e Daily Brief reais
 - [ ] Transformar alunos em Client Portfolio com Health Index, alertas, cohorts e pipeline
 - [ ] Evoluir o detalhe do cliente para cockpit com abas, SLA, CRM, notas e tarefas
