@@ -1510,6 +1510,8 @@ export type Database = {
         | "manager"
         | "admin"
         | "admin_master"
+        | "content"
+        | "analyst"
       perception_scan_status:
         | "processing"
         | "ai_completed"
@@ -1658,6 +1660,8 @@ export const Constants = {
         "manager",
         "admin",
         "admin_master",
+        "content",
+        "analyst",
       ],
       perception_scan_status: [
         "processing",
