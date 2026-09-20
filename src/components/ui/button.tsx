@@ -5,18 +5,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-3 whitespace-nowrap rounded-none text-xs font-medium uppercase tracking-[0.16em] cursor-pointer transition-all duration-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        gold: "border border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90",
-        quiet: "border border-border bg-transparent text-foreground hover:border-primary hover:text-primary",
+        default: "border border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary",
+        gold: "border border-primary/70 bg-primary text-primary-foreground shadow-[0_18px_50px_color-mix(in_oklab,var(--primary)_12%,transparent)] hover:bg-transparent hover:text-primary",
+        quiet: "border border-border bg-transparent text-foreground hover:border-primary/70 hover:text-primary",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:bg-muted/60 hover:text-primary",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
