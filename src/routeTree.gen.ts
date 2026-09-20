@@ -29,11 +29,16 @@ import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedWeeklyReviewRouteImport } from './routes/_authenticated/weekly-review'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminExperiencesRouteImport } from './routes/_authenticated/admin.experiences'
+import { Route as AuthenticatedAdminIntelligenceRouteImport } from './routes/_authenticated/admin.intelligence'
 import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin.members'
 import { Route as AuthenticatedAdminMoneyBrainRouteImport } from './routes/_authenticated/admin.money-brain'
+import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminPerceptionRouteImport } from './routes/_authenticated/admin.perception'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminSimSelectRouteImport } from './routes/_authenticated/admin.sim-select'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin.students'
+import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/admin.tasks'
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
@@ -141,6 +146,12 @@ const AuthenticatedAdminExperiencesRoute =
     path: '/admin/experiences',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminIntelligenceRoute =
+  AuthenticatedAdminIntelligenceRouteImport.update({
+    id: '/admin/intelligence',
+    path: '/admin/intelligence',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminMembersRoute =
   AuthenticatedAdminMembersRouteImport.update({
     id: '/admin/members',
@@ -153,10 +164,28 @@ const AuthenticatedAdminMoneyBrainRoute =
     path: '/admin/money-brain',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminOperationsRoute =
+  AuthenticatedAdminOperationsRouteImport.update({
+    id: '/admin/operations',
+    path: '/admin/operations',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminPerceptionRoute =
   AuthenticatedAdminPerceptionRouteImport.update({
     id: '/admin/perception',
     path: '/admin/perception',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/admin/reports',
+    path: '/admin/reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminSimSelectRoute =
@@ -171,6 +200,11 @@ const AuthenticatedAdminStudentsRoute =
     path: '/admin/students',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminTasksRoute = AuthenticatedAdminTasksRouteImport.update({
+  id: '/admin/tasks',
+  path: '/admin/tasks',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMembersSlugRoute =
   AuthenticatedMembersSlugRouteImport.update({
     id: '/$slug',
@@ -209,11 +243,16 @@ export interface FileRoutesByFullPath {
   '/training': typeof AuthenticatedTrainingRoute
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
+  '/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
+  '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRouteWithChildren
+  '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
@@ -238,10 +277,15 @@ export interface FileRoutesByTo {
   '/training': typeof AuthenticatedTrainingRoute
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
+  '/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
+  '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
+  '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
@@ -268,11 +312,16 @@ export interface FileRoutesById {
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
   '/_authenticated/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/_authenticated/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
+  '/_authenticated/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
   '/_authenticated/admin/members': typeof AuthenticatedAdminMembersRoute
   '/_authenticated/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
+  '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRouteWithChildren
+  '/_authenticated/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
@@ -299,11 +348,16 @@ export interface FileRouteTypes {
     | '/training'
     | '/weekly-review'
     | '/admin/experiences'
+    | '/admin/intelligence'
     | '/admin/members'
     | '/admin/money-brain'
+    | '/admin/operations'
     | '/admin/perception'
+    | '/admin/reports'
+    | '/admin/settings'
     | '/admin/sim-select'
     | '/admin/students'
+    | '/admin/tasks'
     | '/members/$slug'
     | '/admin/'
     | '/admin/students/$studentId'
@@ -328,10 +382,15 @@ export interface FileRouteTypes {
     | '/training'
     | '/weekly-review'
     | '/admin/experiences'
+    | '/admin/intelligence'
     | '/admin/members'
     | '/admin/money-brain'
+    | '/admin/operations'
     | '/admin/perception'
+    | '/admin/reports'
+    | '/admin/settings'
     | '/admin/sim-select'
+    | '/admin/tasks'
     | '/members/$slug'
     | '/admin'
     | '/admin/students/$studentId'
@@ -357,11 +416,16 @@ export interface FileRouteTypes {
     | '/_authenticated/training'
     | '/_authenticated/weekly-review'
     | '/_authenticated/admin/experiences'
+    | '/_authenticated/admin/intelligence'
     | '/_authenticated/admin/members'
     | '/_authenticated/admin/money-brain'
+    | '/_authenticated/admin/operations'
     | '/_authenticated/admin/perception'
+    | '/_authenticated/admin/reports'
+    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/sim-select'
     | '/_authenticated/admin/students'
+    | '/_authenticated/admin/tasks'
     | '/_authenticated/members/$slug'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/students/$studentId'
@@ -518,6 +582,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminExperiencesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/intelligence': {
+      id: '/_authenticated/admin/intelligence'
+      path: '/admin/intelligence'
+      fullPath: '/admin/intelligence'
+      preLoaderRoute: typeof AuthenticatedAdminIntelligenceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/members': {
       id: '/_authenticated/admin/members'
       path: '/admin/members'
@@ -532,11 +603,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMoneyBrainRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/operations': {
+      id: '/_authenticated/admin/operations'
+      path: '/admin/operations'
+      fullPath: '/admin/operations'
+      preLoaderRoute: typeof AuthenticatedAdminOperationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/perception': {
       id: '/_authenticated/admin/perception'
       path: '/admin/perception'
       fullPath: '/admin/perception'
       preLoaderRoute: typeof AuthenticatedAdminPerceptionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/admin/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/sim-select': {
@@ -551,6 +643,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/students'
       fullPath: '/admin/students'
       preLoaderRoute: typeof AuthenticatedAdminStudentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/tasks': {
+      id: '/_authenticated/admin/tasks'
+      path: '/admin/tasks'
+      fullPath: '/admin/tasks'
+      preLoaderRoute: typeof AuthenticatedAdminTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/members/$slug': {
@@ -620,11 +719,16 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
   AuthenticatedWeeklyReviewRoute: typeof AuthenticatedWeeklyReviewRoute
   AuthenticatedAdminExperiencesRoute: typeof AuthenticatedAdminExperiencesRoute
+  AuthenticatedAdminIntelligenceRoute: typeof AuthenticatedAdminIntelligenceRoute
   AuthenticatedAdminMembersRoute: typeof AuthenticatedAdminMembersRoute
   AuthenticatedAdminMoneyBrainRoute: typeof AuthenticatedAdminMoneyBrainRoute
+  AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPerceptionRoute: typeof AuthenticatedAdminPerceptionRoute
+  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSimSelectRoute: typeof AuthenticatedAdminSimSelectRoute
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRouteWithChildren
+  AuthenticatedAdminTasksRoute: typeof AuthenticatedAdminTasksRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -643,11 +747,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
   AuthenticatedWeeklyReviewRoute: AuthenticatedWeeklyReviewRoute,
   AuthenticatedAdminExperiencesRoute: AuthenticatedAdminExperiencesRoute,
+  AuthenticatedAdminIntelligenceRoute: AuthenticatedAdminIntelligenceRoute,
   AuthenticatedAdminMembersRoute: AuthenticatedAdminMembersRoute,
   AuthenticatedAdminMoneyBrainRoute: AuthenticatedAdminMoneyBrainRoute,
+  AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminPerceptionRoute: AuthenticatedAdminPerceptionRoute,
+  AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSimSelectRoute: AuthenticatedAdminSimSelectRoute,
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRouteWithChildren,
+  AuthenticatedAdminTasksRoute: AuthenticatedAdminTasksRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 

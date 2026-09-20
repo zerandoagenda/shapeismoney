@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { AppShell } from "@/components/sim/AppShell";
+import { AppShell } from "@/components/sim/AppShell";import{UsageTracker}from"@/components/sim/UsageTracker";
 import { LockedFeature } from "@/components/sim/LockedFeature";
 import { useEntitlement } from "@/hooks/use-entitlement";
 
@@ -17,7 +17,7 @@ function Page() {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => { void (async () => { const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; const { data } = await supabase.from("nutrition_plans").select("*,nutrition_meals(*,nutrition_meal_items(*))").eq("user_id", auth.user.id).eq("status", "published").order("published_at", { ascending: false }).limit(1).maybeSingle(); setPlan(data as unknown as Plan | null); setLoading(false); })(); }, []);
-  if (entitlement.loading || loading) return <AppShell><div className="grid min-h-[70vh] place-items-center"><p className="sim-kicker">Abrindo orientação</p></div></AppShell>;
+  if (entitlement.loading || loading) return <AppShell><UsageTracker module="nutrition"/><div className="grid min-h-[70vh] place-items-center"><p className="sim-kicker">Abrindo orientação</p></div></AppShell>;
   if (!entitlement.enabled) return <AppShell><div className="mx-auto max-w-4xl px-5 py-16"><LockedFeature title="Direção nutricional" description="Seu plano atual não inclui acompanhamento nutricional. Nenhuma meta será estimada sem orientação da equipe."/></div></AppShell>;
   if (!plan) return <AppShell><div className="mx-auto max-w-5xl px-5 py-16"><p className="sim-kicker">Nutrição</p><h1 className="mt-5 text-5xl">Seu plano nutricional está sendo preparado.</h1><p className="mt-4 max-w-2xl text-muted-foreground">A orientação aparecerá aqui somente depois da revisão e publicação pela equipe.</p></div></AppShell>;
   const meals = [...plan.nutrition_meals].sort((a,b)=>a.meal_order-b.meal_order);
