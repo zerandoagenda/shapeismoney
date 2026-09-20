@@ -118,8 +118,12 @@ function Page() {
   async function saveProgram(status: "draft" | "approved" | "published") {
     const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; setSaving(true);
     let programId = data?.program?.id;
-    if (programId) await supabase.from("workout_programs").update({ title: programTitle, objective: programObjective || null, starts_on: programStart || null, notes: programNotes || null, status }).eq("id", programId);
-    else { const { data: created } = await supabase.from("workout_programs").insert({ user_id: studentId, title: programTitle, objective: programObjective || null, starts_on: programStart || null, notes: programNotes || null, status, created_by: auth.user.id }).select("id").single(); programId = created?.id; }
+    let cycleId=data?.program?.cycle_id??null;
+    if(!cycleId){const{data:cycle}=await supabase.from("cycle_strategies").select("id").eq("client_id",studentId).eq("status","active").order("created_at",{ascending:false}).limit(1).maybeSingle();cycleId=cycle?.id??null;}
+    if(!cycleId){setSaving(false);setMessage("Crie uma estratégia de ciclo no Training Intelligence antes da prescrição.");return;}
+    const approval=status==="approved"?{approved_by:auth.user.id,approved_at:new Date().toISOString()}:{};
+    if (programId) await supabase.from("workout_programs").update({ title: programTitle, objective: programObjective || null, starts_on: programStart || null, notes: programNotes || null, status,cycle_id:cycleId,creation_source:"MANUAL",...approval }).eq("id", programId);
+    else { const { data: created } = await supabase.from("workout_programs").insert({ user_id: studentId, title: programTitle, objective: programObjective || null, starts_on: programStart || null, notes: programNotes || null, status,cycle_id:cycleId,creation_source:"MANUAL", created_by: auth.user.id,...approval }).select("id").single(); programId = created?.id; }
     if (programId) {
       const keptWorkoutIds = workouts.flatMap((item) => item.id ? [item.id] : []); const removedWorkoutIds = (data?.program?.workouts ?? []).map((item) => item.id).filter((id) => !keptWorkoutIds.includes(id)); if (removedWorkoutIds.length) await supabase.from("workouts").delete().in("id", removedWorkoutIds);
       for (const [sequence, workout] of workouts.entries()) {
@@ -130,6 +134,7 @@ function Page() {
         const original = data?.program?.workouts.find((item) => item.id === workoutId)?.workout_exercises ?? []; const keptExerciseIds = workout.exercises.flatMap((item) => item.id ? [item.id] : []); const removedExerciseIds = original.map((item) => item.id).filter((id) => !keptExerciseIds.includes(id)); if (removedExerciseIds.length) await supabase.from("workout_exercises").delete().in("id", removedExerciseIds);
         for (const [exerciseSequence, exercise] of workout.exercises.entries()) { const values = { exercise_id: exercise.exercise_id, sets: exercise.sets, reps: exercise.reps, initial_load: exercise.initial_load, rest_seconds: exercise.rest_seconds, target_rpe: exercise.target_rpe, notes: exercise.notes || null, sequence: exerciseSequence }; if (exercise.id) await supabase.from("workout_exercises").update(values).eq("id", exercise.id); else await supabase.from("workout_exercises").insert({ ...values, workout_id: workoutId }); }
       }
+      await supabase.from("training_decisions").insert({client_id:studentId,cycle_id:cycleId,program_id:programId,decision_type:`MANUAL_${status.toUpperCase()}`,decision:`Programa manual ${status}`,reason:programNotes||programObjective||"Prescrição construída e revisada pela equipe.",author_type:"BRUNO",author_id:auth.user.id,approval_status:status==="approved"?"approved":"pending"});
       if (status === "published") await supabase.from("crm_events").insert({ user_id: studentId, event_type: "training.published", metadata: { program_id: programId } });
     }
     setSaving(false); setMessage(status === "published" ? "Treino publicado." : "Treino salvo."); await load();

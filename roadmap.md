@@ -6,4 +6,4 @@
 - [x] Implementar PDF Import, Manual Builder e Training Architect
 - [x] Implementar execução, progressão, dor, check-in e reavaliação
 - [x] Implementar cockpit, fila de atenção, fotos, vídeos e knowledge base
-- [ ] Validar os três casos ponta a ponta, segurança e mobile
+- [x] Validar os três casos ponta a ponta, segurança e mobile
