@@ -1,7 +1,7 @@
 # Shape Is Money Beta 01
 
 ## Em andamento
-- [ ] Auditar dados mockados, fluxo do aluno, fluxo administrativo e integridade do banco
+- [x] Auditar dados mockados, fluxo do aluno, fluxo administrativo e integridade do banco
 - [ ] Implementar onboarding progressivo e SIM Score V0 determinístico
 - [ ] Conectar diagnóstico, dashboard, gráficos e insights a dados reais
 - [ ] Implementar check-in diário, revisão semanal e atualização de métricas
