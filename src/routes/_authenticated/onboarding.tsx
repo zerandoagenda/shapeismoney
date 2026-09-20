@@ -71,13 +71,14 @@ function Page() {
   async function advance() {
     setSaving(true);
     try {
-      const nextAnswers = step.type === "score" ? { ...answers, [step.key]: scoreValue } : answers;
+      const currentStep = steps[index]; if (!currentStep) return;
+      const nextAnswers = currentStep.type === "score" ? { ...answers, [currentStep.key]: scoreValue } : answers;
       setAnswers(nextAnswers);
       if (index < steps.length - 1) { await persist(nextAnswers, index + 1); setIndex(index + 1); return; }
       const completedAt = new Date().toISOString();
       const userId = await persist(nextAnswers, steps.length, completedAt);
       const score = calculateSimScore(nextAnswers as ScoreAnswers);
-      await supabase.from("profiles").update({ first_name: String(nextAnswers.first_name ?? ""), birth_date: String(nextAnswers.birth_date || "") || null, height_cm: Number(nextAnswers.height_cm) || null, weight_kg: Number(nextAnswers.weight_kg) || null, profession: String(nextAnswers.profession || "") || null, company: String(nextAnswers.company || "") || null, job_title: String(nextAnswers.job_title || "") || null, onboarding_completed_at: completedAt }).eq("id", userId);
+      await supabase.from("profiles").update({ first_name: String(nextAnswers['first_name'] ?? ""), birth_date: String(nextAnswers['birth_date'] || "") || null, height_cm: Number(nextAnswers['height_cm']) || null, weight_kg: Number(nextAnswers['weight_kg']) || null, profession: String(nextAnswers['profession'] || "") || null, company: String(nextAnswers['company'] || "") || null, job_title: String(nextAnswers['job_title'] || "") || null, onboarding_completed_at: completedAt }).eq("id", userId);
       const { error: scoreError } = await supabase.from("sim_scores").insert({ user_id: userId, ...score, source: "onboarding" }); if (scoreError) throw scoreError;
       await supabase.from("crm_events").insert({ user_id: userId, event_type: "onboarding.completed", metadata: { score: score.total } });
       await navigate({ to: "/diagnosis" });
