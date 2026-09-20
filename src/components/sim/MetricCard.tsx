@@ -1,0 +1,3 @@
+export function MetricCard({ label, value, trend, detail }: { label: string; value: string; trend?: string; detail?: string }) {
+  return <article className="sim-panel min-h-36 p-5"><p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p><div className="mt-5 flex items-end justify-between"><strong className="font-display text-4xl font-medium">{value}</strong>{trend&&<span className="text-sm text-primary">{trend}</span>}</div>{detail&&<p className="mt-3 text-xs text-muted-foreground">{detail}</p>}</article>;
+}
