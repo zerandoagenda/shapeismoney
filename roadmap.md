@@ -1,9 +1,10 @@
-# Roadmap
+# Roadmap — Beta Full Access + Relationship OS
 
-- [x] Mapear treino, IA, segurança e experiência atuais
-- [x] Definir arquitetura unificada e plano de implementação
-- [x] Implementar modelo de dados, storage privado e políticas
-- [x] Implementar PDF Import, Manual Builder e Training Architect
-- [x] Implementar execução, progressão, dor, check-in e reavaliação
-- [x] Implementar cockpit, fila de atenção, fotos, vídeos e knowledge base
-- [x] Validar os três casos ponta a ponta, segurança e mobile
+- [ ] Audit current access, routes, controls, and reusable relationship data
+- [ ] Implement centralized permissions and beta roles
+- [ ] Implement Relationship OS data model, RLS, audit, and SLA rules
+- [ ] Build Relationship command center, Client 360, interventions, commitments, milestones, and timeline
+- [ ] Expand member and admin navigation with honest feature states
+- [ ] Remove paywalls and plan locks for beta members and admin master
+- [ ] Audit and repair visible actions across requested routes
+- [ ] Validate Bruno and beta-member access, privacy, desktop/mobile, and generate BETA ACCESS QA
