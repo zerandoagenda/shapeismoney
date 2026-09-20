@@ -1,12 +1,12 @@
-# Shape Is Money Beta 01
+# Shape Is Money — First Client Beta
 
 ## Em andamento
-- [x] Auditar dados mockados, fluxo do aluno, fluxo administrativo e integridade do banco
-- [x] Implementar SIM Score V0 determinístico e onboarding progressivo
-- [x] Conectar diagnóstico, carteira, check-ins e revisão semanal a dados reais
-- [x] Conectar treino publicado, execução progressiva e eventos operacionais
-- [x] Criar detalhe do aluno, protocolo, editor manual de treino e visão administrativa real
-- [x] Aplicar permissões por plano, perfil editável e navegação staff condicional
-- [x] Refinar apenas labels e horários dinâmicos da home
-- [ ] Validar isolamento entre usuários e o golden path completo
-  - Bloqueio: o ambiente possui apenas uma conta de aluno e nenhuma conta staff para o teste comparativo.
+- [ ] Auditar lacunas do golden path e privacidade
+- [ ] Implementar readiness e alteração manual de plano
+- [ ] Completar protocolo e histórico operacional
+- [ ] Completar editor e publicação de treino
+- [ ] Criar banco, editor e experiência de nutrição
+- [ ] Confirmar onboarding, SIM Score, dashboard, check-in e Money Brain sem dados fictícios
+- [ ] Completar eventos CRM do golden path
+- [ ] Validar isolamento entre alunos
+- [ ] Simular o golden path completo até 6 / 6
