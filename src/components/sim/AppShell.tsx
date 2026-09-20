@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BarChart3, BrainCircuit, CheckSquare, Dumbbell, Home, LogOut, Menu, ScanLine, Shield, Sparkles, UserRound, UsersRound, Utensils, X } from "lucide-react";
+import { BarChart3, BrainCircuit, BriefcaseBusiness, CheckSquare, ClipboardList, Dumbbell, FileChartColumn, Home, LogOut, Menu, ScanLine, Settings, Shield, Sparkles, UserRound, UsersRound, Utensils, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brand } from "./Brand";
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,9 @@ const memberNav = [
 ] as const;
 const mobileNav = [["/dashboard", "Home", Home], ["/training", "Treino", Dumbbell], ["/performance", "Performance", BarChart3], ["/members", "Members", UsersRound], ["/profile", "Perfil", UserRound]] as const;
 const adminNav = [
-  ["/admin", "Overview", BarChart3], ["/admin/students", "Clients", UserRound], ["/admin/perception", "Perception", ScanLine], ["/admin/members", "Members", UsersRound], ["/admin/sim-select", "SIM Select", Sparkles], ["/admin/experiences", "Experiences", CheckSquare], ["/admin/money-brain", "Money Brain", BrainCircuit],
+  ["/admin", "CEO Overview", BarChart3], ["/admin/students", "Client Portfolio", BriefcaseBusiness], ["/admin/operations", "Operations", CheckSquare], ["/admin/intelligence", "Intelligence", BrainCircuit], ["/admin/tasks", "Tasks", ClipboardList], ["/admin/reports", "Reports", FileChartColumn], ["/admin/perception", "Perception", ScanLine], ["/admin/members", "Members", UsersRound], ["/admin/sim-select", "SIM Select", Sparkles], ["/admin/experiences", "Experiences", CheckSquare], ["/admin/money-brain", "AI Configuration", BrainCircuit], ["/admin/settings", "Settings", Settings],
 ] as const;
-const staffRoles = ["coach", "nutritionist", "support", "manager", "admin", "admin_master"];
+const staffRoles = ["coach", "nutritionist", "support", "manager", "admin", "admin_master", "content", "analyst"];
 export function AppShell({ children, admin = false }: { children: React.ReactNode; admin?: boolean }) { const navigate = useNavigate(); const [staff,setStaff]=useState(admin); const [menuOpen,setMenuOpen]=useState(false); useEffect(()=>{if(admin)return;void(async()=>{const{data:user}=await supabase.auth.getUser();if(!user.user)return;const{data}=await supabase.from("user_roles").select("role").eq("user_id",user.user.id);setStaff(Boolean(data?.some(item=>staffRoles.includes(item.role))))})()},[admin]); async function signOut() { await supabase.auth.signOut(); await navigate({ to: "/auth", replace: true }); }
   const navLink = (to:string,label:string,Icon:typeof Home) => <Link key={to} to={to} onClick={()=>setMenuOpen(false)} className="group flex items-center gap-3 border-l border-transparent px-3 py-2.5 text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-all duration-500 hover:border-primary hover:text-foreground" activeProps={{className:"border-primary bg-muted/40 text-foreground"}}><Icon className="size-3.5"/>{label}</Link>;
   const navContent = admin ? <><p className="mt-10 text-[9px] uppercase tracking-[0.28em] text-muted-foreground">Administração</p><nav className="mt-5 flex-1 space-y-1">{adminNav.map(([to,label,Icon])=>navLink(to,label,Icon))}</nav></> : <nav className="mt-9 flex-1">{memberNav.map(section=><div key={section.group} className="mb-5"><p className="mb-2 px-3 text-[8px] uppercase tracking-[0.24em] text-muted-foreground/70">{section.group}</p>{section.items.map(([to,label,Icon])=>navLink(to,label,Icon))}</div>)}</nav>;

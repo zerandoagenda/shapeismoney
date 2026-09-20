@@ -1,0 +1,27 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Bell, Check, Command, Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+
+type Client = { id: string; first_name: string; last_name: string; company: string | null; phone: string | null };
+type Notice = { id: string; title: string; message: string; target_path: string | null; read_at: string | null };
+
+export function AdminCommandCenter() {
+  const navigate = useNavigate(); const [open,setOpen]=useState(false); const [noticesOpen,setNoticesOpen]=useState(false); const [query,setQuery]=useState("");
+  const [clients,setClients]=useState<Client[]>([]); const [notices,setNotices]=useState<Notice[]>([]);
+  useEffect(()=>{void(async()=>{const[{data:profiles},{data:notifications}]=await Promise.all([supabase.from("profiles").select("id,first_name,last_name,company,phone").order("first_name"),supabase.from("admin_notifications").select("id,title,message,target_path,read_at").order("created_at",{ascending:false}).limit(30)]);setClients(profiles??[]);setNotices(notifications??[])})()},[]);
+  useEffect(()=>{const handler=(event:KeyboardEvent)=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==="k"){event.preventDefault();setOpen(true)}};window.addEventListener("keydown",handler);return()=>window.removeEventListener("keydown",handler)},[]);
+  const matches=useMemo(()=>query.trim()?clients.filter(client=>`${client.first_name} ${client.last_name} ${client.company??""} ${client.phone??""}`.toLowerCase().includes(query.toLowerCase())).slice(0,8):[],[clients,query]);
+  async function markRead(notice:Notice){if(!notice.read_at){await supabase.from("admin_notifications").update({read_at:new Date().toISOString()}).eq("id",notice.id);setNotices(items=>items.map(item=>item.id===notice.id?{...item,read_at:new Date().toISOString()}:item))}if(notice.target_path){setNoticesOpen(false);await navigate({to:notice.target_path})}}
+  const shortcuts=[["Abrir protocolos","/admin/operations"],["Abrir alertas","/admin#alerts"],["Ir para performance","/admin/intelligence"],["Ir para nutrição","/admin/operations"],["Ir para percepção","/admin/perception"],["Criar tarefa","/admin/tasks"]] as const;
+  return <div className="flex items-center gap-2">
+    <Button variant="quiet" className="hidden min-w-64 justify-between sm:flex" onClick={()=>setOpen(true)}><span className="flex items-center gap-2"><Search className="size-4"/>Buscar cliente</span><span className="text-[9px] text-muted-foreground">⌘ K</span></Button>
+    <Button variant="ghost" size="icon" aria-label="Abrir busca e comandos" onClick={()=>setOpen(true)}><Command className="size-4"/></Button>
+    <Button variant="ghost" size="icon" aria-label="Abrir notificações" className="relative" onClick={()=>setNoticesOpen(true)}><Bell className="size-4"/>{notices.some(item=>!item.read_at)&&<span className="absolute right-2 top-2 size-1.5 bg-primary"/>}</Button>
+    <Dialog open={open} onOpenChange={setOpen}><DialogContent className="max-w-2xl rounded-none"><DialogHeader><DialogTitle className="font-display text-3xl">Command Center</DialogTitle><DialogDescription>Busque um cliente ou execute uma ação.</DialogDescription></DialogHeader><Input autoFocus value={query} onChange={event=>setQuery(event.target.value)} placeholder="Nome, empresa ou telefone"/><div className="max-h-80 overflow-y-auto border-y border-border">{matches.map(client=><Link key={client.id} to="/admin/students/$studentId" params={{studentId:client.id}} onClick={()=>setOpen(false)} className="flex justify-between border-b border-border px-3 py-4 hover:bg-muted/30"><span>{client.first_name} {client.last_name}</span><span className="text-xs text-muted-foreground">{client.company??"Perfil do cliente"}</span></Link>)}{query&&!matches.length&&<p className="py-8 text-center text-sm text-muted-foreground">Nenhum cliente corresponde à busca.</p>}</div><div className="grid gap-2 sm:grid-cols-2">{shortcuts.map(([label,to])=><Button key={label} asChild variant="quiet"><Link to={to} onClick={()=>setOpen(false)}>{label}</Link></Button>)}</div></DialogContent></Dialog>
+    <Dialog open={noticesOpen} onOpenChange={setNoticesOpen}><DialogContent className="rounded-none"><DialogHeader><DialogTitle className="font-display text-3xl">Notificações</DialogTitle><DialogDescription>Alertas operacionais destinados à sua conta.</DialogDescription></DialogHeader><div className="max-h-96 divide-y divide-border overflow-y-auto">{notices.map(notice=><button key={notice.id} type="button" onClick={()=>void markRead(notice)} className="flex w-full gap-3 py-4 text-left"><span className={`mt-1 size-2 shrink-0 ${notice.read_at?"bg-muted":"bg-primary"}`}/><span><span className="block text-sm">{notice.title}</span><span className="mt-1 block text-xs text-muted-foreground">{notice.message}</span></span>{notice.read_at&&<Check className="ml-auto size-3 text-muted-foreground"/>}</button>)}{!notices.length&&<p className="py-10 text-center text-sm text-muted-foreground">Nenhum alerta operacional neste momento.</p>}</div></DialogContent></Dialog>
+  </div>;
+}

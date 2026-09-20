@@ -1,7 +1,7 @@
 import { redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
-const staffRoles = ["coach", "nutritionist", "support", "manager", "admin", "admin_master"];
+const staffRoles = ["coach", "nutritionist", "support", "manager", "admin", "admin_master", "content", "analyst"];
 
 export async function requireStaff() {
   const { data: userData } = await supabase.auth.getUser();
