@@ -64,7 +64,8 @@ function Page() {
 
   async function persist(nextAnswers: Answers, nextStep: number, completedAt?: string) {
     const { data: userData } = await supabase.auth.getUser(); if (!userData.user) throw new Error("Sessão não encontrada");
-    const { error } = await supabase.from("onboarding_responses").upsert({ user_id: userData.user.id, responses: nextAnswers, current_step: nextStep, completed_at: completedAt ?? null }, { onConflict: "user_id" });
+    const profileData = { first_name: String(nextAnswers['first_name'] ?? ""), birth_date: String(nextAnswers['birth_date'] || "") || null, height_cm: Number(nextAnswers['height_cm']) || null, weight_kg: Number(nextAnswers['weight_kg']) || null, profession: String(nextAnswers['profession'] || "") || null, company: String(nextAnswers['company'] || "") || null, job_title: String(nextAnswers['job_title'] || "") || null };
+    const [{ error }] = await Promise.all([supabase.from("onboarding_responses").upsert({ user_id: userData.user.id, responses: nextAnswers, current_step: nextStep, completed_at: completedAt ?? null }, { onConflict: "user_id" }), supabase.from("profiles").update(profileData).eq("id", userData.user.id)]);
     if (error) throw error; return userData.user.id;
   }
 
@@ -80,7 +81,10 @@ function Page() {
       const score = calculateSimScore(nextAnswers as ScoreAnswers);
       await supabase.from("profiles").update({ first_name: String(nextAnswers['first_name'] ?? ""), birth_date: String(nextAnswers['birth_date'] || "") || null, height_cm: Number(nextAnswers['height_cm']) || null, weight_kg: Number(nextAnswers['weight_kg']) || null, profession: String(nextAnswers['profession'] || "") || null, company: String(nextAnswers['company'] || "") || null, job_title: String(nextAnswers['job_title'] || "") || null, onboarding_completed_at: completedAt }).eq("id", userId);
       const { error: scoreError } = await supabase.from("sim_scores").insert({ user_id: userId, ...score, source: "onboarding" }); if (scoreError) throw scoreError;
-      await supabase.from("crm_events").insert({ user_id: userId, event_type: "onboarding.completed", metadata: { score: score.total } });
+      await supabase.from("crm_events").insert([
+        { user_id: userId, event_type: "onboarding.completed", metadata: { score: score.total } },
+        { user_id: userId, event_type: "baseline.completed", metadata: { score: score.total } },
+      ]);
       await navigate({ to: "/diagnosis" });
     } finally { setSaving(false); }
   }
