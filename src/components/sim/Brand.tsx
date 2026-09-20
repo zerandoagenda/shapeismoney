@@ -1,10 +1,16 @@
 import { Link } from "@tanstack/react-router";
+import officialLockup from "@/assets/sim-official-lockup.png.asset.json";
 
-export function Brand({ compact = false }: { compact?: boolean }) {
+export function Brand({ compact = false, impact = false }: { compact?: boolean; impact?: boolean }) {
   return (
-    <Link to="/" className="flex items-center gap-3" aria-label="Shape Is Money">
-      <span className="grid size-10 place-items-center border border-primary font-display text-lg text-primary">SM</span>
-      {!compact && <span className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground">Shape Is Money</span>}
+    <Link to="/" className="inline-flex items-center" aria-label="Shape Is Money">
+      <img
+        src={officialLockup.url}
+        alt="Shape Is Money"
+        width={430}
+        height={518}
+        className={impact ? "h-auto w-48 sm:w-64" : compact ? "h-11 w-auto" : "h-16 w-auto"}
+      />
     </Link>
   );
 }
