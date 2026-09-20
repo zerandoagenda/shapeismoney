@@ -64,7 +64,8 @@ function Page() {
 
   async function persist(nextAnswers: Answers, nextStep: number, completedAt?: string) {
     const { data: userData } = await supabase.auth.getUser(); if (!userData.user) throw new Error("Sessão não encontrada");
-    const { error } = await supabase.from("onboarding_responses").upsert({ user_id: userData.user.id, responses: nextAnswers, current_step: nextStep, completed_at: completedAt ?? null }, { onConflict: "user_id" });
+    const profileData = { first_name: String(nextAnswers['first_name'] ?? ""), birth_date: String(nextAnswers['birth_date'] || "") || null, height_cm: Number(nextAnswers['height_cm']) || null, weight_kg: Number(nextAnswers['weight_kg']) || null, profession: String(nextAnswers['profession'] || "") || null, company: String(nextAnswers['company'] || "") || null, job_title: String(nextAnswers['job_title'] || "") || null };
+    const [{ error }] = await Promise.all([supabase.from("onboarding_responses").upsert({ user_id: userData.user.id, responses: nextAnswers, current_step: nextStep, completed_at: completedAt ?? null }, { onConflict: "user_id" }), supabase.from("profiles").update(profileData).eq("id", userData.user.id)]);
     if (error) throw error; return userData.user.id;
   }
 
