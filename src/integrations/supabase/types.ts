@@ -192,6 +192,172 @@ export type Database = {
         }
         Relationships: []
       }
+      nutrition_meal_items: {
+        Row: {
+          calories: number | null
+          carbs: number | null
+          created_at: string
+          fat: number | null
+          food_name: string
+          id: string
+          item_order: number
+          meal_id: string
+          notes: string | null
+          protein: number | null
+          quantity: number | null
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          calories?: number | null
+          carbs?: number | null
+          created_at?: string
+          fat?: number | null
+          food_name: string
+          id?: string
+          item_order?: number
+          meal_id: string
+          notes?: string | null
+          protein?: number | null
+          quantity?: number | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          calories?: number | null
+          carbs?: number | null
+          created_at?: string
+          fat?: number | null
+          food_name?: string
+          id?: string
+          item_order?: number
+          meal_id?: string
+          notes?: string | null
+          protein?: number | null
+          quantity?: number | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nutrition_meal_items_meal_id_fkey"
+            columns: ["meal_id"]
+            isOneToOne: false
+            referencedRelation: "nutrition_meals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nutrition_meals: {
+        Row: {
+          created_at: string
+          id: string
+          instructions: string | null
+          meal_order: number
+          name: string
+          nutrition_plan_id: string
+          suggested_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          meal_order?: number
+          name: string
+          nutrition_plan_id: string
+          suggested_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          meal_order?: number
+          name?: string
+          nutrition_plan_id?: string
+          suggested_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nutrition_meals_nutrition_plan_id_fkey"
+            columns: ["nutrition_plan_id"]
+            isOneToOne: false
+            referencedRelation: "nutrition_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nutrition_plans: {
+        Row: {
+          calorie_target: number | null
+          carbs_target: number | null
+          created_at: string
+          created_by: string | null
+          fat_target: number | null
+          id: string
+          notes: string | null
+          objective: string | null
+          protein_target: number | null
+          published_at: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          water_target_ml: number | null
+        }
+        Insert: {
+          calorie_target?: number | null
+          carbs_target?: number | null
+          created_at?: string
+          created_by?: string | null
+          fat_target?: number | null
+          id?: string
+          notes?: string | null
+          objective?: string | null
+          protein_target?: number | null
+          published_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          water_target_ml?: number | null
+        }
+        Update: {
+          calorie_target?: number | null
+          carbs_target?: number | null
+          created_at?: string
+          created_by?: string | null
+          fat_target?: number | null
+          id?: string
+          notes?: string | null
+          objective?: string | null
+          protein_target?: number | null
+          published_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          water_target_ml?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nutrition_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nutrition_plans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_responses: {
         Row: {
           completed_at: string | null
@@ -604,6 +770,7 @@ export type Database = {
         Row: {
           exercise_id: string
           id: string
+          initial_load: number | null
           notes: string | null
           reps: string
           rest_seconds: number
@@ -615,6 +782,7 @@ export type Database = {
         Insert: {
           exercise_id: string
           id?: string
+          initial_load?: number | null
           notes?: string | null
           reps?: string
           rest_seconds?: number
@@ -626,6 +794,7 @@ export type Database = {
         Update: {
           exercise_id?: string
           id?: string
+          initial_load?: number | null
           notes?: string | null
           reps?: string
           rest_seconds?: number
@@ -657,6 +826,7 @@ export type Database = {
           created_by: string | null
           ends_on: string | null
           id: string
+          notes: string | null
           objective: string | null
           starts_on: string | null
           status: string
@@ -669,6 +839,7 @@ export type Database = {
           created_by?: string | null
           ends_on?: string | null
           id?: string
+          notes?: string | null
           objective?: string | null
           starts_on?: string | null
           status?: string
@@ -681,6 +852,7 @@ export type Database = {
           created_by?: string | null
           ends_on?: string | null
           id?: string
+          notes?: string | null
           objective?: string | null
           starts_on?: string | null
           status?: string
