@@ -80,7 +80,10 @@ function Page() {
       const score = calculateSimScore(nextAnswers as ScoreAnswers);
       await supabase.from("profiles").update({ first_name: String(nextAnswers['first_name'] ?? ""), birth_date: String(nextAnswers['birth_date'] || "") || null, height_cm: Number(nextAnswers['height_cm']) || null, weight_kg: Number(nextAnswers['weight_kg']) || null, profession: String(nextAnswers['profession'] || "") || null, company: String(nextAnswers['company'] || "") || null, job_title: String(nextAnswers['job_title'] || "") || null, onboarding_completed_at: completedAt }).eq("id", userId);
       const { error: scoreError } = await supabase.from("sim_scores").insert({ user_id: userId, ...score, source: "onboarding" }); if (scoreError) throw scoreError;
-      await supabase.from("crm_events").insert({ user_id: userId, event_type: "onboarding.completed", metadata: { score: score.total } });
+      await supabase.from("crm_events").insert([
+        { user_id: userId, event_type: "onboarding.completed", metadata: { score: score.total } },
+        { user_id: userId, event_type: "baseline.completed", metadata: { score: score.total } },
+      ]);
       await navigate({ to: "/diagnosis" });
     } finally { setSaving(false); }
   }
