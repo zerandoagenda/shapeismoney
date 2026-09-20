@@ -40,6 +40,7 @@ import { Route as AuthenticatedAdminSimSelectRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin.students'
 import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/admin.tasks'
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
+import { Route as AuthenticatedTrainingAssessmentRouteImport } from './routes/_authenticated/training.assessment'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
 import { Route as AuthenticatedAdminTrainingIndexRouteImport } from './routes/_authenticated/admin.training.index'
@@ -214,6 +215,12 @@ const AuthenticatedMembersSlugRoute =
     path: '/$slug',
     getParentRoute: () => AuthenticatedMembersRoute,
   } as any)
+const AuthenticatedTrainingAssessmentRoute =
+  AuthenticatedTrainingAssessmentRouteImport.update({
+    id: '/assessment',
+    path: '/assessment',
+    getParentRoute: () => AuthenticatedTrainingRoute,
+  } as any)
 const AuthenticatedAdminStudentsIndexRoute =
   AuthenticatedAdminStudentsIndexRouteImport.update({
     id: '/',
@@ -261,7 +268,7 @@ export interface FileRoutesByFullPath {
   '/performance': typeof AuthenticatedPerformanceRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/sim-select': typeof AuthenticatedSimSelectRoute
-  '/training': typeof AuthenticatedTrainingRoute
+  '/training': typeof AuthenticatedTrainingRouteWithChildren
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
   '/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
@@ -275,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/admin/students': typeof AuthenticatedAdminStudentsRouteWithChildren
   '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
+  '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -298,7 +306,7 @@ export interface FileRoutesByTo {
   '/performance': typeof AuthenticatedPerformanceRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/sim-select': typeof AuthenticatedSimSelectRoute
-  '/training': typeof AuthenticatedTrainingRoute
+  '/training': typeof AuthenticatedTrainingRouteWithChildren
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
   '/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
@@ -311,6 +319,7 @@ export interface FileRoutesByTo {
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
   '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
+  '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -336,7 +345,7 @@ export interface FileRoutesById {
   '/_authenticated/performance': typeof AuthenticatedPerformanceRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/sim-select': typeof AuthenticatedSimSelectRoute
-  '/_authenticated/training': typeof AuthenticatedTrainingRoute
+  '/_authenticated/training': typeof AuthenticatedTrainingRouteWithChildren
   '/_authenticated/weekly-review': typeof AuthenticatedWeeklyReviewRoute
   '/_authenticated/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
   '/_authenticated/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
@@ -350,6 +359,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRouteWithChildren
   '/_authenticated/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
+  '/_authenticated/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/_authenticated/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/admin/tasks'
     | '/members/$slug'
+    | '/training/assessment'
     | '/admin/'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/admin/sim-select'
     | '/admin/tasks'
     | '/members/$slug'
+    | '/training/assessment'
     | '/admin'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
@@ -463,6 +475,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/students'
     | '/_authenticated/admin/tasks'
     | '/_authenticated/members/$slug'
+    | '/_authenticated/training/assessment'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/students/$studentId'
     | '/_authenticated/admin/training/$studentId'
@@ -698,6 +711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMembersSlugRouteImport
       parentRoute: typeof AuthenticatedMembersRoute
     }
+    '/_authenticated/training/assessment': {
+      id: '/_authenticated/training/assessment'
+      path: '/assessment'
+      fullPath: '/training/assessment'
+      preLoaderRoute: typeof AuthenticatedTrainingAssessmentRouteImport
+      parentRoute: typeof AuthenticatedTrainingRoute
+    }
     '/_authenticated/admin/students/': {
       id: '/_authenticated/admin/students/'
       path: '/'
@@ -747,6 +767,19 @@ const AuthenticatedMembersRouteChildren: AuthenticatedMembersRouteChildren = {
 const AuthenticatedMembersRouteWithChildren =
   AuthenticatedMembersRoute._addFileChildren(AuthenticatedMembersRouteChildren)
 
+interface AuthenticatedTrainingRouteChildren {
+  AuthenticatedTrainingAssessmentRoute: typeof AuthenticatedTrainingAssessmentRoute
+}
+
+const AuthenticatedTrainingRouteChildren: AuthenticatedTrainingRouteChildren = {
+  AuthenticatedTrainingAssessmentRoute: AuthenticatedTrainingAssessmentRoute,
+}
+
+const AuthenticatedTrainingRouteWithChildren =
+  AuthenticatedTrainingRoute._addFileChildren(
+    AuthenticatedTrainingRouteChildren,
+  )
+
 interface AuthenticatedAdminStudentsRouteChildren {
   AuthenticatedAdminStudentsStudentIdRoute: typeof AuthenticatedAdminStudentsStudentIdRoute
   AuthenticatedAdminStudentsIndexRoute: typeof AuthenticatedAdminStudentsIndexRoute
@@ -776,7 +809,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPerformanceRoute: typeof AuthenticatedPerformanceRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSimSelectRoute: typeof AuthenticatedSimSelectRoute
-  AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
+  AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRouteWithChildren
   AuthenticatedWeeklyReviewRoute: typeof AuthenticatedWeeklyReviewRoute
   AuthenticatedAdminExperiencesRoute: typeof AuthenticatedAdminExperiencesRoute
   AuthenticatedAdminIntelligenceRoute: typeof AuthenticatedAdminIntelligenceRoute
@@ -807,7 +840,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPerformanceRoute: AuthenticatedPerformanceRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSimSelectRoute: AuthenticatedSimSelectRoute,
-  AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
+  AuthenticatedTrainingRoute: AuthenticatedTrainingRouteWithChildren,
   AuthenticatedWeeklyReviewRoute: AuthenticatedWeeklyReviewRoute,
   AuthenticatedAdminExperiencesRoute: AuthenticatedAdminExperiencesRoute,
   AuthenticatedAdminIntelligenceRoute: AuthenticatedAdminIntelligenceRoute,
