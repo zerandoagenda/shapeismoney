@@ -21,12 +21,18 @@ import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedMoneyBrainRouteImport } from './routes/_authenticated/money-brain'
 import { Route as AuthenticatedNutritionRouteImport } from './routes/_authenticated/nutrition'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedPerceptionLabRouteImport } from './routes/_authenticated/perception-lab'
 import { Route as AuthenticatedPerformanceRouteImport } from './routes/_authenticated/performance'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedSimSelectRouteImport } from './routes/_authenticated/sim-select'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
 import { Route as AuthenticatedWeeklyReviewRouteImport } from './routes/_authenticated/weekly-review'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminExperiencesRouteImport } from './routes/_authenticated/admin.experiences'
+import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin.members'
+import { Route as AuthenticatedAdminMoneyBrainRouteImport } from './routes/_authenticated/admin.money-brain'
+import { Route as AuthenticatedAdminPerceptionRouteImport } from './routes/_authenticated/admin.perception'
+import { Route as AuthenticatedAdminSimSelectRouteImport } from './routes/_authenticated/admin.sim-select'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin.students'
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
@@ -91,6 +97,12 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPerceptionLabRoute =
+  AuthenticatedPerceptionLabRouteImport.update({
+    id: '/perception-lab',
+    path: '/perception-lab',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPerformanceRoute =
   AuthenticatedPerformanceRouteImport.update({
     id: '/performance',
@@ -123,6 +135,36 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminExperiencesRoute =
+  AuthenticatedAdminExperiencesRouteImport.update({
+    id: '/admin/experiences',
+    path: '/admin/experiences',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminMembersRoute =
+  AuthenticatedAdminMembersRouteImport.update({
+    id: '/admin/members',
+    path: '/admin/members',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminMoneyBrainRoute =
+  AuthenticatedAdminMoneyBrainRouteImport.update({
+    id: '/admin/money-brain',
+    path: '/admin/money-brain',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminPerceptionRoute =
+  AuthenticatedAdminPerceptionRouteImport.update({
+    id: '/admin/perception',
+    path: '/admin/perception',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminSimSelectRoute =
+  AuthenticatedAdminSimSelectRouteImport.update({
+    id: '/admin/sim-select',
+    path: '/admin/sim-select',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminStudentsRoute =
   AuthenticatedAdminStudentsRouteImport.update({
     id: '/admin/students',
@@ -160,11 +202,17 @@ export interface FileRoutesByFullPath {
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
   '/nutrition': typeof AuthenticatedNutritionRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/perception-lab': typeof AuthenticatedPerceptionLabRoute
   '/performance': typeof AuthenticatedPerformanceRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/sim-select': typeof AuthenticatedSimSelectRoute
   '/training': typeof AuthenticatedTrainingRoute
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
+  '/admin/members': typeof AuthenticatedAdminMembersRoute
+  '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
+  '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRouteWithChildren
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -183,11 +231,17 @@ export interface FileRoutesByTo {
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
   '/nutrition': typeof AuthenticatedNutritionRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/perception-lab': typeof AuthenticatedPerceptionLabRoute
   '/performance': typeof AuthenticatedPerformanceRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/sim-select': typeof AuthenticatedSimSelectRoute
   '/training': typeof AuthenticatedTrainingRoute
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
+  '/admin/members': typeof AuthenticatedAdminMembersRoute
+  '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
+  '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
@@ -207,11 +261,17 @@ export interface FileRoutesById {
   '/_authenticated/money-brain': typeof AuthenticatedMoneyBrainRoute
   '/_authenticated/nutrition': typeof AuthenticatedNutritionRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/perception-lab': typeof AuthenticatedPerceptionLabRoute
   '/_authenticated/performance': typeof AuthenticatedPerformanceRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/sim-select': typeof AuthenticatedSimSelectRoute
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
   '/_authenticated/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/_authenticated/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
+  '/_authenticated/admin/members': typeof AuthenticatedAdminMembersRoute
+  '/_authenticated/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
+  '/_authenticated/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/_authenticated/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRouteWithChildren
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -232,11 +292,17 @@ export interface FileRouteTypes {
     | '/money-brain'
     | '/nutrition'
     | '/onboarding'
+    | '/perception-lab'
     | '/performance'
     | '/profile'
     | '/sim-select'
     | '/training'
     | '/weekly-review'
+    | '/admin/experiences'
+    | '/admin/members'
+    | '/admin/money-brain'
+    | '/admin/perception'
+    | '/admin/sim-select'
     | '/admin/students'
     | '/members/$slug'
     | '/admin/'
@@ -255,11 +321,17 @@ export interface FileRouteTypes {
     | '/money-brain'
     | '/nutrition'
     | '/onboarding'
+    | '/perception-lab'
     | '/performance'
     | '/profile'
     | '/sim-select'
     | '/training'
     | '/weekly-review'
+    | '/admin/experiences'
+    | '/admin/members'
+    | '/admin/money-brain'
+    | '/admin/perception'
+    | '/admin/sim-select'
     | '/members/$slug'
     | '/admin'
     | '/admin/students/$studentId'
@@ -278,11 +350,17 @@ export interface FileRouteTypes {
     | '/_authenticated/money-brain'
     | '/_authenticated/nutrition'
     | '/_authenticated/onboarding'
+    | '/_authenticated/perception-lab'
     | '/_authenticated/performance'
     | '/_authenticated/profile'
     | '/_authenticated/sim-select'
     | '/_authenticated/training'
     | '/_authenticated/weekly-review'
+    | '/_authenticated/admin/experiences'
+    | '/_authenticated/admin/members'
+    | '/_authenticated/admin/money-brain'
+    | '/_authenticated/admin/perception'
+    | '/_authenticated/admin/sim-select'
     | '/_authenticated/admin/students'
     | '/_authenticated/members/$slug'
     | '/_authenticated/admin/'
@@ -384,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/perception-lab': {
+      id: '/_authenticated/perception-lab'
+      path: '/perception-lab'
+      fullPath: '/perception-lab'
+      preLoaderRoute: typeof AuthenticatedPerceptionLabRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/performance': {
       id: '/_authenticated/performance'
       path: '/performance'
@@ -424,6 +509,41 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/experiences': {
+      id: '/_authenticated/admin/experiences'
+      path: '/admin/experiences'
+      fullPath: '/admin/experiences'
+      preLoaderRoute: typeof AuthenticatedAdminExperiencesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/members': {
+      id: '/_authenticated/admin/members'
+      path: '/admin/members'
+      fullPath: '/admin/members'
+      preLoaderRoute: typeof AuthenticatedAdminMembersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/money-brain': {
+      id: '/_authenticated/admin/money-brain'
+      path: '/admin/money-brain'
+      fullPath: '/admin/money-brain'
+      preLoaderRoute: typeof AuthenticatedAdminMoneyBrainRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/perception': {
+      id: '/_authenticated/admin/perception'
+      path: '/admin/perception'
+      fullPath: '/admin/perception'
+      preLoaderRoute: typeof AuthenticatedAdminPerceptionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/sim-select': {
+      id: '/_authenticated/admin/sim-select'
+      path: '/admin/sim-select'
+      fullPath: '/admin/sim-select'
+      preLoaderRoute: typeof AuthenticatedAdminSimSelectRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/students': {
@@ -493,11 +613,17 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMoneyBrainRoute: typeof AuthenticatedMoneyBrainRoute
   AuthenticatedNutritionRoute: typeof AuthenticatedNutritionRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedPerceptionLabRoute: typeof AuthenticatedPerceptionLabRoute
   AuthenticatedPerformanceRoute: typeof AuthenticatedPerformanceRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSimSelectRoute: typeof AuthenticatedSimSelectRoute
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
   AuthenticatedWeeklyReviewRoute: typeof AuthenticatedWeeklyReviewRoute
+  AuthenticatedAdminExperiencesRoute: typeof AuthenticatedAdminExperiencesRoute
+  AuthenticatedAdminMembersRoute: typeof AuthenticatedAdminMembersRoute
+  AuthenticatedAdminMoneyBrainRoute: typeof AuthenticatedAdminMoneyBrainRoute
+  AuthenticatedAdminPerceptionRoute: typeof AuthenticatedAdminPerceptionRoute
+  AuthenticatedAdminSimSelectRoute: typeof AuthenticatedAdminSimSelectRoute
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRouteWithChildren
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -510,11 +636,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMoneyBrainRoute: AuthenticatedMoneyBrainRoute,
   AuthenticatedNutritionRoute: AuthenticatedNutritionRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedPerceptionLabRoute: AuthenticatedPerceptionLabRoute,
   AuthenticatedPerformanceRoute: AuthenticatedPerformanceRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSimSelectRoute: AuthenticatedSimSelectRoute,
   AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
   AuthenticatedWeeklyReviewRoute: AuthenticatedWeeklyReviewRoute,
+  AuthenticatedAdminExperiencesRoute: AuthenticatedAdminExperiencesRoute,
+  AuthenticatedAdminMembersRoute: AuthenticatedAdminMembersRoute,
+  AuthenticatedAdminMoneyBrainRoute: AuthenticatedAdminMoneyBrainRoute,
+  AuthenticatedAdminPerceptionRoute: AuthenticatedAdminPerceptionRoute,
+  AuthenticatedAdminSimSelectRoute: AuthenticatedAdminSimSelectRoute,
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRouteWithChildren,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
