@@ -21,4 +21,4 @@
 - [x] Implementar Product Intelligence, Performance Portfolio, Reports e exportações CSV
 - [x] Adicionar busca global, command palette e notificações operacionais
 - [x] Auditar formulários, confirmações, rotas e todos os controles visíveis
-- [ ] Validar desktop, tablet e mobile com o fluxo administrativo completo
+- [x] Validar desktop, tablet e mobile com o fluxo administrativo completo
