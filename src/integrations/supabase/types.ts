@@ -964,7 +964,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      set_student_plan: {
+        Args: {
+          _plan: Database["public"]["Enums"]["plan_code"]
+          _student_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:
