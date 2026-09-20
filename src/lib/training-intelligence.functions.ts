@@ -94,3 +94,27 @@ export const generateTrainingDraft = createServerFn({ method: "POST" })
     await supabaseAdmin.from("crm_events").insert({ user_id:data.clientId,event_type:"training.draft_generated",metadata:{program_id:program.id,cycle_id:data.cycleId} });
     return { programId: program.id, draft };
   });
+
+export const saveImportedTrainingDraft = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ importId: z.string().uuid(), cycleId: z.string().uuid(), payload: planSchema }).parse(input))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: item } = await supabaseAdmin.from("training_imports").select("*").eq("id", data.importId).single();
+    if (!item) throw new Error("Importação não encontrada.");
+    const { data: program, error } = await supabaseAdmin.from("workout_programs").insert({ user_id:item.client_id,cycle_id:data.cycleId,title:data.payload.program_name,objective:data.payload.primary_goal,primary_goal:data.payload.primary_goal,why_this_plan:data.payload.why_this_plan,notes:data.payload.strategy_summary,creation_source:"PDF_IMPORT",status:"draft",created_by:context.userId }).select("id").single();
+    if (error || !program) throw error ?? new Error("Não foi possível salvar o programa.");
+    const { data: library } = await supabaseAdmin.from("exercise_library").select("id,name,aliases").eq("active",true);
+    const names=new Map<string,string>();for(const entry of library??[])for(const name of[entry.name,...(entry.aliases??[])])names.set(name.trim().toLocaleLowerCase("pt-BR"),entry.id);
+    for(const [sequence,workout] of data.payload.workouts.entries()){
+      const{data:workoutRow}=await supabaseAdmin.from("workouts").insert({program_id:program.id,name:workout.name,objective:workout.objective,estimated_minutes:workout.estimated_minutes,variant_type:workout.variant_type,notes:workout.notes,sequence}).select("id").single();
+      if(!workoutRow)continue;
+      const unmatched:string[]=[];const rows=workout.exercises.flatMap((exercise,exerciseSequence)=>{const exerciseId=names.get(exercise.raw_name.trim().toLocaleLowerCase("pt-BR"));if(!exerciseId){unmatched.push(exercise.raw_name);return[];}return[{workout_id:workoutRow.id,exercise_id:exerciseId,sequence:exerciseSequence,sets:exercise.sets,reps:exercise.reps,rep_min:exercise.rep_min,rep_max:exercise.rep_max,target_effort_type:exercise.target_effort_type,target_effort:exercise.target_effort,rest_seconds:exercise.rest_seconds,tempo:exercise.tempo,execution_notes:exercise.execution_notes,initial_load:exercise.load,pain_rule:exercise.pain_rule,video_reference:exercise.video_reference,reason_for_inclusion:exercise.reason_for_inclusion,priority_relation:exercise.priority_relation,evidence_relation:[]}];});
+      if(unmatched.length)throw new Error(`UNMATCHED EXERCISE: ${unmatched.join(", ")}. Faça o mapeamento antes de salvar.`);
+      if(rows.length)await supabaseAdmin.from("workout_exercises").insert(rows);
+    }
+    await supabaseAdmin.from("training_imports").update({status:"saved",program_id:program.id,parsed_payload:data.payload}).eq("id",item.id);
+    await supabaseAdmin.from("training_decisions").insert({client_id:item.client_id,cycle_id:data.cycleId,program_id:program.id,decision_type:"PDF_IMPORT_REVIEWED",decision:data.payload.why_this_plan,reason:data.payload.strategy_summary,author_type:"COACH",author_id:context.userId,approval_status:"pending",final_version:data.payload,evidence_ids:[data.importId]});
+    return {programId:program.id};
+  });
