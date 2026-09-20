@@ -1,26 +1,11 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BarChart3, CheckSquare, Dumbbell, Home, LogOut, Menu, Shield, UserRound, Utensils } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brand } from "./Brand";
 import { Button } from "@/components/ui/button";
-
 const nav = [["/dashboard", "Portfolio", Home], ["/training", "Treino", Dumbbell], ["/check-ins", "Check-in", CheckSquare], ["/nutrition", "Nutrição", Utensils], ["/profile", "Perfil", UserRound]] as const;
-
-export function AppShell({ children, admin = false }: { children: React.ReactNode; admin?: boolean }) {
-  const navigate = useNavigate();
-  async function signOut() { await supabase.auth.signOut(); await navigate({ to: "/auth", replace: true }); }
-  const items = admin ? [["/admin", "Visão geral", BarChart3], ["/admin/students", "Alunos", UserRound]] as const : nav;
-  return <div className="min-h-screen bg-background text-foreground">
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-border bg-sidebar/95 px-6 py-7 backdrop-blur-xl lg:flex lg:flex-col">
-      <Brand compact />
-      <p className="mt-12 text-[9px] uppercase tracking-[0.28em] text-muted-foreground">{admin ? "Administração" : "Performance portfolio"}</p>
-      <nav className="mt-7 flex-1 space-y-1">{items.map(([to,label,Icon])=><Link key={to} to={to} className="group flex items-center gap-3 border-l border-transparent px-3 py-3 text-xs uppercase tracking-[0.12em] text-muted-foreground transition-all duration-500 hover:border-primary hover:text-foreground" activeProps={{className:"border-primary bg-muted/40 text-foreground"}}><Icon className="size-3.5" />{label}</Link>)}</nav>
-      {!admin&&<Link to="/admin" className="mb-4 flex items-center gap-3 px-3 py-3 text-xs uppercase tracking-[0.12em] text-muted-foreground"><Shield className="size-3.5"/>Admin</Link>}
-      <Button variant="ghost" className="justify-start px-3 text-muted-foreground" onClick={signOut}><LogOut/>Sair</Button>
-      <p className="mt-7 border-t border-border pt-5 text-[8px] uppercase tracking-[0.22em] text-muted-foreground">Executive shell / Private access</p>
-    </aside>
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/90 px-5 backdrop-blur-xl lg:hidden"><Brand compact/><Menu className="size-4 text-primary" /></header>
-    <main className="pb-20 lg:ml-56 lg:pb-0">{children}</main>
-    {!admin&&<nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-sidebar/95 px-1 backdrop-blur-xl lg:hidden">{nav.map(([to,label,Icon])=><Link key={to} to={to} className="flex h-16 flex-col items-center justify-center gap-1 text-[8px] uppercase tracking-[0.08em] text-muted-foreground" activeProps={{className:"text-primary"}}><Icon className="size-4"/>{label}</Link>)}</nav>}
-  </div>;
+const staffRoles = ["coach", "nutritionist", "support", "manager", "admin", "admin_master"];
+export function AppShell({ children, admin = false }: { children: React.ReactNode; admin?: boolean }) { const navigate = useNavigate(); const [staff,setStaff]=useState(admin); useEffect(()=>{if(admin)return;void(async()=>{const{data:user}=await supabase.auth.getUser();if(!user.user)return;const{data}=await supabase.from("user_roles").select("role").eq("user_id",user.user.id);setStaff(Boolean(data?.some(item=>staffRoles.includes(item.role))))})()},[admin]); async function signOut() { await supabase.auth.signOut(); await navigate({ to: "/auth", replace: true }); } const items = admin ? [["/admin", "Visão geral", BarChart3], ["/admin/students", "Alunos", UserRound]] as const : nav;
+  return <div className="min-h-screen bg-background text-foreground"><aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-border bg-sidebar/95 px-6 py-7 backdrop-blur-xl lg:flex lg:flex-col"><Brand compact/><p className="mt-12 text-[9px] uppercase tracking-[0.28em] text-muted-foreground">{admin ? "Administração" : "Performance portfolio"}</p><nav className="mt-7 flex-1 space-y-1">{items.map(([to,label,Icon])=><Link key={to} to={to} className="group flex items-center gap-3 border-l border-transparent px-3 py-3 text-xs uppercase tracking-[0.12em] text-muted-foreground transition-all duration-500 hover:border-primary hover:text-foreground" activeProps={{className:"border-primary bg-muted/40 text-foreground"}}><Icon className="size-3.5"/>{label}</Link>)}</nav>{!admin&&staff&&<Link to="/admin" className="mb-4 flex items-center gap-3 px-3 py-3 text-xs uppercase tracking-[0.12em] text-muted-foreground"><Shield className="size-3.5"/>Admin</Link>}{admin&&<Link to="/dashboard" className="mb-4 flex items-center gap-3 px-3 py-3 text-xs uppercase tracking-[0.12em] text-muted-foreground"><Home className="size-3.5"/>Experiência aluno</Link>}<Button variant="ghost" className="justify-start px-3 text-muted-foreground" onClick={signOut}><LogOut/>Sair</Button><p className="mt-7 border-t border-border pt-5 text-[8px] uppercase tracking-[0.22em] text-muted-foreground">Executive shell / Private access</p></aside><header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/90 px-5 backdrop-blur-xl lg:hidden"><Brand compact/><Menu className="size-4 text-primary"/></header><main className="pb-20 lg:ml-56 lg:pb-0">{children}</main>{!admin&&<nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-sidebar/95 px-1 backdrop-blur-xl lg:hidden">{nav.map(([to,label,Icon])=><Link key={to} to={to} className="flex h-16 flex-col items-center justify-center gap-1 text-[8px] uppercase tracking-[0.08em] text-muted-foreground" activeProps={{className:"text-primary"}}><Icon className="size-4"/>{label}</Link>)}</nav>}</div>;
 }
