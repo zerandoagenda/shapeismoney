@@ -29,4 +29,4 @@
 - [x] Criar seleção centralizada de aluno no admin
 - [x] Unificar entradas por IA, PDF, texto e montagem manual
 - [x] Registrar importação por texto com origem e revisão humana
-- [ ] Validar os quatro caminhos em desktop e celular
+- [x] Validar os quatro caminhos em desktop e celular
