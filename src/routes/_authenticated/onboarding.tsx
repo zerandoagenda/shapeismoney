@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
+import { useServerFn } from "@tanstack/react-start";
+import { refreshClientOperations } from "@/lib/sim-orchestrator.functions";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({ meta: [{ title: "Calibração inicial — Shape Is Money" }, { name: "description", content: "Calibre sua jornada de performance executiva." }, { property: "og:title", content: "Calibração inicial — Shape Is Money" }, { property: "og:description", content: "Entenda a vida que seu corpo precisa sustentar." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -49,6 +51,7 @@ function Page() {
   const [scoreValue, setScoreValue] = useState(3);
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
+  const refreshOperations = useServerFn(refreshClientOperations);
   const step = steps[index];
 
   useEffect(() => { void (async () => {
@@ -85,6 +88,7 @@ function Page() {
         { user_id: userId, event_type: "onboarding.completed", metadata: { score: score.total } },
         { user_id: userId, event_type: "baseline.completed", metadata: { score: score.total } },
       ]);
+      await refreshOperations({ data: { clientId: userId, event: "onboarding.completed" } });
       await navigate({ to: "/diagnosis" });
     } finally { setSaving(false); }
   }
