@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BarChart3, BriefcaseBusiness, Factory, Home, LibraryBig, LogOut, Menu, Settings, Shield, UserRound, X } from "lucide-react";
+import { BarChart3, BrainCircuit, BriefcaseBusiness, ClipboardList, Dumbbell, Factory, HeartHandshake, Home, LibraryBig, LogOut, Menu, Network, ScanLine, Settings, Shield, Sparkles, UserRound, Utensils, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brand } from "./Brand";
 import { Button } from "@/components/ui/button";

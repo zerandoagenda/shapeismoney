@@ -33,8 +33,11 @@ import { Route as AuthenticatedSimSelectRouteImport } from './routes/_authentica
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
 import { Route as AuthenticatedWeeklyReviewRouteImport } from './routes/_authenticated/weekly-review'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminBusinessRouteImport } from './routes/_authenticated/admin.business'
+import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminExperiencesRouteImport } from './routes/_authenticated/admin.experiences'
 import { Route as AuthenticatedAdminIntelligenceRouteImport } from './routes/_authenticated/admin.intelligence'
+import { Route as AuthenticatedAdminLibraryRouteImport } from './routes/_authenticated/admin.library'
 import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin.members'
 import { Route as AuthenticatedAdminMoneyBrainRouteImport } from './routes/_authenticated/admin.money-brain'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
@@ -47,6 +50,7 @@ import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/admin.tasks'
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
 import { Route as AuthenticatedTrainingAssessmentRouteImport } from './routes/_authenticated/training.assessment'
+import { Route as AuthenticatedAdminLibraryExercisesRouteImport } from './routes/_authenticated/admin.library.exercises'
 import { Route as AuthenticatedAdminRelationshipStudentIdRouteImport } from './routes/_authenticated/admin.relationship.$studentId'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
@@ -182,6 +186,18 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminBusinessRoute =
+  AuthenticatedAdminBusinessRouteImport.update({
+    id: '/admin/business',
+    path: '/admin/business',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminClientsRoute =
+  AuthenticatedAdminClientsRouteImport.update({
+    id: '/admin/clients',
+    path: '/admin/clients',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminExperiencesRoute =
   AuthenticatedAdminExperiencesRouteImport.update({
     id: '/admin/experiences',
@@ -192,6 +208,12 @@ const AuthenticatedAdminIntelligenceRoute =
   AuthenticatedAdminIntelligenceRouteImport.update({
     id: '/admin/intelligence',
     path: '/admin/intelligence',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminLibraryRoute =
+  AuthenticatedAdminLibraryRouteImport.update({
+    id: '/admin/library',
+    path: '/admin/library',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminMembersRoute =
@@ -264,6 +286,12 @@ const AuthenticatedTrainingAssessmentRoute =
     id: '/assessment',
     path: '/assessment',
     getParentRoute: () => AuthenticatedTrainingRoute,
+  } as any)
+const AuthenticatedAdminLibraryExercisesRoute =
+  AuthenticatedAdminLibraryExercisesRouteImport.update({
+    id: '/exercises',
+    path: '/exercises',
+    getParentRoute: () => AuthenticatedAdminLibraryRoute,
   } as any)
 const AuthenticatedAdminRelationshipStudentIdRoute =
   AuthenticatedAdminRelationshipStudentIdRouteImport.update({
@@ -349,8 +377,11 @@ export interface FileRoutesByFullPath {
   '/sim-select': typeof AuthenticatedSimSelectRoute
   '/training': typeof AuthenticatedTrainingRouteWithChildren
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/admin/business': typeof AuthenticatedAdminBusinessRoute
+  '/admin/clients': typeof AuthenticatedAdminClientsRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
   '/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
+  '/admin/library': typeof AuthenticatedAdminLibraryRouteWithChildren
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -364,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
   '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -398,8 +430,11 @@ export interface FileRoutesByTo {
   '/sim-select': typeof AuthenticatedSimSelectRoute
   '/training': typeof AuthenticatedTrainingRouteWithChildren
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/admin/business': typeof AuthenticatedAdminBusinessRoute
+  '/admin/clients': typeof AuthenticatedAdminClientsRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
   '/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
+  '/admin/library': typeof AuthenticatedAdminLibraryRouteWithChildren
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -412,6 +447,7 @@ export interface FileRoutesByTo {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
   '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -448,8 +484,11 @@ export interface FileRoutesById {
   '/_authenticated/sim-select': typeof AuthenticatedSimSelectRoute
   '/_authenticated/training': typeof AuthenticatedTrainingRouteWithChildren
   '/_authenticated/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/_authenticated/admin/business': typeof AuthenticatedAdminBusinessRoute
+  '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRoute
   '/_authenticated/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
   '/_authenticated/admin/intelligence': typeof AuthenticatedAdminIntelligenceRoute
+  '/_authenticated/admin/library': typeof AuthenticatedAdminLibraryRouteWithChildren
   '/_authenticated/admin/members': typeof AuthenticatedAdminMembersRoute
   '/_authenticated/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -463,6 +502,7 @@ export interface FileRoutesById {
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/_authenticated/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
   '/_authenticated/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/_authenticated/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -499,8 +539,11 @@ export interface FileRouteTypes {
     | '/sim-select'
     | '/training'
     | '/weekly-review'
+    | '/admin/business'
+    | '/admin/clients'
     | '/admin/experiences'
     | '/admin/intelligence'
+    | '/admin/library'
     | '/admin/members'
     | '/admin/money-brain'
     | '/admin/operations'
@@ -514,6 +557,7 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/training/assessment'
     | '/admin/'
+    | '/admin/library/exercises'
     | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
@@ -548,8 +592,11 @@ export interface FileRouteTypes {
     | '/sim-select'
     | '/training'
     | '/weekly-review'
+    | '/admin/business'
+    | '/admin/clients'
     | '/admin/experiences'
     | '/admin/intelligence'
+    | '/admin/library'
     | '/admin/members'
     | '/admin/money-brain'
     | '/admin/operations'
@@ -562,6 +609,7 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/training/assessment'
     | '/admin'
+    | '/admin/library/exercises'
     | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
@@ -597,8 +645,11 @@ export interface FileRouteTypes {
     | '/_authenticated/sim-select'
     | '/_authenticated/training'
     | '/_authenticated/weekly-review'
+    | '/_authenticated/admin/business'
+    | '/_authenticated/admin/clients'
     | '/_authenticated/admin/experiences'
     | '/_authenticated/admin/intelligence'
+    | '/_authenticated/admin/library'
     | '/_authenticated/admin/members'
     | '/_authenticated/admin/money-brain'
     | '/_authenticated/admin/operations'
@@ -612,6 +663,7 @@ export interface FileRouteTypes {
     | '/_authenticated/members/$slug'
     | '/_authenticated/training/assessment'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/library/exercises'
     | '/_authenticated/admin/relationship/$studentId'
     | '/_authenticated/admin/students/$studentId'
     | '/_authenticated/admin/training/$studentId'
@@ -802,6 +854,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/business': {
+      id: '/_authenticated/admin/business'
+      path: '/admin/business'
+      fullPath: '/admin/business'
+      preLoaderRoute: typeof AuthenticatedAdminBusinessRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/clients': {
+      id: '/_authenticated/admin/clients'
+      path: '/admin/clients'
+      fullPath: '/admin/clients'
+      preLoaderRoute: typeof AuthenticatedAdminClientsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/experiences': {
       id: '/_authenticated/admin/experiences'
       path: '/admin/experiences'
@@ -814,6 +880,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/intelligence'
       fullPath: '/admin/intelligence'
       preLoaderRoute: typeof AuthenticatedAdminIntelligenceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/library': {
+      id: '/_authenticated/admin/library'
+      path: '/admin/library'
+      fullPath: '/admin/library'
+      preLoaderRoute: typeof AuthenticatedAdminLibraryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/members': {
@@ -899,6 +972,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/training/assessment'
       preLoaderRoute: typeof AuthenticatedTrainingAssessmentRouteImport
       parentRoute: typeof AuthenticatedTrainingRoute
+    }
+    '/_authenticated/admin/library/exercises': {
+      id: '/_authenticated/admin/library/exercises'
+      path: '/exercises'
+      fullPath: '/admin/library/exercises'
+      preLoaderRoute: typeof AuthenticatedAdminLibraryExercisesRouteImport
+      parentRoute: typeof AuthenticatedAdminLibraryRoute
     }
     '/_authenticated/admin/relationship/$studentId': {
       id: '/_authenticated/admin/relationship/$studentId'
@@ -997,6 +1077,21 @@ const AuthenticatedTrainingRouteWithChildren =
     AuthenticatedTrainingRouteChildren,
   )
 
+interface AuthenticatedAdminLibraryRouteChildren {
+  AuthenticatedAdminLibraryExercisesRoute: typeof AuthenticatedAdminLibraryExercisesRoute
+}
+
+const AuthenticatedAdminLibraryRouteChildren: AuthenticatedAdminLibraryRouteChildren =
+  {
+    AuthenticatedAdminLibraryExercisesRoute:
+      AuthenticatedAdminLibraryExercisesRoute,
+  }
+
+const AuthenticatedAdminLibraryRouteWithChildren =
+  AuthenticatedAdminLibraryRoute._addFileChildren(
+    AuthenticatedAdminLibraryRouteChildren,
+  )
+
 interface AuthenticatedAdminRelationshipRouteChildren {
   AuthenticatedAdminRelationshipStudentIdRoute: typeof AuthenticatedAdminRelationshipStudentIdRoute
 }
@@ -1048,8 +1143,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSimSelectRoute: typeof AuthenticatedSimSelectRoute
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRouteWithChildren
   AuthenticatedWeeklyReviewRoute: typeof AuthenticatedWeeklyReviewRoute
+  AuthenticatedAdminBusinessRoute: typeof AuthenticatedAdminBusinessRoute
+  AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRoute
   AuthenticatedAdminExperiencesRoute: typeof AuthenticatedAdminExperiencesRoute
   AuthenticatedAdminIntelligenceRoute: typeof AuthenticatedAdminIntelligenceRoute
+  AuthenticatedAdminLibraryRoute: typeof AuthenticatedAdminLibraryRouteWithChildren
   AuthenticatedAdminMembersRoute: typeof AuthenticatedAdminMembersRoute
   AuthenticatedAdminMoneyBrainRoute: typeof AuthenticatedAdminMoneyBrainRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
@@ -1089,8 +1187,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSimSelectRoute: AuthenticatedSimSelectRoute,
   AuthenticatedTrainingRoute: AuthenticatedTrainingRouteWithChildren,
   AuthenticatedWeeklyReviewRoute: AuthenticatedWeeklyReviewRoute,
+  AuthenticatedAdminBusinessRoute: AuthenticatedAdminBusinessRoute,
+  AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRoute,
   AuthenticatedAdminExperiencesRoute: AuthenticatedAdminExperiencesRoute,
   AuthenticatedAdminIntelligenceRoute: AuthenticatedAdminIntelligenceRoute,
+  AuthenticatedAdminLibraryRoute: AuthenticatedAdminLibraryRouteWithChildren,
   AuthenticatedAdminMembersRoute: AuthenticatedAdminMembersRoute,
   AuthenticatedAdminMoneyBrainRoute: AuthenticatedAdminMoneyBrainRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
