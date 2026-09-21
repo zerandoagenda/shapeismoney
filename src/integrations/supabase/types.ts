@@ -114,6 +114,7 @@ export type Database = {
           id: string
           message: string
           notification_type: string
+          operation_key: string | null
           read_at: string | null
           recipient_id: string
           target_path: string | null
@@ -125,6 +126,7 @@ export type Database = {
           id?: string
           message: string
           notification_type: string
+          operation_key?: string | null
           read_at?: string | null
           recipient_id: string
           target_path?: string | null
@@ -136,6 +138,7 @@ export type Database = {
           id?: string
           message?: string
           notification_type?: string
+          operation_key?: string | null
           read_at?: string | null
           recipient_id?: string
           target_path?: string | null
@@ -168,6 +171,7 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: string
+          operation_key: string | null
           priority: string
           status: string
           title: string
@@ -182,6 +186,7 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          operation_key?: string | null
           priority?: string
           status?: string
           title: string
@@ -196,6 +201,7 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          operation_key?: string | null
           priority?: string
           status?: string
           title?: string
@@ -353,6 +359,81 @@ export type Database = {
             columns: ["previous_assessment_id"]
             isOneToOne: false
             referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_activations: {
+        Row: {
+          client_id: string
+          completed_at: string | null
+          created_at: string
+          current_stage: Database["public"]["Enums"]["activation_stage"]
+          id: string
+          metadata: Json
+          next_action: string
+          next_action_owner: string
+          payment_reference: string | null
+          plan: Database["public"]["Enums"]["plan_code"]
+          responsible_id: string | null
+          source: string
+          stage_started_at: string
+          started_at: string
+          status: Database["public"]["Enums"]["client_activation_status"]
+          target_delivery_at: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          completed_at?: string | null
+          created_at?: string
+          current_stage?: Database["public"]["Enums"]["activation_stage"]
+          id?: string
+          metadata?: Json
+          next_action?: string
+          next_action_owner?: string
+          payment_reference?: string | null
+          plan: Database["public"]["Enums"]["plan_code"]
+          responsible_id?: string | null
+          source: string
+          stage_started_at?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["client_activation_status"]
+          target_delivery_at: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string
+          current_stage?: Database["public"]["Enums"]["activation_stage"]
+          id?: string
+          metadata?: Json
+          next_action?: string
+          next_action_owner?: string
+          payment_reference?: string | null
+          plan?: Database["public"]["Enums"]["plan_code"]
+          responsible_id?: string | null
+          source?: string
+          stage_started_at?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["client_activation_status"]
+          target_delivery_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_activations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_activations_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -3424,6 +3505,89 @@ export type Database = {
           },
         ]
       }
+      training_generation_jobs: {
+        Row: {
+          activation_id: string | null
+          attempts: number
+          client_id: string
+          created_at: string
+          cycle_id: string | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          missing_prerequisites: Json
+          program_id: string | null
+          readiness_snapshot: Json
+          started_at: string | null
+          status: Database["public"]["Enums"]["training_generation_status"]
+          trigger_source: string
+          updated_at: string
+        }
+        Insert: {
+          activation_id?: string | null
+          attempts?: number
+          client_id: string
+          created_at?: string
+          cycle_id?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          missing_prerequisites?: Json
+          program_id?: string | null
+          readiness_snapshot?: Json
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["training_generation_status"]
+          trigger_source: string
+          updated_at?: string
+        }
+        Update: {
+          activation_id?: string | null
+          attempts?: number
+          client_id?: string
+          created_at?: string
+          cycle_id?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          missing_prerequisites?: Json
+          program_id?: string | null
+          readiness_snapshot?: Json
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["training_generation_status"]
+          trigger_source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_generation_jobs_activation_id_fkey"
+            columns: ["activation_id"]
+            isOneToOne: false
+            referencedRelation: "client_activations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_generation_jobs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_generation_jobs_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "cycle_strategies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_generation_jobs_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "workout_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       training_imports: {
         Row: {
           client_id: string
@@ -4005,6 +4169,20 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      activation_stage:
+        | "PAYMENT_CONFIRMED"
+        | "ONBOARDING_REQUIRED"
+        | "BASELINE_REQUIRED"
+        | "PHOTO_PROTOCOL_REQUIRED"
+        | "ASSESSMENT_PROCESSING"
+        | "ASSESSMENT_REVIEW"
+        | "CYCLE_STRATEGY"
+        | "TRAINING_GENERATION"
+        | "TRAINING_REVIEW"
+        | "NUTRITION_BUILD"
+        | "FINAL_REVIEW"
+        | "READY_TO_PUBLISH"
+        | "ACTIVE_PROTOCOL"
       app_role:
         | "student"
         | "coach"
@@ -4020,6 +4198,12 @@ export type Database = {
         | "specialist"
         | "beta_member"
         | "member"
+      client_activation_status:
+        | "ACTIVE"
+        | "BLOCKED"
+        | "READY"
+        | "COMPLETED"
+        | "CANCELLED"
       perception_scan_status:
         | "processing"
         | "ai_completed"
@@ -4033,6 +4217,15 @@ export type Database = {
         | "in_review"
         | "approved"
         | "published"
+      training_generation_status:
+        | "WAITING_PREREQUISITES"
+        | "READY"
+        | "GENERATING"
+        | "DRAFT_READY"
+        | "HUMAN_REVIEW"
+        | "APPROVED"
+        | "PUBLISHED"
+        | "FAILED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4160,6 +4353,21 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      activation_stage: [
+        "PAYMENT_CONFIRMED",
+        "ONBOARDING_REQUIRED",
+        "BASELINE_REQUIRED",
+        "PHOTO_PROTOCOL_REQUIRED",
+        "ASSESSMENT_PROCESSING",
+        "ASSESSMENT_REVIEW",
+        "CYCLE_STRATEGY",
+        "TRAINING_GENERATION",
+        "TRAINING_REVIEW",
+        "NUTRITION_BUILD",
+        "FINAL_REVIEW",
+        "READY_TO_PUBLISH",
+        "ACTIVE_PROTOCOL",
+      ],
       app_role: [
         "student",
         "coach",
@@ -4176,6 +4384,13 @@ export const Constants = {
         "beta_member",
         "member",
       ],
+      client_activation_status: [
+        "ACTIVE",
+        "BLOCKED",
+        "READY",
+        "COMPLETED",
+        "CANCELLED",
+      ],
       perception_scan_status: [
         "processing",
         "ai_completed",
@@ -4190,6 +4405,16 @@ export const Constants = {
         "in_review",
         "approved",
         "published",
+      ],
+      training_generation_status: [
+        "WAITING_PREREQUISITES",
+        "READY",
+        "GENERATING",
+        "DRAFT_READY",
+        "HUMAN_REVIEW",
+        "APPROVED",
+        "PUBLISHED",
+        "FAILED",
       ],
     },
   },
