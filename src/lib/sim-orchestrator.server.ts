@@ -1,6 +1,6 @@
 import { generateTrainingDraftCore } from "@/lib/training-architect.server";
 
-type EventName="user.created"|"onboarding.completed"|"plan.activated"|"payment.confirmed"|"photo_protocol.completed"|"assessment.generated"|"assessment.approved"|"cycle.draft_created"|"training.ready_for_generation"|"training.draft_generated"|"training.approved"|"training.published"|"nutrition.created"|"nutrition.published"|"perception.completed"|"checkin.completed"|"weekly_review.completed"|"reassessment.due";
+type EventName="user.created"|"onboarding.completed"|"plan.activated"|"payment.confirmed"|"photo_protocol.completed"|"assessment.generated"|"assessment.approved"|"cycle.draft_created"|"training.ready_for_generation"|"training.draft_generated"|"training.approved"|"training.published"|"nutrition.created"|"nutrition.published"|"protocol.published"|"perception.completed"|"checkin.completed"|"weekly_review.completed"|"reassessment.due";
 
 function deliveryTarget(){const date=new Date();let days=0;while(days<3){date.setUTCDate(date.getUTCDate()+1);const day=date.getUTCDay();if(day!==0&&day!==6)days+=1;}date.setUTCHours(20,59,59,999);return date.toISOString()}
 async function activeStaff(admin:any, roles:string[]){const {data}=await admin.from("user_roles").select("user_id,role").in("role",roles);return (data??[]).map((row:any)=>row.user_id as string)}

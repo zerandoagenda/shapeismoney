@@ -15,7 +15,7 @@ import { calculateClientHealth } from "@/lib/client-health";
 import { buildReadiness } from "@/lib/readiness";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { activateClientPlan } from "@/lib/sim-orchestrator.functions";
+import { activateClientPlan, refreshClientOperations } from "@/lib/sim-orchestrator.functions";
 import { deriveOperationalStatus, type OperationalActivation, type TrainingJobStatus } from "@/lib/client-operational-status";
 
 export const Route = createFileRoute("/_authenticated/admin/students/$studentId")({
@@ -78,6 +78,7 @@ const move = <T,>(items: T[], from: number, to: number) => { if (to < 0 || to >=
 function Page() {
   const { studentId } = Route.useParams();
   const activatePlan = useServerFn(activateClientPlan);
+  const refreshOperations = useServerFn(refreshClientOperations);
   const [data, setData] = useState<StudentData | null>(null);
   const [protocolTitle, setProtocolTitle] = useState("Protocolo executivo");
   const [protocolObjective, setProtocolObjective] = useState("");
@@ -152,7 +153,7 @@ function Page() {
     await load();
   }
   async function saveProtocol() { const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; setSaving(true); if (data?.protocol) await supabase.from("protocols").update({ title: protocolTitle, objective: protocolObjective }).eq("id", data.protocol.id); else { const { data: created } = await supabase.from("protocols").insert({ user_id: studentId, title: protocolTitle, objective: protocolObjective, status: "data_received", created_by: auth.user.id }).select("id").single(); if (created) { await supabase.from("protocol_status_history").insert({ protocol_id: created.id, user_id: studentId, status: "data_received", changed_by: auth.user.id }); await supabase.from("crm_events").insert({ user_id: studentId, event_type: "protocol.created", metadata: { protocol_id: created.id } }); } } setSaving(false); await load(); }
-  async function changeStatus(status: ProtocolStatus) { if (!data?.protocol) return; const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; await supabase.from("protocols").update({ status, approved_at: status === "approved" ? new Date().toISOString() : data.protocol.approved_at, published_at: status === "published" ? new Date().toISOString() : data.protocol.published_at }).eq("id", data.protocol.id); await supabase.from("protocol_status_history").insert({ protocol_id: data.protocol.id, user_id: studentId, status, changed_by: auth.user.id }); if (status === "published") await supabase.from("crm_events").insert({ user_id: studentId, event_type: "protocol.published", metadata: { protocol_id: data.protocol.id } }); await load(); }
+  async function changeStatus(status: ProtocolStatus) { if (!data?.protocol) return; const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; await supabase.from("protocols").update({ status, approved_at: status === "approved" ? new Date().toISOString() : data.protocol.approved_at, published_at: status === "published" ? new Date().toISOString() : data.protocol.published_at }).eq("id", data.protocol.id); await supabase.from("protocol_status_history").insert({ protocol_id: data.protocol.id, user_id: studentId, status, changed_by: auth.user.id }); if (status === "published") { await supabase.from("crm_events").insert({ user_id: studentId, event_type: "protocol.published", metadata: { protocol_id: data.protocol.id } }); await refreshOperations({data:{clientId:studentId,event:"protocol.published"}}); } await load(); }
 
   async function saveProgram(status: "draft" | "approved" | "published") {
     const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; setSaving(true);
@@ -174,7 +175,7 @@ function Page() {
         for (const [exerciseSequence, exercise] of workout.exercises.entries()) { const values = { exercise_id: exercise.exercise_id, sets: exercise.sets, reps: exercise.reps, initial_load: exercise.initial_load, rest_seconds: exercise.rest_seconds, target_rpe: exercise.target_rpe, notes: exercise.notes || null, sequence: exerciseSequence }; if (exercise.id) await supabase.from("workout_exercises").update(values).eq("id", exercise.id); else await supabase.from("workout_exercises").insert({ ...values, workout_id: workoutId }); }
       }
       await supabase.from("training_decisions").insert({client_id:studentId,cycle_id:cycleId,program_id:programId,decision_type:`MANUAL_${status.toUpperCase()}`,decision:`Programa manual ${status}`,reason:programNotes||programObjective||"Prescrição construída e revisada pela equipe.",author_type:"BRUNO",author_id:auth.user.id,approval_status:status==="approved"?"approved":"pending"});
-      if (status === "published") await supabase.from("crm_events").insert({ user_id: studentId, event_type: "training.published", metadata: { program_id: programId } });
+      if (status === "published") { await supabase.from("crm_events").insert({ user_id: studentId, event_type: "training.published", metadata: { program_id: programId } }); await refreshOperations({data:{clientId:studentId,event:"training.published"}}); }
     }
     setSaving(false); setMessage(status === "published" ? "Treino publicado." : "Treino salvo."); await load();
   }
@@ -187,7 +188,7 @@ function Page() {
     if (planId) {
       const existingMeals = data?.nutrition?.nutrition_meals ?? []; const keptMealIds = nutrition.meals.flatMap((item) => item.id ? [item.id] : []); const removedMealIds = existingMeals.map((item) => item.id).filter((id) => !keptMealIds.includes(id)); if (removedMealIds.length) await supabase.from("nutrition_meals").delete().in("id", removedMealIds);
       for (const [mealOrder, meal] of nutrition.meals.entries()) { let mealId = meal.id; const mealValues = { name: meal.name, suggested_time: meal.suggested_time || null, instructions: meal.instructions || null, meal_order: mealOrder }; if (mealId) await supabase.from("nutrition_meals").update(mealValues).eq("id", mealId); else { const { data: created } = await supabase.from("nutrition_meals").insert({ ...mealValues, nutrition_plan_id: planId }).select("id").single(); mealId = created?.id; } if (!mealId) continue; const originalItems = existingMeals.find((item) => item.id === mealId)?.nutrition_meal_items ?? []; const keptItemIds = meal.items.flatMap((item) => item.id ? [item.id] : []); const removedItemIds = originalItems.map((item) => item.id).filter((id) => !keptItemIds.includes(id)); if (removedItemIds.length) await supabase.from("nutrition_meal_items").delete().in("id", removedItemIds); for (const [itemOrder, item] of meal.items.entries()) { const itemValues = { food_name: item.food_name, quantity: item.quantity, unit: item.unit || null, calories: item.calories, protein: item.protein, carbs: item.carbs, fat: item.fat, notes: item.notes || null, item_order: itemOrder }; if (item.id) await supabase.from("nutrition_meal_items").update(itemValues).eq("id", item.id); else await supabase.from("nutrition_meal_items").insert({ ...itemValues, meal_id: mealId }); } }
-      if (status === "published") await supabase.from("crm_events").insert({ user_id: studentId, event_type: "nutrition.published", metadata: { nutrition_plan_id: planId } });
+      if (status === "published") { await supabase.from("crm_events").insert({ user_id: studentId, event_type: "nutrition.published", metadata: { nutrition_plan_id: planId } }); await refreshOperations({data:{clientId:studentId,event:"nutrition.published"}}); }
     }
     setSaving(false); setMessage(status === "published" ? "Orientação alimentar publicada." : "Orientação alimentar salva."); await load();
   }
