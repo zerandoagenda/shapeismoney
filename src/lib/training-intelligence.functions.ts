@@ -36,6 +36,11 @@ async function modelForRequest() {
   return createTrainingArchitectModel(key);
 }
 
+async function completeTrainingPrinciples() {
+  const { SIM_TRAINING_SPEC_V1 } = await import("@/lib/training-spec.server");
+  return `${trainingPrinciples}\n\nMETODOLOGIA OFICIAL INTEGRAL:\n${SIM_TRAINING_SPEC_V1}`;
+}
+
 const trainingPrinciples = `Você é o Training Architect do Shape Is Money. Siga a SIM TRAINING INTELLIGENCE SPEC v1.0 como regra operacional, não como referência superficial.
 ORDEM OBRIGATÓRIA: DADO → EVIDÊNCIA → INTERPRETAÇÃO → PRIORIDADE → DECISÃO → PRESCRIÇÃO → EXECUÇÃO → RESPOSTA → REAVALIAÇÃO. Responda primeiro qual decisão o cliente precisa agora e depois qual treino materializa a decisão.
 PRESCRIÇÃO: justifique ordem, volume, frequência, recuperação e aderência; use somente exercícios da biblioteca; detalhe progressão e regressão; custo de fadiga; cardio e mobilidade quando sustentados por evidência.
@@ -53,13 +58,14 @@ export const parseTrainingPdf = createServerFn({ method: "POST" })
     if (!item) throw new Error("Importação não encontrada.");
     await context.supabase.from("training_imports").update({ status: "parsing", error_message: null }).eq("id", item.id);
     try {
+      if (!item.storage_path || !item.mime_type) throw new Error("Arquivo PDF indisponível.");
       const { data: file, error } = await context.supabase.storage.from("training-private").download(item.storage_path);
       if (error) throw error;
       const model = await modelForRequest();
       const result = streamText({
         model,
-        instructions: `${trainingPrinciples}\nExtraia fielmente o PDF. Não substitua nomes desconhecidos. Preserve carga, tempo, cardio, mobilidade, observações e alternativas quando existirem.`,
-        messages: [{ role: "user", content: [{ type: "text", text: "Estruture este PDF de treino individual para revisão. Retorne todos os campos, usando texto vazio ou null quando ausentes." }, { type: "file", data: new Uint8Array(await file.arrayBuffer()), mediaType: item.mime_type, filename: item.original_filename }] }],
+        instructions: `${await completeTrainingPrinciples()}\nExtraia fielmente o PDF. Não substitua nomes desconhecidos. Preserve carga, tempo, cardio, mobilidade, observações e alternativas quando existirem.`,
+        messages: [{ role: "user", content: [{ type: "text", text: "Estruture este PDF de treino individual para revisão. Retorne todos os campos, usando texto vazio ou null quando ausentes." }, { type: "file", data: new Uint8Array(await file.arrayBuffer()), mediaType: item.mime_type, filename: item.original_filename ?? "treino.pdf" }] }],
         output: Output.object({ schema: planSchema, name: "training_pdf" }), providerOptions: aiOptions,
       });
       const parsed = await result.output;
@@ -72,6 +78,38 @@ export const parseTrainingPdf = createServerFn({ method: "POST" })
       return payload;
     } catch (error) {
       const message = error instanceof Error ? error.message.slice(0, 300) : "Não foi possível interpretar o PDF.";
+      await context.supabase.from("training_imports").update({ status: "failed", error_message: message }).eq("id", item.id);
+      throw new Error(message);
+    }
+  });
+
+export const parseTrainingText = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ importId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context);
+    const { data: item } = await context.supabase.from("training_imports").select("*").eq("id", data.importId).single();
+    if (!item?.source_text) throw new Error("Texto de treino não encontrado.");
+    await context.supabase.from("training_imports").update({ status: "parsing", error_message: null }).eq("id", item.id);
+    try {
+      const model = await modelForRequest();
+      const result = streamText({
+        model,
+        instructions: `${await completeTrainingPrinciples()}\nEstruture fielmente o texto recebido. Não substitua nomes desconhecidos, não invente séries, cargas ou equivalências.`,
+        prompt: `Converta o texto abaixo em um programa estruturado para revisão humana. Use texto vazio ou null quando o dado não existir:\n\n${item.source_text}`,
+        output: Output.object({ schema: planSchema, name: "training_text" }),
+        providerOptions: aiOptions,
+      });
+      const parsed = await result.output;
+      const { data: library } = await context.supabase.from("exercise_library").select("id,name,aliases").eq("active", true);
+      const normalized = new Map<string,string>();
+      for (const exercise of library ?? []) for (const name of [exercise.name, ...(exercise.aliases ?? [])]) normalized.set(name.trim().toLocaleLowerCase("pt-BR"), exercise.id);
+      const payload = { ...parsed, workouts: parsed.workouts.map(workout => ({ ...workout, exercises: workout.exercises.map(exercise => ({ ...exercise, matched_exercise_id: normalized.get(exercise.raw_name.trim().toLocaleLowerCase("pt-BR")) ?? null })) })) };
+      await context.supabase.from("training_imports").update({ status: "review", parsed_payload: payload, extracted_text: item.source_text }).eq("id", item.id);
+      await context.supabase.from("crm_events").insert({ user_id: item.client_id, event_type: "training.imported_text", metadata: { import_id: item.id } });
+      return payload;
+    } catch (error) {
+      const message = error instanceof Error ? error.message.slice(0, 300) : "Não foi possível interpretar o texto.";
       await context.supabase.from("training_imports").update({ status: "failed", error_message: message }).eq("id", item.id);
       throw new Error(message);
     }
@@ -96,7 +134,7 @@ export const generateTrainingDraft = createServerFn({ method: "POST" })
     if (!profile.data || !cycle.data) throw new Error("Cliente ou ciclo não encontrado.");
     const model = await modelForRequest();
     const evidence = { profile: profile.data, onboarding: onboarding.data?.responses ?? {}, sim_score: score.data, cycle: cycle.data, recent_checkins: checkins.data ?? [], weekly_reviews: reviews.data ?? [], previous_training: sessions.data ?? [], exercise_library: library.data ?? [], knowledge_base: knowledge.data ?? [] };
-    const result = streamText({ model, instructions: trainingPrinciples, prompt: `Crie o draft completo exigido pela metodologia. Use exclusivamente nomes da biblioteca fornecida. Cada exercício precisa de rationale em reason_for_inclusion e ligação explícita à prioridade/evidência. Contexto completo:\n${JSON.stringify(evidence)}`, output: Output.object({ schema: architectSchema, name: "training_draft" }), providerOptions: aiOptions });
+    const result = streamText({ model, instructions: await completeTrainingPrinciples(), prompt: `Crie o draft completo exigido pela metodologia. Use exclusivamente nomes da biblioteca fornecida. Cada exercício precisa de rationale em reason_for_inclusion e ligação explícita à prioridade/evidência. Contexto completo:\n${JSON.stringify(evidence)}`, output: Output.object({ schema: architectSchema, name: "training_draft" }), providerOptions: aiOptions });
     const draft = await result.output;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: program, error: programError } = await supabaseAdmin.from("workout_programs").insert({ user_id:data.clientId, cycle_id:data.cycleId, title:draft.program_name, objective:draft.primary_goal, primary_goal:draft.primary_goal, why_this_plan:draft.why_this_plan, notes:draft.strategy_summary, creation_source:"AI_DRAFT", status:"draft", created_by:context.userId, starts_on:cycle.data.start_date, ends_on:cycle.data.target_date }).select("id").single();
@@ -137,7 +175,8 @@ export const saveImportedTrainingDraft = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: item } = await supabaseAdmin.from("training_imports").select("*").eq("id", data.importId).single();
     if (!item) throw new Error("Importação não encontrada.");
-    const { data: program, error } = await supabaseAdmin.from("workout_programs").insert({ user_id:item.client_id,cycle_id:data.cycleId,title:data.payload.program_name,objective:data.payload.primary_goal,primary_goal:data.payload.primary_goal,why_this_plan:data.payload.why_this_plan,notes:data.payload.strategy_summary,creation_source:"PDF_IMPORT",status:"draft",created_by:context.userId }).select("id").single();
+    const creationSource=item.import_source==="TEXT_IMPORT"?"TEXT_IMPORT":"PDF_IMPORT";
+    const { data: program, error } = await supabaseAdmin.from("workout_programs").insert({ user_id:item.client_id,cycle_id:data.cycleId,title:data.payload.program_name,objective:data.payload.primary_goal,primary_goal:data.payload.primary_goal,why_this_plan:data.payload.why_this_plan,notes:data.payload.strategy_summary,creation_source:creationSource,status:"draft",created_by:context.userId }).select("id").single();
     if (error || !program) throw error ?? new Error("Não foi possível salvar o programa.");
     const { data: library } = await supabaseAdmin.from("exercise_library").select("id,name,aliases").eq("active",true);
     const names=new Map<string,string>();for(const entry of library??[])for(const name of[entry.name,...(entry.aliases??[])])names.set(name.trim().toLocaleLowerCase("pt-BR"),entry.id);
@@ -149,6 +188,6 @@ export const saveImportedTrainingDraft = createServerFn({ method: "POST" })
       if(rows.length)await supabaseAdmin.from("workout_exercises").insert(rows);
     }
     await supabaseAdmin.from("training_imports").update({status:"saved",program_id:program.id,parsed_payload:data.payload}).eq("id",item.id);
-    await supabaseAdmin.from("training_decisions").insert({client_id:item.client_id,cycle_id:data.cycleId,program_id:program.id,decision_type:"PDF_IMPORT_REVIEWED",decision:data.payload.why_this_plan,reason:data.payload.strategy_summary,author_type:"COACH",author_id:context.userId,approval_status:"pending",final_version:data.payload,evidence_ids:[data.importId]});
+    await supabaseAdmin.from("training_decisions").insert({client_id:item.client_id,cycle_id:data.cycleId,program_id:program.id,decision_type:`${creationSource}_REVIEWED`,decision:data.payload.why_this_plan,reason:data.payload.strategy_summary,author_type:"COACH",author_id:context.userId,approval_status:"pending",final_version:data.payload,evidence_ids:[data.importId]});
     return {programId:program.id};
   });

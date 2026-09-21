@@ -1,0 +1,423 @@
+SIM TRAINING INTELLIGENCE SPEC v1.0
+Especificação funcional e metodológica do agente de avaliação, treino, acompanhamento e reavaliação
+Documento para Produto, UX, Engenharia, IA e Operação. Shape Is Money / Bruno Barbosa. Versão consolidada em 20/09/2026.
+Objetivo: transformar a metodologia da consultoria em regras implementáveis. O sistema não é um simples gerador de fichas. Ele organiza contexto, diagnóstico, decisão, execução, acompanhamento, reavaliação e memória longitudinal do cliente.
+1. PRINCÍPIO DO PRODUTO
+A plataforma deve transformar diagnóstico em decisão, decisão em execução e execução em evolução documentada. O cliente precisa saber o que fazer hoje, por que o plano existe e por que ele mudou. O treinador precisa enxergar quem exige atenção, por quê e qual decisão foi tomada.
+A inteligência deve operar sobre cinco eixos: Construção, Capacidade, Governo, Percepção e Execução. Execução é o centro operacional: um plano tecnicamente bom que não cabe na vida do cliente é um plano ruim.
+Eixo
+Pergunta operacional
+Dados principais
+Construção
+O que precisa ser construído?
+força, hipertrofia, composição, proporção, estabilidade, mobilidade necessária, postura
+Capacidade
+O corpo suporta a vida e o objetivo?
+aeróbio, resistência, potência, tolerância e recuperação entre esforços
+Governo
+O organismo está em condição de responder?
+sono, energia, estresse, alimentação, hidratação, dores, recuperação, rotina
+Percepção
+Como o corpo está sendo apresentado?
+proporção, postura, movimento, aparência saudável e coerência visual
+Execução
+O cliente consegue sustentar o plano?
+frequência real, agenda, viagens, tempo, equipamento, aderência e contingências
+2. ARQUITETURA DA INTELIGÊNCIA
+CLIENT PROFILE  -> ONBOARDING / ANAMNESE  -> PROTOCOLO VISUAL DE 17 FOTOS  -> AVALIAÇÃO FÍSICA + POSTURAL  -> DIAGNÓSTICO DOS 5 EIXOS  -> PRIORIDADES DO CICLO  -> PLANO / TRAINING ARCHITECT  -> EXECUÇÃO E LOG DE TREINO  -> CHECK-IN SEMANAL  -> DECISION ENGINE  -> AJUSTE / CONTINGÊNCIA / REVISÃO HUMANA  -> REAVALIAÇÃO  -> NOVA TESE DO CICLO  -> HISTÓRICO LONGITUDINAL
+Arquitetura recomendada: banco de dados + motor de regras + LLM + revisão humana. O LLM não deve ser a única camada decisória. Regras determinísticas cuidam de estados, alertas, permissões, progressões simples, datas e consistência de dados; o LLM interpreta contexto, compara evidências, redige explicações e propõe decisões; o treinador aprova decisões sensíveis.
+3. ENTIDADES DE DADOS
+3.1 Client Profile
+client_idnome, sexo, data_nascimento, altura, peso_atualprofissaoobjetivo_principal, objetivos_curto_medio_longo_prazomotivacao, importancia_objetivo, compromissoexperiencia_treino, treino_atualdias_disponiveis, duracao_sessao, horarioambientes_treino, equipamentospreferencias_exercicios, dificuldades_exercicioshistorico_lesoes, dores_atuais, restricoesrotina, viagens, agenda_criticasono, energia, estresse, hidratacao, alimentacaocardio, atividade_diariahistorico_avaliacoes, treinos, checkins, decisoes, fotos, videos
+Uma pessoa possui uma identidade e um histórico únicos mesmo que mude de plano ou produto. Matrículas controlam permissões e cadência; o histórico físico não deve ser reiniciado.
+3.2 Cycle Strategy
+cycle_id, client_id, start_date, target_datevisual_goalstructural_goalcapacity_goalbehavior_goalpriority_regions[]maintenance_regions[]limitations[]weekly_frequencysession_durationminimum_weekstrategy_summarysuccess_metrics[]contingency_rules[]review_date
+3.3 Decision Log
+decision_id, client_id, cycle_id, datedecision_typedecisionreason[]evidence_ids[]confidenceauthor_type: AI | COACH | BRUNOapproval_statusreview_datesupersedes_decision_id
+Toda alteração relevante precisa registrar a razão. A memória do sistema deve guardar não só o que foi feito, mas por que foi feito.
+4. ONBOARDING E ANAMNESE
+A anamnese deve ser utilizada para prescrição, não apenas arquivada. Cada resposta relevante deve ser capaz de alterar objetivo, frequência, seleção de exercício, contingência, alerta ou necessidade de revisão humana.
+Dados pessoais: nome, contato, idade, profissão, altura e peso.
+Histórico de treino: tempo de prática, interrupções, treino atual, frequência atual e experiência.
+Ambiente: academia comercial, academia de prédio, casa, hotel/viagem; permitir fotos de equipamentos.
+Objetivo principal e objetivos de curto, médio e longo prazo.
+Motivação: por que começou, importância do objetivo, disposição para executar e expectativa sobre a consultoria.
+Preferências: exercícios prediletos, exercícios difíceis ou mal tolerados.
+Histórico físico: lesões, cirurgias, dores atuais, local, intensidade, comportamento da dor e acompanhamento profissional.
+Rotina: dias disponíveis, duração máxima, horários, trabalho, deslocamentos, viagens e semanas críticas.
+Comportamento: sono, energia, estresse, alimentação, hidratação, mobilidade/alongamentos e atividade diária.
+Contexto estratégico: eventos, viagens, datas-alvo e mudanças de rotina que possam alterar o ciclo.
+Dados de saúde devem ter controle de acesso e consentimento apropriados. O produto não realiza diagnóstico médico, prescrição de medicamentos, hormônios ou tratamento clínico.
+5. PROTOCOLO INICIAL DE 17 FOTOS
+REGRA OFICIAL: a avaliação inicial da consultoria solicita 17 fotos. O aplicativo deve tratar isso como um protocolo fechado de 17 slots obrigatórios, e não como um campo genérico de upload.
+IMPORTANTE PARA O DEV: o número 17 está confirmado. A sequência nominal completa das 17 poses não deve ser inventada nem hardcoded sem os 17 assets oficiais. Nos materiais recuperados aparecem claramente vistas frontal, posterior, perfis, braços elevados, apoio unipodal/elevação de joelho, flexão sentada de tronco/cadeia posterior e posição em prono. Como os 17 nomes/ordem não estão integralmente documentados na base recuperada, a implementação deve permitir configuração administrativa do nome, instrução, exemplo e finalidade de cada slot. Antes de produção, Bruno/equipe substituem os placeholders pelos 17 assets oficiais.
+5.1 Contrato técnico do protocolo
+photo_protocol {  protocol_id: "SIM_INITIAL_17",  version: 1,  required_count: 17,  slots: [    {      slot_number: 1..17,      pose_code,      public_name,      instruction_text,      reference_asset_url,      camera_orientation,      framing_rules,      required: true,      analysis_tags[],      active: true    }  ]}
+5.2 Regras de captura
+Exibir uma pose por vez com imagem-exemplo e instrução curta.
+Solicitar corpo inteiro quando a finalidade exigir leitura global; não cortar pés ou cabeça sem regra explícita.
+Padronizar distância, orientação da câmera e posição sempre que possível.
+Registrar data, protocolo, slot e versão do protocolo em cada arquivo.
+Permitir refazer uma foto antes de concluir.
+Validar presença dos 17 slots antes de liberar a avaliação inicial.
+Na reavaliação, recuperar o mesmo protocolo e mostrar a imagem anterior como referência de enquadramento.
+Não comparar automaticamente fotos de protocolos incompatíveis sem sinalizar limitação.
+5.3 O que as imagens alimentam
+As 17 fotos servem a cinco leituras: físico global, análise segmentar, postura, mobilidade/controle visível nas posições do protocolo e comparação longitudinal. A imagem gera observações e hipóteses; não gera diagnóstico clínico.
+6. PROTOCOLO OFICIAL DE AVALIAÇÃO FÍSICA E POSTURAL
+6.1 Leitura física - Antes x Depois
+Quando existir avaliação anterior, a saída nunca deve descrever apenas o estado atual. A sequência é: ANTES -> DEPOIS -> MUDANÇA OBSERVÁVEL -> SIGNIFICADO PARA O CICLO.
+Vista frontal
+organização geral do tronco
+proporção ombro x cintura
+volume e firmeza muscular
+simetria visual quando observável
+presença corporal
+membros inferiores
+Vista de perfil
+projeção abdominal
+alinhamento cabeça x tronco
+sustentação torácica
+controle pélvico
+ativação/sustentação de glúteos
+posterior de coxa
+organização global
+Vista posterior
+expansão dorsal
+organização escapular
+linha da cintura posterior
+glúteos
+posteriores de coxa
+base inferior
+6.2 Análise segmentar - padrão masculino
+Segmento
+Itens obrigatórios
+Peitoral
+volume; contorno superior; densidade
+Ombros
+largura; arredondamento lateral; separação deltoide x braço
+Braços
+preenchimento de bíceps; espessura de tríceps; separação muscular
+Dorsal
+expansão lateral; espessura média; construção do formato em V
+Abdômen
+compactação; redução de projeção; controle abdominal
+Coxas
+volume anterior/quadríceps; espessura lateral
+Posterior de coxa
+densidade no perfil; conexão com glúteo
+Glúteos
+sustentação pélvica; ativação estrutural
+Panturrilhas
+proporção; base de sustentação
+6.3 Análise segmentar - padrão feminino
+Segmento
+Itens obrigatórios
+Ombros
+contorno lateral; estrutura para contraste de cintura
+Braços
+firmeza de tríceps; tônus geral
+Dorsal
+organização; expansão leve para afinar visualmente a cintura
+Peitoral
+sustentação torácica; postura
+Abdômen
+compactação; linha média firme; aparência de retenção apenas como observação visual, sem diagnóstico
+Cintura
+afunilamento visual
+Glúteos
+projeção; arredondamento superior; sustentação lateral
+Posterior de coxa
+firmeza; definição no perfil
+Quadríceps
+volume proporcional; linha frontal
+Adutores
+preenchimento interno
+Panturrilhas
+harmonia e proporção
+6.4 Leitura postural
+Cabeça e cervical.
+Cintura escapular.
+Coluna torácica.
+Pelve: tendência visual de anteversão/retroversão quando a imagem permitir.
+Estabilidade lombar e controle de core.
+Base inferior: quadris, joelhos e pés quando necessário e visível.
+Linguagem obrigatória: usar 'tendência', 'aparenta', 'nas imagens aparece', 'vale observar'. Não afirmar patologia a partir de fotografia.
+6.5 Conexão com questionário
+A avaliação precisa cruzar imagem com frequência de treino, tempo de treino, alongamentos/mobilidade, ingestão de água, sono, alimentação, dores/desconfortos, energia, estresse, rotina e aderência. O sistema deve evitar causalidade inventada: se os dados não sustentarem a causa, registrar hipótese e nível de confiança.
+6.6 Pontos fortes e pontos de ajuste
+Pontos fortes: o que evoluiu, o que deve ser mantido e onde o corpo responde melhor. Pontos de ajuste: regiões prioritárias, correções técnicas, hábitos limitantes e possíveis gargalos de recuperação/execução. O sistema não deve transformar toda observação em prioridade.
+6.7 Próxima fase estratégica
+objetivo visual da fase
+objetivo estrutural
+objetivo de capacidade quando aplicável
+ajuste de treino
+ajuste comportamental
+meta clara para o próximo ciclo
+REGRA OFICIAL MQO/SIM: toda avaliação compara antes/depois quando houver baseline, inclui membros inferiores, conecta físico com comportamento, indica direção clara e termina com plano de ação.
+7. SAÍDA ESTRUTURADA DA AVALIAÇÃO
+assessment_output {  context,  comparison_summary,  frontal_view,  profile_view,  posterior_view,  segment_analysis[],  posture_observations[],  behavior_connections[],  strengths[],  adjustment_points[],  priorities: [    {type, target, reason, evidence, confidence}  ],  next_cycle: {    visual_goal,    structural_goal,    capacity_goal,    behavioral_goal,    training_adjustments[],    behavioral_adjustments[],    target_date  },  human_review_flags[]}
+A IA deve produzir primeiro JSON estruturado e só depois a versão em linguagem natural. Isso evita que a escrita 'bonita' substitua a decisão técnica.
+8. MOTOR DE PRIORIDADES
+O agente não deve tentar corrigir tudo em um ciclo. Deve converter observações em poucas prioridades acionáveis. Cada prioridade precisa de tipo, alvo, razão, evidência e confiança.
+Tipo
+Exemplos
+Estética/Construção
+deltoide lateral, peitoral superior, dorsal, glúteos, posteriores
+Estrutural
+organização escapular, sustentação torácica, controle lombopélvico
+Capacidade
+aeróbio, tolerância ao esforço, recuperação
+Comportamental
+frequência, sono, hidratação, aderência, organização de agenda
+Execução
+tempo de sessão, viagem, falta de equipamento, contingência
+A prioridade altera frequência, ordem, volume, escolha de exercício e comunicação. Regiões não prioritárias podem ficar em manutenção.
+9. CONSTRUÇÃO DO TREINO
+O Training Architect só prescreve depois do diagnóstico e da definição do ciclo.
+OBJETIVO-> PRIORIDADES-> FREQUÊNCIA REAL-> TEMPO DISPONÍVEL-> EXPERIÊNCIA-> RECUPERAÇÃO-> LIMITAÇÕES / DOR-> AMBIENTE E EQUIPAMENTO-> VOLUME E FREQUÊNCIA POR PRIORIDADE-> DIVISÃO SEMANAL-> SELEÇÃO E ORDEM DE EXERCÍCIOS-> SÉRIES / REP RANGE / RIR / DESCANSO-> PROGRESSÃO-> ALTERNATIVAS-> CARDIO / MOBILIDADE-> REGRAS DE CONTINGÊNCIA
+9.1 Filosofia de prescrição
+O básico bem feito tem prioridade sobre novidade.
+Complexidade só entra quando melhora a solução.
+A divisão semanal nasce de estímulo x recuperação x aderência, não de moda.
+Máquinas, pesos livres, exercícios estáveis, unilaterais e técnicas intensificadoras são ferramentas; nenhum deles é obrigatório por identidade.
+Prioridade muscular deve aparecer na arquitetura: maior frequência, posição mais cedo na sessão, maior volume útil ou sessão dedicada quando fizer sentido.
+Uma sessão dedicada não impede pequenas exposições adicionais em outros dias.
+Manter coerência entre treino, rotina, idade, profissão, objetivo, histórico e equipamento.
+9.2 Estrutura do exercício prescrito
+workout_exercise {  exercise_id,  order,  sets,  rep_min,  rep_max,  target_RIR_or_RPE,  rest_seconds,  tempo_optional,  execution_notes[],  load_optional,  substitution_group_id,  pain_rule,  video_reference}
+9.3 Ordem dos exercícios
+Critérios: prioridade do ciclo, necessidade técnica, demanda sistêmica, movimentos principais, acessórios, isoladores e complementares. A prioridade pode alterar a ordem; um músculo prioritário não precisa ficar sempre depois de todos os compostos.
+9.4 Volume
+Não hardcodar 'X séries por músculo para todos'. O volume depende de prioridade, experiência, frequência, recuperação, volume anterior, proximidade da falha, estímulos indiretos, desempenho e aderência. Trabalhar com faixas configuráveis e revisão pela resposta do cliente, sem fingir precisão biológica inexistente.
+9.5 Frequência
+A frequência deve respeitar disponibilidade real. O sistema pode sugerir estruturas compatíveis, mas a escolha final deve ser justificada pelo ciclo. Três dias, quatro dias ou seis dias não são níveis de qualidade; são restrições/possibilidades de distribuição.
+10. BIBLIOTECA DE EXERCÍCIOS
+exercise {  id, name,  movement_pattern,  primary_muscles[],  secondary_muscles[],  equipment[],  difficulty,  stability_requirement,  mobility_requirement,  fatigue_cost,  joint_considerations[],  red_flags[],  regressions[],  progressions[],  alternatives[],  execution_cues[],  common_errors[],  video_url}
+Substituição não pode usar apenas 'mesmo músculo'. Considerar padrão de movimento, perfil do exercício, estabilidade, amplitude, equipamento, objetivo, tolerância, nível técnico e posição na sessão.
+11. PROGRESSÃO E REGRESSÃO
+11.1 Regra-base de progressão
+IF  all_sets_reach_rep_target  AND technique_ok  AND effort_within_target  AND no_relevant_painTHEN  suggest_load_progressionELSE  maintain_or_adjust
+Exemplo: meta 3x8-10. Se o cliente entrega 10/10/10 dentro do esforço previsto e com boa execução, o sistema pode sugerir progressão. Se entrega 8/7/6, não progride automaticamente.
+11.2 Regressão/ajuste
+queda persistente de performance
+dor ou piora de tolerância
+recuperação ruim
+fadiga acumulada
+doença ou semana crítica
+sono muito abaixo do padrão
+múltiplas sessões abaixo da meta
+mudança de agenda/equipamento
+Ações possíveis: reduzir carga, reduzir séries, aumentar RIR, trocar exercício, reduzir duração, usar sessão alternativa, ativar protocolo de viagem/contingência ou solicitar revisão humana.
+12. DOR, LIMITES E ENCAMINHAMENTO
+O agente coleta localização, intensidade, início, movimento provocador, irradiação, sintomas associados, histórico e acompanhamento. Não diagnostica.
+Estado
+Ação
+Verde
+adaptação normal dentro das regras; continuar monitorando
+Amarelo
+bloquear automação relevante e pedir revisão do treinador
+Vermelho
+suspender/limitar prescrição relacionada e orientar encaminhamento profissional apropriado
+Dor persistente, sinais neurológicos, sintomas cardiovasculares/sistêmicos, suspeita de lesão ou qualquer situação fora do escopo profissional exigem revisão/encaminhamento.
+13. CARDIO, CAPACIDADE E MOBILIDADE
+Cardio deve ter finalidade explícita: saúde, capacidade aeróbia, condicionamento, gasto energético, recuperação, performance esportiva, VO2 ou sprints. O sistema deve considerar interferência com treino de membros inferiores e recuperação.
+Mobilidade não é uma biblioteca aleatória de alongamentos. Ela deriva de limitação observada + movimento necessário + objetivo. O cliente deve receber instrução simples do porquê.
+14. TREINOS ALTERNATIVOS, CASA, VIAGEM E SEMANA CRÍTICA
+plan_variants {  MAIN_WORKOUT,  HOME_OR_LIMITED_EQUIPMENT,  TRAVEL_WORKOUT,  EMERGENCY_20_MIN,  OPTIONAL_30_MIN,  OPTIONAL_40_MIN,  STANDARD_SESSION}
+Viagem não deve significar reinício. O protocolo recebe destino, dias, tempo disponível, academia/hotel, equipamentos, deslocamento e agenda. Preserva o objetivo central do ciclo na medida do possível e define regra de retomada após a viagem.
+A semana mínima é parte do plano: qual é a menor execução aceitável que mantém continuidade quando a agenda degrada? Isso deve ser configurado por ciclo.
+15. EXECUÇÃO E LOG DE TREINO
+training_log {  workout_id,  started_at, completed_at,  exercise_logs: [    {exercise_id, set_number, load, reps, RIR_RPE, pain, notes}  ],  session_RPE,  session_pain,  completion_percent,  client_comment}
+O sistema precisa preservar histórico por exercício para permitir progressão, detecção de queda de desempenho e comparação entre ciclos.
+16. CHECK-IN SEMANAL
+O check-in existe para produzir decisão. Não deve virar um formulário longo sem consequência.
+Treinos planejados x realizados.
+Sono: horas e qualidade.
+Energia.
+Estresse/estado geral.
+Dor: intensidade, local e mudança em relação à semana anterior.
+Alimentação: leitura qualitativa compatível com o escopo.
+Hidratação.
+Peso e sensação corporal quando aplicável.
+Cardio/atividade.
+O que funcionou e o que não funcionou.
+Maior obstáculo da próxima semana.
+Viagem, evento ou mudança de agenda.
+Campo livre para contexto.
+16.1 Classificação do check-in
+CONTINUEMINOR_ADJUSTMENTRECOVERY_ADJUSTMENTTRAINING_REVIEWHUMAN_REVIEWREFERRAL
+Uma semana ruim isolada não deve reconstruir automaticamente um programa que vinha funcionando. Tendência persistente, aderência boa com resposta ruim, dor crescente ou perda de performance exigem revisão.
+17. ALERTAS E PRIORIZAÇÃO DA CARTEIRA
+Estado
+Interpretação
+Exemplos
+GREEN
+plano seguindo
+aderência adequada; sem sinais relevantes; tendência coerente
+YELLOW
+atenção
+queda de aderência, sono/energia piores, dor moderada, sessões perdidas, agenda crítica
+RED
+intervenção
+dor relevante, deterioração persistente, incapacidade de executar, sinais fora do escopo, risco de abandono
+O dashboard do treinador deve responder primeiro: 'quem precisa de mim hoje?'. O cliente não precisa ver toda a complexidade interna.
+18. REAVALIAÇÃO
+A reavaliação não é uma avaliação nova desconectada. Ela compara a decisão anterior com a resposta real.
+BASELINE-> ESTRATÉGIA DO CICLO-> O QUE FOI PRESCRITO-> O QUE FOI EXECUTADO-> O QUE MUDOU-> O QUE NÃO MUDOU-> HIPÓTESES SUSTENTADAS PELOS DADOS-> GARGALOS-> NOVA PRIORIDADE-> NOVO PLANO DE AÇÃO
+Regra oficial: comparar antes/depois, incluir membros inferiores, conectar físico com comportamento, mostrar evolução, mostrar gargalos, indicar direção e terminar com plano de ação.
+Não confundir peso com evolução. Peso é apenas um dado. Considerar também densidade/volume visual, proporção, cintura, medidas, força, postura, capacidade, performance e aderência.
+19. CADÊNCIA
+Para a Consultoria SIM, manter check-in semanal e reavaliação programada conforme plano. O produto deve deixar a cadência configurável, porque o PRD ainda prevê definição final por plano. No Private Office, a referência consolidada é gestão semanal, estratégia mensal e Body Review trimestral.
+Não codificar cadências comerciais diretamente na lógica do app. Usar configuração por produto/matrícula.
+20. CORREÇÃO TÉCNICA POR VÍDEO
+O aluno pode anexar vídeo ao exercício/treino. A análise observa amplitude, controle, estabilidade, trajetória, compensações visíveis, velocidade e compatibilidade entre carga e execução.
+technique_review {  status: KEEP | ADJUST | REDUCE_LOAD | CHANGE_EXECUTION | SUBSTITUTE | HUMAN_REVIEW,  observations[],  one_to_three_cues[],  next_check}
+A devolutiva deve ser curta e executável. Evitar dez correções simultâneas.
+21. MODO DE FALA DO AGENTE
+A voz deve parecer treinador/consultor: direta, humana, próxima, tecnicamente segura e individualizada. A estrutura pode ser padronizada; a escrita não pode parecer copiada.
+21.1 Estrutura de comunicação
+O que observamos.
+Por que isso importa.
+O que vamos fazer.
+O que esperamos acompanhar no próximo ciclo.
+21.2 Formas naturais de abertura
+'O que mais me chamou atenção quando comparei suas fotos foi...'
+'Quando eu olho a foto de frente e depois vou para o perfil...'
+'Aqui tem um ponto que eu quero atacar agora...'
+'Pensa comigo...'
+'Antes de mudar qualquer coisa no treino, tem um detalhe importante nas suas respostas...'
+21.3 Evitar
+texto genérico de IA
+motivação vazia
+excesso de títulos na mensagem enviada ao cliente
+repetir a mesma abertura e conclusão para todos
+'melhor versão' como clichê
+'jornada incrível', 'resultado impressionante' e elogios automáticos
+linguagem médica quando não existe diagnóstico
+causalidade inventada a partir de foto
+falar apenas de emagrecimento quando o objetivo é postura, força, densidade ou proporção
+21.4 Duas camadas
+INTERNAL: raciocínio estruturado, evidências, prioridade, volume, frequência, alertas e confiança. CLIENT OUTPUT: tradução simples, pessoal e acionável. O cliente não precisa receber todo o raciocínio técnico.
+22. FORMATO DA ENTREGA AO CLIENTE
+A mensagem final de avaliação/reavaliação deve soar pessoal, não como relatório hospitalar. Estrutura recomendada:
+Abertura ligada às respostas ou à comparação.
+Leitura geral da evolução.
+Frontal.
+Perfil.
+Posterior.
+Principais segmentos relevantes.
+Postura.
+Conexão com hábitos/execução.
+Pontos fortes.
+Prioridades do próximo ciclo.
+Como o treino será reorganizado e por quê.
+Meta/data do próximo ciclo quando houver.
+Mensagem final curta.
+O app pode renderizar versão detalhada e versão WhatsApp/curta a partir do mesmo objeto estruturado.
+23. PERSONALIZAÇÃO E MEMÓRIA
+O agente deve lembrar o que funcionou, o que não funcionou, dores anteriores, exercícios mal tolerados, preferências, cargas, PRs, aderência, viagens, objetivos, eventos, avaliações, fotos e mudanças de estratégia. A memória mais valiosa é o histórico de decisões e suas razões.
+Quando Bruno ou outro treinador editar uma sugestão da IA, registrar sugestão original, versão final e motivo da alteração quando possível. Isso forma dataset proprietário de decisão da SIM.
+24. NÍVEIS DE AUTONOMIA DA IA
+Nível
+Permissão
+0 - Observe
+apenas organiza e resume
+1 - Suggest
+sugere decisão
+2 - Draft
+gera avaliação/treino/ajuste para aprovação
+3 - Guardrailed Action
+executa ajustes simples dentro de regras previamente aprovadas
+4 - Advanced Automation
+automação de baixo risco com monitoramento e auditoria
+Recomendação para MVP: treino novo, reavaliação e mudanças relevantes em nível 2. Progressões simples e lembretes podem evoluir para nível 3 depois de validação.
+25. DASHBOARD DO TREINADOR
+Fila RED / YELLOW / GREEN.
+Aderência da semana.
+Sono e energia em tendência, não só valor isolado.
+Dor e mudança de dor.
+Performance recente.
+Último check-in e pendências.
+Próxima reavaliação.
+Prioridade do ciclo.
+Viagem/semana crítica próxima.
+Decisões aguardando aprovação.
+Clientes sem execução ou sem resposta.
+O objetivo não é mostrar 300 números. É reduzir o tempo até a próxima ação correta.
+26. DASHBOARD DO CLIENTE
+A primeira tela deve responder: 'o que eu preciso fazer hoje?'. Priorizar treino do dia, mobilidade/cardio quando prescritos, check-in/pendência e mensagem prioritária. Progresso, histórico e avaliação ficam acessíveis sem competir com a ação do dia.
+27. REGRAS DE EXPLICABILIDADE
+Toda alteração importante deve possuir uma explicação legível. Exemplo: 'Reduzimos um pouco o volume nesta semana porque seu desempenho caiu nas últimas duas sessões e sua recuperação ficou abaixo do seu padrão.'
+Nunca usar 'a IA decidiu'. A comunicação é da metodologia/equipe. Internamente, registrar autor e aprovação.
+28. AGENTES / SERVIÇOS INTERNOS
+Componente
+Responsabilidade
+SIM Orchestrator
+rotear contexto, estados, permissões e tarefas
+Assessment Agent
+anamnese, 17 fotos, comparação, segmentos, postura, prioridades
+Training Architect
+divisão, sessões, exercícios, volume, intensidade e alternativas
+Progression Agent
+ler logs e sugerir progressão/regressão
+Check-in Agent
+interpretar semana e classificar ação
+Recovery/Government Agent
+sono, energia, estresse, recuperação e contexto
+Travel Agent
+adaptar ciclo a viagem/semana crítica
+Technique Agent
+analisar vídeo e gerar cues
+Reassessment Agent
+comparar ciclo e propor nova tese
+Communication Agent
+traduzir decisão técnica para voz SIM
+Para o cliente, tudo pode aparecer como uma única experiência SIM. A separação é arquitetural.
+29. REGRAS DE SEGURANÇA E ESCOPO
+Não diagnosticar patologias por foto ou vídeo.
+Não prescrever medicamentos, hormônios ou tratamentos.
+Não prescrever plano alimentar sem profissional habilitado responsável.
+Não prometer faturamento, liderança ou sucesso social como consequência automática do físico.
+Não transformar dados de saúde em conteúdo comercial sem consentimento específico.
+Fotos e vídeos devem ter acesso restrito, trilha de auditoria e política de retenção.
+Em dúvida clínica ou baixa confiança, escalar para humano.
+30. API / FUNÇÕES SUGERIDAS
+POST /clientsPOST /clients/{id}/onboardingPOST /clients/{id}/photo-protocols/{protocol_id}/slots/{slot}POST /clients/{id}/assessmentsPOST /clients/{id}/cyclesPOST /clients/{id}/workout-plansPOST /clients/{id}/training-logsPOST /clients/{id}/checkinsPOST /clients/{id}/technique-videosPOST /clients/{id}/reassessmentsPOST /clients/{id}/decisionsGET  /coaches/{id}/attention-queueGET  /clients/{id}/timelineGET  /clients/{id}/todayPATCH /decisions/{id}/approvePATCH /decisions/{id}/reject-or-edit
+31. EVENTOS IMPORTANTES
+onboarding.completedphoto_protocol.completedassessment.ready_for_reviewassessment.approvedcycle.startedworkout.completedworkout.missedpain.flaggedcheckin.submittedcheckin.yellowcheckin.redprogression.suggesteddecision.awaiting_approvaltravel.upcomingreassessment.duecycle.completed
+32. CRITÉRIOS DE ACEITE DO MVP
+O cliente consegue concluir onboarding e protocolo obrigatório de 17 fotos.
+O treinador recebe os dados em uma linha do tempo única.
+A avaliação gera estrutura antes do texto e exige aprovação quando configurado.
+O sistema registra prioridades e estratégia do ciclo.
+O treinador monta/publica treino com exercícios, séries, reps, esforço, descanso e alternativas.
+O aluno registra execução por exercício.
+O check-in semanal gera classificação e fila de atenção.
+Há histórico de decisões com evidências e autor.
+Reavaliação compara baseline, execução e resposta.
+Treino de viagem/contingência pode coexistir com o plano principal.
+O cliente entende por que o plano mudou.
+Dados de foto/vídeo possuem permissão e auditoria.
+Nenhuma função clínica proibida é executada pela IA.
+33. PONTOS QUE NÃO DEVEM SER INVENTADOS PELO DEV
+A ordem e nomenclatura exatas das 17 fotos: usar configuração e assets oficiais da SIM antes do go-live.
+Cadência comercial final de reavaliação da Consultoria: configurável por plano.
+SLA final de resposta: configurável e validado pela operação.
+Faixas de volume universais por músculo: não hardcodar.
+Diagnósticos médicos a partir de imagem, dor ou questionário.
+Regras de progressão que ignorem execução, esforço, dor e contexto.
+34. SYSTEM PROMPT BASE DO AGENTE
+Você é o motor de apoio à decisão da metodologia Shape Is Money.Sua função não é gerar fichas genéricas. Você organiza evidências e transforma contexto em uma decisão de treinamento coerente.Sempre:1. considere Construção, Capacidade, Governo, Percepção e Execução;2. use histórico e compare com o ciclo anterior;3. diferencie fato observado de hipótese;4. priorize poucos problemas por ciclo;5. conecte físico com comportamento e execução;6. inclua membros inferiores na avaliação;7. explique por que uma mudança foi sugerida;8. prefira o básico bem executado à complexidade desnecessária;9. respeite agenda, viagens, sono, dores, experiência, objetivo e equipamento;10. declare baixa confiança quando os dados forem insuficientes;11. escale situações clínicas ou de risco;12. nunca diagnostique, prescreva medicamentos/hormônios ou prometa consequências sociais/financeiras;13. produza primeiro saída estruturada e depois comunicação ao cliente;14. escreva de forma direta, humana, pessoal e sem clichês de IA;15. toda avaliação termina em direção e plano de ação;16. toda reavaliação termina em uma nova decisão;17. todo exercício precisa conseguir responder: por que está aqui?
+35. RESUMO PARA ENGENHARIA
+A unidade central do sistema não é o treino; é a decisão. O treino é uma consequência da decisão. A arquitetura precisa preservar uma linha causal auditável: DADO -> EVIDÊNCIA -> INTERPRETAÇÃO -> PRIORIDADE -> DECISÃO -> PRESCRIÇÃO -> EXECUÇÃO -> RESPOSTA -> REAVALIAÇÃO.
+O maior erro seria construir primeiro uma tela de ficha e depois tentar encaixar a metodologia. O correto é modelar cliente, ciclo, avaliação, prioridade, decisão, execução e histórico; a UI de treino é apenas uma das interfaces desse sistema.
+O segundo maior erro seria hardcodar elementos que ainda pertencem à operação: nomes exatos dos 17 slots, cadências comerciais, SLA e faixas de prescrição. Esses itens devem ser configuráveis.
+O terceiro maior erro seria deixar o LLM decidir tudo. A SIM precisa de regras, estados, auditoria, revisão humana e memória longitudinal. O LLM é uma camada de interpretação e comunicação dentro desse sistema.
+36. FONTES INTERNAS CONSOLIDADAS
+PRD da Consultoria SIM, versão 0.1, 20/09/2026.
+Shape Is Money - Guia Estratégico, versão 1.0, 2026.
+SIM Private Office Product Blueprint.
+Formulário de Anamnese da Consultoria Individual.
+Protocolo Estrutural MQO fornecido por Bruno: leitura antes/depois, análise segmentar masculina/feminina, leitura postural, conexão com questionário, pontos fortes, pontos de ajuste e próxima fase estratégica.
+Histórico operacional da consultoria: feedbacks, construção de treino, treino de viagem/casa, correções, check-ins e reavaliações.

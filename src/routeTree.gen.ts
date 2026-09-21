@@ -52,6 +52,7 @@ import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
 import { Route as AuthenticatedAdminTrainingIndexRouteImport } from './routes/_authenticated/admin.training.index'
 import { Route as AuthenticatedAdminTrainingStudentIdRouteImport } from './routes/_authenticated/admin.training.$studentId'
+import { Route as AuthenticatedAdminTrainingAgentCentralRouteImport } from './routes/_authenticated/admin.training.agent-central'
 import { Route as AuthenticatedAdminTrainingExerciseImportRouteImport } from './routes/_authenticated/admin.training.exercise-import'
 import { Route as AuthenticatedAdminTrainingExercisesRouteImport } from './routes/_authenticated/admin.training.exercises'
 import { Route as AuthenticatedAdminTrainingKnowledgeRouteImport } from './routes/_authenticated/admin.training.knowledge'
@@ -294,6 +295,12 @@ const AuthenticatedAdminTrainingStudentIdRoute =
     path: '/admin/training/$studentId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminTrainingAgentCentralRoute =
+  AuthenticatedAdminTrainingAgentCentralRouteImport.update({
+    id: '/admin/training/agent-central',
+    path: '/admin/training/agent-central',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminTrainingExerciseImportRoute =
   AuthenticatedAdminTrainingExerciseImportRouteImport.update({
     id: '/admin/training/exercise-import',
@@ -360,6 +367,7 @@ export interface FileRoutesByFullPath {
   '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
+  '/admin/training/agent-central': typeof AuthenticatedAdminTrainingAgentCentralRoute
   '/admin/training/exercise-import': typeof AuthenticatedAdminTrainingExerciseImportRoute
   '/admin/training/exercises': typeof AuthenticatedAdminTrainingExercisesRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -407,6 +415,7 @@ export interface FileRoutesByTo {
   '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
+  '/admin/training/agent-central': typeof AuthenticatedAdminTrainingAgentCentralRoute
   '/admin/training/exercise-import': typeof AuthenticatedAdminTrainingExerciseImportRoute
   '/admin/training/exercises': typeof AuthenticatedAdminTrainingExercisesRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -457,6 +466,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/_authenticated/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
+  '/_authenticated/admin/training/agent-central': typeof AuthenticatedAdminTrainingAgentCentralRoute
   '/_authenticated/admin/training/exercise-import': typeof AuthenticatedAdminTrainingExerciseImportRoute
   '/_authenticated/admin/training/exercises': typeof AuthenticatedAdminTrainingExercisesRoute
   '/_authenticated/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -507,6 +517,7 @@ export interface FileRouteTypes {
     | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
+    | '/admin/training/agent-central'
     | '/admin/training/exercise-import'
     | '/admin/training/exercises'
     | '/admin/training/knowledge'
@@ -554,6 +565,7 @@ export interface FileRouteTypes {
     | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
+    | '/admin/training/agent-central'
     | '/admin/training/exercise-import'
     | '/admin/training/exercises'
     | '/admin/training/knowledge'
@@ -603,6 +615,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/relationship/$studentId'
     | '/_authenticated/admin/students/$studentId'
     | '/_authenticated/admin/training/$studentId'
+    | '/_authenticated/admin/training/agent-central'
     | '/_authenticated/admin/training/exercise-import'
     | '/_authenticated/admin/training/exercises'
     | '/_authenticated/admin/training/knowledge'
@@ -922,6 +935,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminTrainingStudentIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/training/agent-central': {
+      id: '/_authenticated/admin/training/agent-central'
+      path: '/admin/training/agent-central'
+      fullPath: '/admin/training/agent-central'
+      preLoaderRoute: typeof AuthenticatedAdminTrainingAgentCentralRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/training/exercise-import': {
       id: '/_authenticated/admin/training/exercise-import'
       path: '/admin/training/exercise-import'
@@ -1042,6 +1062,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminTasksRoute: typeof AuthenticatedAdminTasksRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminTrainingStudentIdRoute: typeof AuthenticatedAdminTrainingStudentIdRoute
+  AuthenticatedAdminTrainingAgentCentralRoute: typeof AuthenticatedAdminTrainingAgentCentralRoute
   AuthenticatedAdminTrainingExerciseImportRoute: typeof AuthenticatedAdminTrainingExerciseImportRoute
   AuthenticatedAdminTrainingExercisesRoute: typeof AuthenticatedAdminTrainingExercisesRoute
   AuthenticatedAdminTrainingKnowledgeRoute: typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -1084,6 +1105,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminTrainingStudentIdRoute:
     AuthenticatedAdminTrainingStudentIdRoute,
+  AuthenticatedAdminTrainingAgentCentralRoute:
+    AuthenticatedAdminTrainingAgentCentralRoute,
   AuthenticatedAdminTrainingExerciseImportRoute:
     AuthenticatedAdminTrainingExerciseImportRoute,
   AuthenticatedAdminTrainingExercisesRoute:
