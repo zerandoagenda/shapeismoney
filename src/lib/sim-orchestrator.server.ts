@@ -71,6 +71,8 @@ export async function processClientActivation(input:{admin:any;clientId:string;a
   const nutritionReady=readiness.onboarding&&readiness.baseline;
   const {data:nutrition}=await input.admin.from("nutrition_plans").select("id,status").eq("user_id",input.clientId).order("created_at",{ascending:false}).limit(1).maybeSingle();
   const nutritionStatus=nutrition?.status==="published"?"PUBLISHED":nutrition?.status==="review"?"HUMAN_REVIEW":nutrition?.status==="draft"?"DRAFT_READY":nutritionReady?"READY":"WAITING_DATA";
-  await input.admin.from("nutrition_generation_jobs").upsert({client_id:input.clientId,activation_id:state.activation.id,status:nutritionStatus,trigger_source:input.event,missing_prerequisites:nutritionReady?[]:["onboarding","baseline"],readiness_snapshot:{onboarding:readiness.onboarding,baseline:readiness.baseline},plan_id:nutrition?.id??null},{onConflict:"client_id",ignoreDuplicates:false});
+  const nutritionJob={client_id:input.clientId,activation_id:state.activation.id,status:nutritionStatus,trigger_source:input.event,missing_prerequisites:nutritionReady?[]:["onboarding","baseline"],readiness_snapshot:{onboarding:readiness.onboarding,baseline:readiness.baseline},plan_id:nutrition?.id??null};
+  const {data:openNutritionJob}=await input.admin.from("nutrition_generation_jobs").select("id").eq("client_id",input.clientId).in("status",["WAITING_DATA","READY","GENERATING","DRAFT_READY","HUMAN_REVIEW","FAILED"]).order("created_at",{ascending:false}).limit(1).maybeSingle();
+  if(openNutritionJob)await input.admin.from("nutrition_generation_jobs").update(nutritionJob).eq("id",openNutritionJob.id);else if(nutritionStatus!=="PUBLISHED")await input.admin.from("nutrition_generation_jobs").insert(nutritionJob);
   return {...state,readiness};
 }
