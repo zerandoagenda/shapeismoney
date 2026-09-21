@@ -4166,19 +4166,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      activate_client_plan_transaction: {
-        Args: {
-          _actor_id: string
-          _client_id: string
-          _payment_reference?: string
-          _plan: Database["public"]["Enums"]["plan_code"]
-          _source: string
-        }
-        Returns: {
-          active_subscription_id: string
-          previous_plan: Database["public"]["Enums"]["plan_code"]
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       activation_stage:
