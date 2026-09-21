@@ -19,6 +19,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDiagnosisRouteImport } from './routes/_authenticated/diagnosis'
 import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticated/members'
 import { Route as AuthenticatedMoneyBrainRouteImport } from './routes/_authenticated/money-brain'
+import { Route as AuthenticatedMyJourneyRouteImport } from './routes/_authenticated/my-journey'
 import { Route as AuthenticatedNutritionRouteImport } from './routes/_authenticated/nutrition'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPerceptionLabRouteImport } from './routes/_authenticated/perception-lab'
@@ -34,6 +35,7 @@ import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminMoneyBrainRouteImport } from './routes/_authenticated/admin.money-brain'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminPerceptionRouteImport } from './routes/_authenticated/admin.perception'
+import { Route as AuthenticatedAdminRelationshipRouteImport } from './routes/_authenticated/admin.relationship'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminSimSelectRouteImport } from './routes/_authenticated/admin.sim-select'
@@ -94,6 +96,11 @@ const AuthenticatedMembersRoute = AuthenticatedMembersRouteImport.update({
 const AuthenticatedMoneyBrainRoute = AuthenticatedMoneyBrainRouteImport.update({
   id: '/money-brain',
   path: '/money-brain',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMyJourneyRoute = AuthenticatedMyJourneyRouteImport.update({
+  id: '/my-journey',
+  path: '/my-journey',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNutritionRoute = AuthenticatedNutritionRouteImport.update({
@@ -180,6 +187,12 @@ const AuthenticatedAdminPerceptionRoute =
     path: '/admin/perception',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminRelationshipRoute =
+  AuthenticatedAdminRelationshipRouteImport.update({
+    id: '/admin/relationship',
+    path: '/admin/relationship',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminReportsRoute =
   AuthenticatedAdminReportsRouteImport.update({
     id: '/admin/reports',
@@ -262,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/members': typeof AuthenticatedMembersRouteWithChildren
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
+  '/my-journey': typeof AuthenticatedMyJourneyRoute
   '/nutrition': typeof AuthenticatedNutritionRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perception-lab': typeof AuthenticatedPerceptionLabRoute
@@ -276,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/relationship': typeof AuthenticatedAdminRelationshipRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -300,6 +315,7 @@ export interface FileRoutesByTo {
   '/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/members': typeof AuthenticatedMembersRouteWithChildren
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
+  '/my-journey': typeof AuthenticatedMyJourneyRoute
   '/nutrition': typeof AuthenticatedNutritionRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perception-lab': typeof AuthenticatedPerceptionLabRoute
@@ -314,6 +330,7 @@ export interface FileRoutesByTo {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/relationship': typeof AuthenticatedAdminRelationshipRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -339,6 +356,7 @@ export interface FileRoutesById {
   '/_authenticated/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/_authenticated/members': typeof AuthenticatedMembersRouteWithChildren
   '/_authenticated/money-brain': typeof AuthenticatedMoneyBrainRoute
+  '/_authenticated/my-journey': typeof AuthenticatedMyJourneyRoute
   '/_authenticated/nutrition': typeof AuthenticatedNutritionRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/perception-lab': typeof AuthenticatedPerceptionLabRoute
@@ -353,6 +371,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/_authenticated/admin/relationship': typeof AuthenticatedAdminRelationshipRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -379,6 +398,7 @@ export interface FileRouteTypes {
     | '/diagnosis'
     | '/members'
     | '/money-brain'
+    | '/my-journey'
     | '/nutrition'
     | '/onboarding'
     | '/perception-lab'
@@ -393,6 +413,7 @@ export interface FileRouteTypes {
     | '/admin/money-brain'
     | '/admin/operations'
     | '/admin/perception'
+    | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
     | '/admin/sim-select'
@@ -417,6 +438,7 @@ export interface FileRouteTypes {
     | '/diagnosis'
     | '/members'
     | '/money-brain'
+    | '/my-journey'
     | '/nutrition'
     | '/onboarding'
     | '/perception-lab'
@@ -431,6 +453,7 @@ export interface FileRouteTypes {
     | '/admin/money-brain'
     | '/admin/operations'
     | '/admin/perception'
+    | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
     | '/admin/sim-select'
@@ -455,6 +478,7 @@ export interface FileRouteTypes {
     | '/_authenticated/diagnosis'
     | '/_authenticated/members'
     | '/_authenticated/money-brain'
+    | '/_authenticated/my-journey'
     | '/_authenticated/nutrition'
     | '/_authenticated/onboarding'
     | '/_authenticated/perception-lab'
@@ -469,6 +493,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/money-brain'
     | '/_authenticated/admin/operations'
     | '/_authenticated/admin/perception'
+    | '/_authenticated/admin/relationship'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/sim-select'
@@ -562,6 +587,13 @@ declare module '@tanstack/react-router' {
       path: '/money-brain'
       fullPath: '/money-brain'
       preLoaderRoute: typeof AuthenticatedMoneyBrainRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/my-journey': {
+      id: '/_authenticated/my-journey'
+      path: '/my-journey'
+      fullPath: '/my-journey'
+      preLoaderRoute: typeof AuthenticatedMyJourneyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/nutrition': {
@@ -667,6 +699,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/perception'
       fullPath: '/admin/perception'
       preLoaderRoute: typeof AuthenticatedAdminPerceptionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/relationship': {
+      id: '/_authenticated/admin/relationship'
+      path: '/admin/relationship'
+      fullPath: '/admin/relationship'
+      preLoaderRoute: typeof AuthenticatedAdminRelationshipRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/reports': {
@@ -803,6 +842,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDiagnosisRoute: typeof AuthenticatedDiagnosisRoute
   AuthenticatedMembersRoute: typeof AuthenticatedMembersRouteWithChildren
   AuthenticatedMoneyBrainRoute: typeof AuthenticatedMoneyBrainRoute
+  AuthenticatedMyJourneyRoute: typeof AuthenticatedMyJourneyRoute
   AuthenticatedNutritionRoute: typeof AuthenticatedNutritionRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPerceptionLabRoute: typeof AuthenticatedPerceptionLabRoute
@@ -817,6 +857,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminMoneyBrainRoute: typeof AuthenticatedAdminMoneyBrainRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPerceptionRoute: typeof AuthenticatedAdminPerceptionRoute
+  AuthenticatedAdminRelationshipRoute: typeof AuthenticatedAdminRelationshipRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSimSelectRoute: typeof AuthenticatedAdminSimSelectRoute
@@ -834,6 +875,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDiagnosisRoute: AuthenticatedDiagnosisRoute,
   AuthenticatedMembersRoute: AuthenticatedMembersRouteWithChildren,
   AuthenticatedMoneyBrainRoute: AuthenticatedMoneyBrainRoute,
+  AuthenticatedMyJourneyRoute: AuthenticatedMyJourneyRoute,
   AuthenticatedNutritionRoute: AuthenticatedNutritionRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPerceptionLabRoute: AuthenticatedPerceptionLabRoute,
@@ -848,6 +890,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminMoneyBrainRoute: AuthenticatedAdminMoneyBrainRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminPerceptionRoute: AuthenticatedAdminPerceptionRoute,
+  AuthenticatedAdminRelationshipRoute: AuthenticatedAdminRelationshipRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSimSelectRoute: AuthenticatedAdminSimSelectRoute,
