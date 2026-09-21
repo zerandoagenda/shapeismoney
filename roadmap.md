@@ -24,3 +24,9 @@
 - [x] Retomar sessão e cronômetro persistente após sair da página
 - [x] Manter Fábio como aluno Plus sem beta ou acesso administrativo
 - [x] Validar carteira administrativa, treino e vídeos em celular e desktop
+
+## Central do Agente de Treino
+- [x] Criar seleção centralizada de aluno no admin
+- [x] Unificar entradas por IA, PDF, texto e montagem manual
+- [x] Registrar importação por texto com origem e revisão humana
+- [ ] Validar os quatro caminhos em desktop e celular
