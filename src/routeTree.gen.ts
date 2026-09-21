@@ -42,6 +42,7 @@ import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminMoneyBrainRouteImport } from './routes/_authenticated/admin.money-brain'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminPerceptionRouteImport } from './routes/_authenticated/admin.perception'
+import { Route as AuthenticatedAdminProductionRouteImport } from './routes/_authenticated/admin.production'
 import { Route as AuthenticatedAdminRelationshipRouteImport } from './routes/_authenticated/admin.relationship'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -240,6 +241,12 @@ const AuthenticatedAdminPerceptionRoute =
     path: '/admin/perception',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminProductionRoute =
+  AuthenticatedAdminProductionRouteImport.update({
+    id: '/admin/production',
+    path: '/admin/production',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminRelationshipRoute =
   AuthenticatedAdminRelationshipRouteImport.update({
     id: '/admin/relationship',
@@ -386,6 +393,7 @@ export interface FileRoutesByFullPath {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/production': typeof AuthenticatedAdminProductionRoute
   '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -439,6 +447,7 @@ export interface FileRoutesByTo {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/production': typeof AuthenticatedAdminProductionRoute
   '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -493,6 +502,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/_authenticated/admin/production': typeof AuthenticatedAdminProductionRoute
   '/_authenticated/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -548,6 +558,7 @@ export interface FileRouteTypes {
     | '/admin/money-brain'
     | '/admin/operations'
     | '/admin/perception'
+    | '/admin/production'
     | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
@@ -601,6 +612,7 @@ export interface FileRouteTypes {
     | '/admin/money-brain'
     | '/admin/operations'
     | '/admin/perception'
+    | '/admin/production'
     | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
@@ -654,6 +666,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/money-brain'
     | '/_authenticated/admin/operations'
     | '/_authenticated/admin/perception'
+    | '/_authenticated/admin/production'
     | '/_authenticated/admin/relationship'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/settings'
@@ -917,6 +930,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPerceptionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/production': {
+      id: '/_authenticated/admin/production'
+      path: '/admin/production'
+      fullPath: '/admin/production'
+      preLoaderRoute: typeof AuthenticatedAdminProductionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/relationship': {
       id: '/_authenticated/admin/relationship'
       path: '/admin/relationship'
@@ -1152,6 +1172,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminMoneyBrainRoute: typeof AuthenticatedAdminMoneyBrainRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPerceptionRoute: typeof AuthenticatedAdminPerceptionRoute
+  AuthenticatedAdminProductionRoute: typeof AuthenticatedAdminProductionRoute
   AuthenticatedAdminRelationshipRoute: typeof AuthenticatedAdminRelationshipRouteWithChildren
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -1196,6 +1217,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminMoneyBrainRoute: AuthenticatedAdminMoneyBrainRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminPerceptionRoute: AuthenticatedAdminPerceptionRoute,
+  AuthenticatedAdminProductionRoute: AuthenticatedAdminProductionRoute,
   AuthenticatedAdminRelationshipRoute:
     AuthenticatedAdminRelationshipRouteWithChildren,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
