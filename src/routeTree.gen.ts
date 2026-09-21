@@ -43,6 +43,7 @@ import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/admin.tasks'
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
 import { Route as AuthenticatedTrainingAssessmentRouteImport } from './routes/_authenticated/training.assessment'
+import { Route as AuthenticatedAdminRelationshipStudentIdRouteImport } from './routes/_authenticated/admin.relationship.$studentId'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
 import { Route as AuthenticatedAdminTrainingIndexRouteImport } from './routes/_authenticated/admin.training.index'
@@ -234,6 +235,12 @@ const AuthenticatedTrainingAssessmentRoute =
     path: '/assessment',
     getParentRoute: () => AuthenticatedTrainingRoute,
   } as any)
+const AuthenticatedAdminRelationshipStudentIdRoute =
+  AuthenticatedAdminRelationshipStudentIdRouteImport.update({
+    id: '/$studentId',
+    path: '/$studentId',
+    getParentRoute: () => AuthenticatedAdminRelationshipRoute,
+  } as any)
 const AuthenticatedAdminStudentsIndexRoute =
   AuthenticatedAdminStudentsIndexRouteImport.update({
     id: '/',
@@ -290,7 +297,7 @@ export interface FileRoutesByFullPath {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
-  '/admin/relationship': typeof AuthenticatedAdminRelationshipRoute
+  '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -299,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -330,7 +338,7 @@ export interface FileRoutesByTo {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
-  '/admin/relationship': typeof AuthenticatedAdminRelationshipRoute
+  '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -338,6 +346,7 @@ export interface FileRoutesByTo {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -371,7 +380,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/perception': typeof AuthenticatedAdminPerceptionRoute
-  '/_authenticated/admin/relationship': typeof AuthenticatedAdminRelationshipRoute
+  '/_authenticated/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -380,6 +389,7 @@ export interface FileRoutesById {
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/_authenticated/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/_authenticated/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
   '/_authenticated/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -422,6 +432,7 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/training/assessment'
     | '/admin/'
+    | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
     | '/admin/training/knowledge'
@@ -461,6 +472,7 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/training/assessment'
     | '/admin'
+    | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
     | '/admin/training/knowledge'
@@ -502,6 +514,7 @@ export interface FileRouteTypes {
     | '/_authenticated/members/$slug'
     | '/_authenticated/training/assessment'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/relationship/$studentId'
     | '/_authenticated/admin/students/$studentId'
     | '/_authenticated/admin/training/$studentId'
     | '/_authenticated/admin/training/knowledge'
@@ -757,6 +770,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrainingAssessmentRouteImport
       parentRoute: typeof AuthenticatedTrainingRoute
     }
+    '/_authenticated/admin/relationship/$studentId': {
+      id: '/_authenticated/admin/relationship/$studentId'
+      path: '/$studentId'
+      fullPath: '/admin/relationship/$studentId'
+      preLoaderRoute: typeof AuthenticatedAdminRelationshipStudentIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRelationshipRoute
+    }
     '/_authenticated/admin/students/': {
       id: '/_authenticated/admin/students/'
       path: '/'
@@ -819,6 +839,21 @@ const AuthenticatedTrainingRouteWithChildren =
     AuthenticatedTrainingRouteChildren,
   )
 
+interface AuthenticatedAdminRelationshipRouteChildren {
+  AuthenticatedAdminRelationshipStudentIdRoute: typeof AuthenticatedAdminRelationshipStudentIdRoute
+}
+
+const AuthenticatedAdminRelationshipRouteChildren: AuthenticatedAdminRelationshipRouteChildren =
+  {
+    AuthenticatedAdminRelationshipStudentIdRoute:
+      AuthenticatedAdminRelationshipStudentIdRoute,
+  }
+
+const AuthenticatedAdminRelationshipRouteWithChildren =
+  AuthenticatedAdminRelationshipRoute._addFileChildren(
+    AuthenticatedAdminRelationshipRouteChildren,
+  )
+
 interface AuthenticatedAdminStudentsRouteChildren {
   AuthenticatedAdminStudentsStudentIdRoute: typeof AuthenticatedAdminStudentsStudentIdRoute
   AuthenticatedAdminStudentsIndexRoute: typeof AuthenticatedAdminStudentsIndexRoute
@@ -857,7 +892,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminMoneyBrainRoute: typeof AuthenticatedAdminMoneyBrainRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPerceptionRoute: typeof AuthenticatedAdminPerceptionRoute
-  AuthenticatedAdminRelationshipRoute: typeof AuthenticatedAdminRelationshipRoute
+  AuthenticatedAdminRelationshipRoute: typeof AuthenticatedAdminRelationshipRouteWithChildren
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSimSelectRoute: typeof AuthenticatedAdminSimSelectRoute
@@ -890,7 +925,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminMoneyBrainRoute: AuthenticatedAdminMoneyBrainRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminPerceptionRoute: AuthenticatedAdminPerceptionRoute,
-  AuthenticatedAdminRelationshipRoute: AuthenticatedAdminRelationshipRoute,
+  AuthenticatedAdminRelationshipRoute:
+    AuthenticatedAdminRelationshipRouteWithChildren,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSimSelectRoute: AuthenticatedAdminSimSelectRoute,
