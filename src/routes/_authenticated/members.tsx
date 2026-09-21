@@ -1,9 +1,18 @@
-import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, LockKeyhole } from "lucide-react";
-import { AppShell } from "@/components/sim/AppShell";import{UsageTracker}from"@/components/sim/UsageTracker";
-import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
-import membersCover from "@/assets/members-briefing-cover.jpg";
-export const Route=createFileRoute("/_authenticated/members")({head:()=>({meta:[{title:"Members — Shape Is Money"},{name:"description",content:"Private members club para performance executiva."},{property:"og:title",content:"Members — Shape Is Money"},{property:"og:description",content:"Briefings, playbooks e experiências para membros."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary"}]}),component:Page});
-function Page(){const[items,setItems]=useState<Tables<"member_contents">[]>([]);useEffect(()=>{void(async()=>{const{data}=await supabase.from("member_contents").select("*").eq("active",true).not("published_at","is",null).order("featured",{ascending:false}).order("published_at",{ascending:false});setItems(data??[])})()},[]);const featured=items[0];return <AppShell><UsageTracker module="members"/><div className="mx-auto max-w-7xl px-5 py-10"><header className="relative min-h-[520px] overflow-hidden border-b border-border"><img src={membersCover} alt="Arquitetura silenciosa do Members" className="absolute inset-0 size-full object-cover opacity-55" width={1600} height={1008}/><div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent"/><div className="relative flex min-h-[520px] max-w-3xl flex-col justify-end pb-12"><p className="sim-kicker">Private members club</p><h1 className="mt-4 text-6xl sm:text-7xl">Members</h1><p className="mt-5 max-w-xl text-lg leading-8 text-foreground/80">Conhecimento, protocolos e experiências organizados para quem carrega grandes responsabilidades.</p></div></header>{featured&&<section className="grid gap-8 border-b border-border py-12 md:grid-cols-[.35fr_1fr_auto] md:items-end"><div><p className="sim-kicker">SIM Briefing</p><p className="mt-2 text-xs text-muted-foreground">{featured.duration_label??featured.content_type}</p></div><div><h2 className="text-4xl">{featured.title}</h2><p className="mt-3 max-w-2xl text-muted-foreground">{featured.excerpt}</p></div><Link to="/members/$slug" params={{slug:featured.slug}} className="story-link text-sm">Abrir briefing <ArrowRight className="ml-2 inline size-4"/></Link></section>}<section className="py-12"><div className="flex items-end justify-between"><div><p className="sim-kicker">Member library</p><h2 className="mt-3 text-4xl">Curadoria editorial</h2></div></div><div className="mt-8 divide-y divide-border border-y border-border">{items.slice(1).map((item,index)=><Link key={item.id} to="/members/$slug" params={{slug:item.slug}} className="grid gap-4 py-7 transition-colors hover:text-primary sm:grid-cols-[60px_160px_1fr_auto] sm:items-center"><span className="font-display text-3xl text-muted-foreground">0{index+1}</span><span className="sim-kicker">{item.category}</span><span className="text-2xl">{item.title}</span><ArrowRight className="size-4"/></Link>)}</div></section><section className="border-y border-border py-14 text-center"><LockKeyhole className="mx-auto size-5 text-primary"/><p className="sim-kicker mt-5">The Club</p><h2 className="mt-4 text-4xl">Alguns ambientes não são comprados. São conquistados.</h2></section></div></AppShell>}
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authenticated/members")({
+  beforeLoad: () => {
+    throw redirect({ to: "/dashboard" });
+  },
+  head: () => ({
+    meta: [
+      { title: "Club — Shape Is Money" },
+      { name: "description", content: "Club temporariamente indisponível." },
+      { property: "og:title", content: "Club — Shape Is Money" },
+      { property: "og:description", content: "Club temporariamente indisponível." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  component: () => null,
+});

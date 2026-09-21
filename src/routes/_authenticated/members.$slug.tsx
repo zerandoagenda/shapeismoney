@@ -1,3 +1,18 @@
-import { useEffect,useState } from "react";import{createFileRoute,Link}from"@tanstack/react-router";import{ArrowLeft}from"lucide-react";import{AppShell}from"@/components/sim/AppShell";import{Button}from"@/components/ui/button";import{supabase}from"@/integrations/supabase/client";import type{Tables}from"@/integrations/supabase/types";import{recordEcosystemEvent}from"@/lib/ecosystem-events.functions";import{useServerFn}from"@tanstack/react-start";
-export const Route=createFileRoute("/_authenticated/members/$slug")({head:()=>({meta:[{title:"SIM Briefing — Shape Is Money"},{name:"description",content:"Conteúdo privado para membros."},{property:"og:title",content:"SIM Briefing — Shape Is Money"},{property:"og:description",content:"Conhecimento aplicado à performance executiva."},{property:"og:type",content:"article"},{name:"twitter:card",content:"summary"}]}),component:Page});
-function Page(){const{slug}=Route.useParams();const[item,setItem]=useState<Tables<"member_contents">|null>(null);const record=useServerFn(recordEcosystemEvent);useEffect(()=>{void(async()=>{const{data}=await supabase.from("member_contents").select("*").eq("slug",slug).eq("active",true).maybeSingle();setItem(data);if(data){await supabase.from("member_content_views").upsert({content_id:data.id,user_id:(await supabase.auth.getUser()).data.user?.id??""},{onConflict:"user_id,content_id"});await record({data:{eventType:"content.viewed",metadata:{content_id:data.id}}})}})()},[slug,record]);return <AppShell><article className="mx-auto max-w-4xl px-5 py-10"><Button asChild variant="ghost" className="px-0"><Link to="/members"><ArrowLeft/> Members</Link></Button>{item?<><p className="sim-kicker mt-12">{item.eyebrow??item.category}</p><h1 className="mt-5 text-6xl leading-none">{item.title}</h1><p className="mt-6 border-b border-border pb-10 text-xl leading-8 text-muted-foreground">{item.excerpt}</p><div className="whitespace-pre-line py-12 text-lg leading-9">{item.body}</div></>:<div className="py-24 text-center"><p className="sim-kicker">Conteúdo indisponível</p></div>}</article></AppShell>}
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authenticated/members/$slug")({
+  beforeLoad: () => {
+    throw redirect({ to: "/dashboard" });
+  },
+  head: () => ({
+    meta: [
+      { title: "Club — Shape Is Money" },
+      { name: "description", content: "Club temporariamente indisponível." },
+      { property: "og:title", content: "Club — Shape Is Money" },
+      { property: "og:description", content: "Club temporariamente indisponível." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  component: () => null,
+});

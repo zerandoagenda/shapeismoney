@@ -9,7 +9,7 @@ import { PermissionService } from "@/lib/permissions";
 const memberNav = [
   { group: "Overview", items: [["/dashboard", "Home", Home]] },
   { group: "Performance", items: [["/performance", "Performance", BarChart3], ["/training", "Treino", Dumbbell], ["/nutrition", "Nutrição", Utensils], ["/food-log", "Food Log", Utensils], ["/perception-lab", "Perception Lab", ScanLine], ["/money-brain", "Money Brain", BrainCircuit]] },
-  { group: "Ecossistema", items: [["/members", "Members", UsersRound], ["/experiences", "Experiences", Sparkles], ["/network", "SIM Network", Network], ["/sim-select", "SIM Select", Sparkles]] },
+  { group: "Ecossistema", items: [["/experiences", "Experiences", Sparkles], ["/network", "SIM Network", Network], ["/sim-select", "SIM Select", Sparkles]] },
   { group: "Jornada", items: [["/my-journey", "Minha Jornada", HeartHandshake], ["/monthly-review", "Revisão mensal", ClipboardList]] },
   { group: "Conta", items: [["/profile", "Perfil", UserRound]] },
 ] as const;
