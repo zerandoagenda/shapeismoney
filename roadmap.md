@@ -21,3 +21,9 @@
 - [x] Relationship start and First Win
 - [x] Member Home next action
 - [x] Full ADMIN_MASTER/BETA_MEMBER QA with zero functional failures and honest incomplete client states
+## Importação Muscle & Strength
+- [x] Estrutura de origem, auditoria, lotes e armazenamento privado
+- [ ] Conectar serviço de coleta autorizado (bloqueado: conexão recusada)
+- [ ] Descobrir catálogo completo e importar mídia em lotes
+- [ ] Validar catálogo final, deduplicação e reprodução por amostragem
+

@@ -1,0 +1,22 @@
+import { useEffect, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AlertTriangle, ArrowLeft, Database, Download, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
+import { AppShell } from "@/components/sim/AppShell";
+import { Button } from "@/components/ui/button";
+import { requireStaff } from "@/lib/admin-guard";
+import { discoverExerciseCatalog, importExerciseBatch } from "@/lib/exercise-import.functions";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
+
+export const Route = createFileRoute("/_authenticated/admin/training/exercise-import")({ beforeLoad: requireStaff, head: () => ({ meta: [{ title: "Importação de exercícios — SIM" }, { name: "description", content: "Importação auditável da biblioteca autorizada de exercícios." }, { property: "og:title", content: "Importação de exercícios — SIM" }, { property: "og:description", content: "Catálogo, mídia e progresso de importação." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: Page });
+
+function Page() {
+  const [batches, setBatches] = useState<Tables<"exercise_import_batches">[]>([]);
+  const [busy, setBusy] = useState(false);
+  async function load() { const { data } = await supabase.from("exercise_import_batches").select("*").order("created_at", { ascending: false }); setBatches(data ?? []); }
+  useEffect(() => { void load(); }, []);
+  async function discover() { setBusy(true); try { const result = await discoverExerciseCatalog(); toast.success(`${result.discovered} páginas encontradas.`); await load(); } catch (error) { toast.error(error instanceof Error ? error.message : "Falha na descoberta."); } finally { setBusy(false); } }
+  async function process(batchId: string) { setBusy(true); try { const result = await importExerciseBatch({ data: { batchId, limit: 5 } }); toast.success(result.remaining ? `Lote processado. ${result.remaining} itens restantes.` : "Importação concluída."); await load(); } catch (error) { toast.error(error instanceof Error ? error.message : "Falha na importação."); } finally { setBusy(false); } }
+  return <AppShell admin><div className="mx-auto max-w-7xl px-5 py-10"><Link to="/admin/training/exercises" className="inline-flex items-center gap-2 text-xs uppercase text-muted-foreground"><ArrowLeft className="size-4"/> Exercise Library</Link><div className="mt-7 flex flex-wrap items-end justify-between gap-5"><div><p className="sim-kicker">Fonte autorizada · Muscle & Strength</p><h1 className="mt-4 text-5xl">Importação de exercícios</h1><p className="mt-3 max-w-2xl text-muted-foreground">Descoberta, mídia privada, deduplicação e retomada em lotes de cinco páginas.</p></div><Button variant="gold" disabled={busy} onClick={() => void discover()}>{busy ? <RefreshCw className="animate-spin"/> : <Database/>} Descobrir catálogo</Button></div><div className="mt-8 flex gap-3 border-y border-border py-4 text-xs text-muted-foreground"><AlertTriangle className="size-4 shrink-0 text-primary"/><p>A origem pode bloquear coletas automáticas. Falhas permanecem registradas e podem ser retomadas sem duplicar exercícios.</p></div><section className="mt-10 divide-y divide-border border-y border-border">{batches.length === 0 ? <div className="py-12 text-center text-muted-foreground">Nenhuma importação iniciada.</div> : batches.map(batch => { const remaining = Math.max(0, batch.discovered_count - batch.processed_count); return <article key={batch.id} className="grid gap-5 py-6 lg:grid-cols-[1fr_auto] lg:items-center"><div><div className="flex flex-wrap items-center gap-3"><h2 className="text-2xl">{batch.source_name}</h2><span className="sim-kicker text-primary">{batch.status.replaceAll("_", " ")}</span></div><p className="mt-3 text-sm text-muted-foreground">{batch.processed_count}/{batch.discovered_count} processados · {batch.imported_count} novos · {batch.updated_count} atualizados · {batch.without_video_count} sem vídeo · {batch.error_count} falhas</p>{batch.error_summary && <p className="mt-2 text-sm text-destructive">{batch.error_summary}</p>}</div>{remaining > 0 && <Button variant="quiet" disabled={busy} onClick={() => void process(batch.id)}><Download/> Importar próximo lote</Button>}</article>; })}</section></div></AppShell>;
+}
