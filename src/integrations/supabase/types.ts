@@ -68,6 +68,7 @@ export type Database = {
           created_at: string
           id: string
           note: string
+          note_type: string
           updated_at: string
           user_id: string
         }
@@ -76,6 +77,7 @@ export type Database = {
           created_at?: string
           id?: string
           note: string
+          note_type?: string
           updated_at?: string
           user_id: string
         }
@@ -84,6 +86,7 @@ export type Database = {
           created_at?: string
           id?: string
           note?: string
+          note_type?: string
           updated_at?: string
           user_id?: string
         }
@@ -400,6 +403,152 @@ export type Database = {
           {
             foreignKeyName: "client_assignments_staff_id_fkey"
             columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_milestones: {
+        Row: {
+          client_id: string
+          client_shared: boolean
+          created_at: string
+          evidence: string
+          id: string
+          milestone_type: string
+          recognized_at: string
+          recognized_by: string
+          title: string
+        }
+        Insert: {
+          client_id: string
+          client_shared?: boolean
+          created_at?: string
+          evidence: string
+          id?: string
+          milestone_type: string
+          recognized_at?: string
+          recognized_by: string
+          title: string
+        }
+        Update: {
+          client_id?: string
+          client_shared?: boolean
+          created_at?: string
+          evidence?: string
+          id?: string
+          milestone_type?: string
+          recognized_at?: string
+          recognized_by?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_milestones_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_milestones_recognized_by_fkey"
+            columns: ["recognized_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_relationships: {
+        Row: {
+          attention_level: string
+          attention_reason: string | null
+          client_id: string
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          current_commitment: string | null
+          id: string
+          journey_evidence: Json
+          journey_phase: string
+          last_activity: string | null
+          last_checkin: string | null
+          last_human_contact: string | null
+          next_action: string | null
+          next_action_due_at: string | null
+          protocol_status: Database["public"]["Enums"]["protocol_status"] | null
+          relationship_state: string
+          responsible_user: string | null
+          state_evidence: Json
+          updated_at: string
+        }
+        Insert: {
+          attention_level?: string
+          attention_reason?: string | null
+          client_id: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          current_commitment?: string | null
+          id?: string
+          journey_evidence?: Json
+          journey_phase?: string
+          last_activity?: string | null
+          last_checkin?: string | null
+          last_human_contact?: string | null
+          next_action?: string | null
+          next_action_due_at?: string | null
+          protocol_status?:
+            | Database["public"]["Enums"]["protocol_status"]
+            | null
+          relationship_state?: string
+          responsible_user?: string | null
+          state_evidence?: Json
+          updated_at?: string
+        }
+        Update: {
+          attention_level?: string
+          attention_reason?: string | null
+          client_id?: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          current_commitment?: string | null
+          id?: string
+          journey_evidence?: Json
+          journey_phase?: string
+          last_activity?: string | null
+          last_checkin?: string | null
+          last_human_contact?: string | null
+          next_action?: string | null
+          next_action_due_at?: string | null
+          protocol_status?:
+            | Database["public"]["Enums"]["protocol_status"]
+            | null
+          relationship_state?: string
+          responsible_user?: string | null
+          state_evidence?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_relationships_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_relationships_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_relationships_responsible_user_fkey"
+            columns: ["responsible_user"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1855,6 +2004,583 @@ export type Database = {
           {
             foreignKeyName: "protocols_profile_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_alerts: {
+        Row: {
+          attention_level: string
+          client_id: string
+          created_at: string
+          due_at: string
+          id: string
+          owner_id: string
+          priority: string
+          reason: string
+          resolved_at: string | null
+          source: string
+          source_entity_id: string | null
+          status: string
+          suggested_action: string | null
+          updated_at: string
+        }
+        Insert: {
+          attention_level: string
+          client_id: string
+          created_at?: string
+          due_at: string
+          id?: string
+          owner_id: string
+          priority: string
+          reason: string
+          resolved_at?: string | null
+          source: string
+          source_entity_id?: string | null
+          status?: string
+          suggested_action?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attention_level?: string
+          client_id?: string
+          created_at?: string
+          due_at?: string
+          id?: string
+          owner_id?: string
+          priority?: string
+          reason?: string
+          resolved_at?: string | null
+          source?: string
+          source_entity_id?: string | null
+          status?: string
+          suggested_action?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_alerts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_alerts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_commitments: {
+        Row: {
+          action: string
+          client_id: string
+          client_shared: boolean
+          completed_at: string | null
+          confirmation_criterion: string
+          created_at: string
+          created_by: string
+          deadline: string
+          dose_or_frequency: string
+          id: string
+          intervention_id: string | null
+          responsible_id: string
+          review_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          client_id: string
+          client_shared?: boolean
+          completed_at?: string | null
+          confirmation_criterion: string
+          created_at?: string
+          created_by: string
+          deadline: string
+          dose_or_frequency: string
+          id?: string
+          intervention_id?: string | null
+          responsible_id: string
+          review_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          client_id?: string
+          client_shared?: boolean
+          completed_at?: string | null
+          confirmation_criterion?: string
+          created_at?: string
+          created_by?: string
+          deadline?: string
+          dose_or_frequency?: string
+          id?: string
+          intervention_id?: string | null
+          responsible_id?: string
+          review_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_commitments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_commitments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_commitments_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "relationship_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_commitments_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_contacts: {
+        Row: {
+          channel: string
+          client_id: string
+          contact_type: string
+          contacted_at: string
+          context: string | null
+          created_at: string
+          created_by: string
+          facts: string
+          id: string
+          intervention_summary: string | null
+          next_action: string | null
+          next_action_due_at: string | null
+          objective: string
+          outcome: string | null
+          responsible_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          channel: string
+          client_id: string
+          contact_type: string
+          contacted_at?: string
+          context?: string | null
+          created_at?: string
+          created_by: string
+          facts: string
+          id?: string
+          intervention_summary?: string | null
+          next_action?: string | null
+          next_action_due_at?: string | null
+          objective: string
+          outcome?: string | null
+          responsible_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          client_id?: string
+          contact_type?: string
+          contacted_at?: string
+          context?: string | null
+          created_at?: string
+          created_by?: string
+          facts?: string
+          id?: string
+          intervention_summary?: string | null
+          next_action?: string | null
+          next_action_due_at?: string | null
+          objective?: string
+          outcome?: string | null
+          responsible_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_contacts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_contacts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_contacts_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_evidence: {
+        Row: {
+          client_id: string
+          created_at: string
+          created_by: string
+          evidence_type: string
+          fact: string
+          id: string
+          observed_at: string
+          source: string
+          source_entity_id: string | null
+          weight: number
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          created_by: string
+          evidence_type: string
+          fact: string
+          id?: string
+          observed_at?: string
+          source: string
+          source_entity_id?: string | null
+          weight: number
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          created_by?: string
+          evidence_type?: string
+          fact?: string
+          id?: string
+          observed_at?: string
+          source?: string
+          source_entity_id?: string | null
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_evidence_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_evidence_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_hypotheses: {
+        Row: {
+          client_id: string
+          confidence: number
+          created_at: string
+          created_by: string | null
+          created_by_type: string
+          evidence_ids: Json
+          gap_type: string
+          hypothesis: string
+          id: string
+          is_predominant: boolean
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          confidence: number
+          created_at?: string
+          created_by?: string | null
+          created_by_type?: string
+          evidence_ids?: Json
+          gap_type: string
+          hypothesis: string
+          id?: string
+          is_predominant?: boolean
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          confidence?: number
+          created_at?: string
+          created_by?: string | null
+          created_by_type?: string
+          evidence_ids?: Json
+          gap_type?: string
+          hypothesis?: string
+          id?: string
+          is_predominant?: boolean
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_hypotheses_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_hypotheses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_hypotheses_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_interventions: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          attention_level: string
+          channel: string
+          client_id: string
+          created_at: string
+          created_by: string
+          draft_message: string | null
+          evidence_ids: Json
+          executed_at: string | null
+          final_message: string | null
+          id: string
+          journey_phase: string
+          last_commitment: string | null
+          objective: string
+          possible_questions: Json
+          predominant_gap: string | null
+          prisma_annotate: string
+          prisma_interpret: string
+          prisma_mobilize: string
+          prisma_perceive: string
+          prisma_recognize: string
+          prisma_simplify: string
+          recent_data: Json
+          relationship_state: string
+          review_date: string
+          smallest_next_step: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          attention_level: string
+          channel: string
+          client_id: string
+          created_at?: string
+          created_by: string
+          draft_message?: string | null
+          evidence_ids?: Json
+          executed_at?: string | null
+          final_message?: string | null
+          id?: string
+          journey_phase: string
+          last_commitment?: string | null
+          objective: string
+          possible_questions?: Json
+          predominant_gap?: string | null
+          prisma_annotate: string
+          prisma_interpret: string
+          prisma_mobilize: string
+          prisma_perceive: string
+          prisma_recognize: string
+          prisma_simplify: string
+          recent_data?: Json
+          relationship_state: string
+          review_date: string
+          smallest_next_step: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          attention_level?: string
+          channel?: string
+          client_id?: string
+          created_at?: string
+          created_by?: string
+          draft_message?: string | null
+          evidence_ids?: Json
+          executed_at?: string | null
+          final_message?: string | null
+          id?: string
+          journey_phase?: string
+          last_commitment?: string | null
+          objective?: string
+          possible_questions?: Json
+          predominant_gap?: string | null
+          prisma_annotate?: string
+          prisma_interpret?: string
+          prisma_mobilize?: string
+          prisma_perceive?: string
+          prisma_recognize?: string
+          prisma_simplify?: string
+          recent_data?: Json
+          relationship_state?: string
+          review_date?: string
+          smallest_next_step?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_interventions_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_interventions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_interventions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_sla_policies: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          priority: string
+          product_key: string
+          response_minutes: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          priority: string
+          product_key: string
+          response_minutes: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          priority?: string
+          product_key?: string
+          response_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_sla_policies_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_timeline: {
+        Row: {
+          actor_id: string | null
+          client_id: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+          occurred_at: string
+          source: string
+          source_entity_id: string | null
+          summary: string
+          title: string
+          visibility: string
+        }
+        Insert: {
+          actor_id?: string | null
+          client_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          source: string
+          source_entity_id?: string | null
+          summary: string
+          title: string
+          visibility?: string
+        }
+        Update: {
+          actor_id?: string | null
+          client_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          source?: string
+          source_entity_id?: string | null
+          summary?: string
+          title?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_timeline_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_timeline_client_id_fkey"
+            columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
