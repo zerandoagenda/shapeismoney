@@ -30,3 +30,15 @@
 - [x] Unificar entradas por IA, PDF, texto e montagem manual
 - [x] Registrar importação por texto com origem e revisão humana
 - [x] Validar os quatro caminhos em desktop e celular
+
+## Operational Rebuild
+- [ ] Reduzir a navegação administrativa às seis áreas operacionais sem remover subáreas existentes
+- [ ] Recriar Hoje com Precisa de Você, OS Trabalhando e Aguardando Cliente usando dados reais
+- [ ] Consolidar Delivery Center com filtros, responsáveis, SLA, ações e log operacional
+- [ ] Tornar processClientActivation idempotente e acionado por todos os marcos oficiais
+- [ ] Automatizar Cycle Strategy, Training e Nutrition drafts com revisão humana
+- [ ] Evoluir Exercise Library com filtros, vídeo privado, aliases, CSV e edição em massa
+- [ ] Simplificar Client 360 e adicionar visualização segura da experiência do cliente
+- [ ] Preservar fotos longitudinais de antes/depois por assessment e aluno
+- [ ] Implementar reconciliação, retry, erros visíveis e atualização sem recarregar
+- [ ] Validar fluxos ALUNO OS TEST, Bruno, cliente e Exercise Library
