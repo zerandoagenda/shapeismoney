@@ -18,9 +18,9 @@
 - [ ] Validar catálogo final, deduplicação e reprodução por amostragem
 
 ## Biblioteca em vídeo e execução por série
-- [ ] Transferir e associar os 778 vídeos autorizados do Google Drive
-- [ ] Validar criação e deduplicação dos exercícios do índice
-- [ ] Registrar carga e repetições individualmente por série
-- [ ] Retomar sessão e cronômetro persistente após sair da página
+- [x] Transferir e associar os 778 vídeos autorizados do Google Drive
+- [x] Validar criação e deduplicação dos exercícios do índice
+- [x] Registrar carga e repetições individualmente por série
+- [x] Retomar sessão e cronômetro persistente após sair da página
 - [x] Manter Fábio como aluno Plus sem beta ou acesso administrativo
 - [ ] Validar carteira administrativa, treino e vídeos em celular e desktop
