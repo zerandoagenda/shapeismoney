@@ -1,29 +1,18 @@
-# Roadmap — Beta Full Access + Relationship OS
+# Roadmap — Activation & Delivery Engine
 
-- [x] Audit current access, routes, controls, and reusable relationship data
-- [x] Implement centralized permissions and beta roles
-- [x] Implement Relationship OS data model, RLS, audit, and SLA rules
-- [x] Build Relationship command center, Client 360, interventions, commitments, milestones, and timeline
-- [x] Expand member and admin navigation with honest feature states
-- [x] Remove paywalls and plan locks for beta members and admin master
-- [x] Audit and repair visible actions across requested routes
-- [x] Validate Bruno and beta-member access, privacy, desktop/mobile, and generate BETA ACCESS QA
+- [ ] Centralizar eventos, ativação de plano e status operacional no SIM Orchestrator
+- [ ] Criar Client Activation, etapas, jobs de treino, SLA e políticas de segurança
+- [ ] Refatorar mudança manual de plano para usar o mesmo fluxo de futura confirmação de pagamento
+- [ ] Automatizar pré-requisitos, ciclo, Training Architect draft e fila de revisão humana
+- [ ] Criar tarefas/notificações operacionais e operação manual de nutrição
+- [ ] Tornar Home, Money Brain e acessos reativos ao plano e à ativação
+- [ ] Simplificar CEO Home, Delivery Queue, Training Queue e Client 360
+- [ ] Adicionar atualização em tempo real para ativação, treino, nutrição e protocolo
+- [ ] Validar FREE → PAID → requisitos → AI draft → revisão → publicação → execução
+- [ ] Auditar todos os CTAs e documentar QA final
 
-## Final Go-Live Experience Patch
-- [x] Beta toggle and 12/12 readiness
-- [x] Photo protocol configuration and release gate
-- [x] Exercise library and PDF mapping
-- [x] Training Intelligence methodology/output/status
-- [x] Experiences and honest SIM Select
-- [x] SIM Network community
-- [x] Food Log and Monthly Review
-- [x] Perception real scan validation
-- [x] Relationship start and First Win
-- [x] Member Home next action
-- [x] Full ADMIN_MASTER/BETA_MEMBER QA with zero functional failures and honest incomplete client states
 ## Importação Muscle & Strength
 - [x] Estrutura de origem, auditoria, lotes e armazenamento privado
 - [ ] Conectar serviço de coleta autorizado (bloqueado: conexão recusada)
 - [ ] Descobrir catálogo completo e importar mídia em lotes
 - [ ] Validar catálogo final, deduplicação e reprodução por amostragem
-
