@@ -21,11 +21,6 @@ const pageSchema = z.object({
 
 type FirecrawlResult = Record<string, unknown>;
 
-async function assertStaff(supabase: Parameters<Parameters<typeof createServerFn>[0]>[0] | never, userId: string) {
-  void supabase;
-  void userId;
-}
-
 async function verifyStaff(context: { supabase: any; userId: string }) {
   const { data, error } = await context.supabase.from("user_roles").select("role").eq("user_id", context.userId);
   if (error || !(data ?? []).some((row: { role: string }) => STAFF_ROLES.has(row.role))) throw new Error("Acesso restrito à equipe administrativa.");
@@ -54,15 +49,15 @@ async function firecrawl(path: string, body: Record<string, unknown>): Promise<F
 }
 
 function normalizeLinks(result: FirecrawlResult) {
-  const nested = result.data && typeof result.data === "object" ? result.data as Record<string, unknown> : result;
-  const values = Array.isArray(result.links) ? result.links : Array.isArray(nested.links) ? nested.links : [];
+  const nested = result["data"] && typeof result["data"] === "object" ? result["data"] as Record<string, unknown> : result;
+  const values: unknown[] = Array.isArray(result["links"]) ? result["links"] : Array.isArray(nested["links"]) ? nested["links"] : [];
   return [...new Set(values.filter((value): value is string => typeof value === "string")
     .map((value) => value.split("#")[0])
     .filter((value) => /^https:\/\/(www\.)?muscleandstrength\.com\/exercises\/[a-z0-9-]+\/?$/i.test(value))
     .map((value) => value.replace(/\/$/, "")))];
 }
 
-function slugFromUrl(url: string) { return new URL(url).pathname.split("/").filter(Boolean).at(-1) ?? url; }
+function slugFromUrl(url: string) { const parts = new URL(url).pathname.split("/").filter(Boolean); return parts[parts.length - 1] ?? url; }
 function safeName(value: string) { return value.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, ""); }
 function hostAllowed(url: string) {
   const host = new URL(url).hostname.toLowerCase();
@@ -121,8 +116,8 @@ export const importExerciseBatch = createServerFn({ method: "POST" })
       await supabaseAdmin.from("exercise_import_items").update({ status: "processing", error_message: null }).eq("id", item.id);
       try {
         const result = await firecrawl("/scrape", { url: item.source_url, onlyMainContent: true, waitFor: 2500, formats: [{ type: "json", schema: { type: "object", properties: { name: { type: "string" }, primaryMuscles: { type: "array", items: { type: "string" } }, secondaryMuscles: { type: "array", items: { type: "string" } }, equipment: { type: ["string", "null"] }, level: { type: ["string", "null"] }, exerciseType: { type: ["string", "null"] }, instructions: { type: "array", items: { type: "string" } }, tips: { type: "array", items: { type: "string" } }, videoUrl: { type: ["string", "null"] }, imageUrl: { type: ["string", "null"] } }, required: ["name"] }, prompt: "Extract the exercise profile, instructions, tips, and the direct demonstration video and image URLs. Do not invent missing values." }] });
-        const nested = result.data && typeof result.data === "object" ? result.data as Record<string, unknown> : result;
-        const parsed = pageSchema.parse(nested.json ?? result.json);
+        const nested = result["data"] && typeof result["data"] === "object" ? result["data"] as Record<string, unknown> : result;
+        const parsed = pageSchema.parse(nested["json"] ?? result["json"]);
         const externalId = item.source_external_id ?? slugFromUrl(item.source_url);
         const videoPath = await storeMedia(supabaseAdmin, parsed.videoUrl, "video", externalId);
         const imagePath = await storeMedia(supabaseAdmin, parsed.imageUrl, "image", externalId);
@@ -138,7 +133,7 @@ export const importExerciseBatch = createServerFn({ method: "POST" })
     }
     const { data: all } = await supabaseAdmin.from("exercise_import_items").select("status").eq("batch_id", data.batchId);
     const counts = (all ?? []).reduce<Record<string, number>>((acc, item) => ({ ...acc, [item.status]: (acc[item.status] ?? 0) + 1 }), {});
-    const pending = (counts.queued ?? 0) + (counts.processing ?? 0);
-    await supabaseAdmin.from("exercise_import_batches").update({ status: pending ? "paused" : counts.failed ? "completed_with_errors" : "completed", processed_count: (all?.length ?? 0) - pending, imported_count: counts.imported ?? 0, updated_count: counts.updated ?? 0, duplicate_count: counts.duplicate ?? 0, without_video_count: counts.without_video ?? 0, error_count: counts.failed ?? 0, completed_at: pending ? null : new Date().toISOString() }).eq("id", data.batchId);
+    const pending = (counts["queued"] ?? 0) + (counts["processing"] ?? 0);
+    await supabaseAdmin.from("exercise_import_batches").update({ status: pending ? "paused" : counts["failed"] ? "completed_with_errors" : "completed", processed_count: (all?.length ?? 0) - pending, imported_count: counts["imported"] ?? 0, updated_count: counts["updated"] ?? 0, duplicate_count: counts["duplicate"] ?? 0, without_video_count: counts["without_video"] ?? 0, error_count: counts["failed"] ?? 0, completed_at: pending ? null : new Date().toISOString() }).eq("id", data.batchId);
     return { processed: items?.length ?? 0, remaining: pending };
   });
