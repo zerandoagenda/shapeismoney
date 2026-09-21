@@ -205,7 +205,7 @@ function Page() {
   const adherence = completedSessions.length ? Math.round(completedSessions.reduce((sum, session) => sum + (session.completion_percent ?? 0), 0) / completedSessions.length) : null;
   const latestActivity=[data.checkins[0]?.created_at,data.sessions[0]?.started_at].filter((value):value is string=>Boolean(value)).sort().at(-1)??null;
   const health=calculateClientHealth({lastActivityAt:latestActivity,checkins30d:data.checkins.length,workouts30d:completedSessions.length,nutritionPublished:data.nutrition?.status==="published",protocolPublished:data.protocol?.status==="published",memberViews30d:data.usage.filter(item=>item.module==="members").length,perceptionActivity30d:data.usage.filter(item=>item.module==="perception").length});
-  const operational=deriveOperationalStatus({activation:data.activation,trainingStatus:data.trainingJob?.status,nutritionStatus:data.nutrition?.status,perceptionStatus:data.scans[0]?.status});
+  const operational=deriveOperationalStatus({activation:data.activation,trainingStatus:data.trainingJob?.status??null,nutritionStatus:data.nutrition?.status??null,perceptionStatus:data.scans[0]?.status??null});
   const updateWorkout = (index: number, next: DraftWorkout) => setWorkouts(workouts.map((item, itemIndex) => itemIndex === index ? next : item));
   const updateMeal = (index: number, next: DraftMeal) => setNutrition({ ...nutrition, meals: nutrition.meals.map((item, itemIndex) => itemIndex === index ? next : item) });
 
