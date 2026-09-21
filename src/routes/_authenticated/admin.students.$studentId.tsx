@@ -14,6 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { calculateClientHealth } from "@/lib/client-health";
 import { buildReadiness } from "@/lib/readiness";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { activateClientPlan, refreshClientOperations } from "@/lib/sim-orchestrator.functions";
+import { deriveOperationalStatus, type OperationalActivation, type TrainingJobStatus } from "@/lib/client-operational-status";
 
 export const Route = createFileRoute("/_authenticated/admin/students/$studentId")({
   beforeLoad: requireStaff,
@@ -49,6 +52,8 @@ type StudentData = {
   usage: Tables<"product_usage_events">[];
   roles: string[];
   assessment: (Tables<"assessments"> & { assessment_photos: Tables<"assessment_photos">[] }) | null;
+  activation: OperationalActivation | null;
+  trainingJob: { status: TrainingJobStatus; error_message: string | null } | null;
 };
 type DraftExercise = { id?: string | undefined; exercise_id: string; sets: number; reps: string; initial_load: number | null; rest_seconds: number; target_rpe: number | null; notes: string };
 type DraftWorkout = { id?: string | undefined; name: string; estimated_minutes: number; notes: string; exercises: DraftExercise[] };
@@ -72,6 +77,8 @@ const move = <T,>(items: T[], from: number, to: number) => { if (to < 0 || to >=
 
 function Page() {
   const { studentId } = Route.useParams();
+  const activatePlan = useServerFn(activateClientPlan);
+  const refreshOperations = useServerFn(refreshClientOperations);
   const [data, setData] = useState<StudentData | null>(null);
   const [protocolTitle, setProtocolTitle] = useState("Protocolo executivo");
   const [protocolObjective, setProtocolObjective] = useState("");
@@ -90,7 +97,7 @@ function Page() {
   const [renewalDate, setRenewalDate] = useState("");
 
   async function load() {
-    const [profile, score, onboarding, checkins, sessions, protocol, program, nutritionPlan, notes, events, exercises, scans, subscription, tasks, audit, usage, roles, assessment] = await Promise.all([
+    const [profile, score, onboarding, checkins, sessions, protocol, program, nutritionPlan, notes, events, exercises, scans, subscription, tasks, audit, usage, roles, assessment, activation, trainingJob] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", studentId).single(),
       supabase.from("sim_scores").select("*").eq("user_id", studentId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("onboarding_responses").select("*").eq("user_id", studentId).maybeSingle(),
@@ -109,12 +116,14 @@ function Page() {
       supabase.from("product_usage_events").select("*").eq("user_id", studentId).order("occurred_at", { ascending: false }).limit(50),
       supabase.from("user_roles").select("role").eq("user_id",studentId),
       supabase.from("assessments").select("*,assessment_photos(*)").eq("client_id",studentId).order("created_at",{ascending:false}).limit(1).maybeSingle(),
+      supabase.from("client_activations").select("current_stage,status,next_action,next_action_owner,target_delivery_at,stage_started_at").eq("client_id",studentId).maybeSingle(),
+      supabase.from("training_generation_jobs").select("status,error_message").eq("client_id",studentId).order("created_at",{ascending:false}).limit(1).maybeSingle(),
     ]);
     const protocolHistory = protocol.data ? await supabase.from("protocol_status_history").select("*").eq("protocol_id", protocol.data.id).order("created_at") : { data: [] };
     if (!profile.data) return;
     const nextProgram = program.data as unknown as ProgramRow | null;
     const nextNutrition = nutritionPlan.data as unknown as NutritionRow | null;
-    setData({ profile: profile.data, score: score.data, onboarding: onboarding.data, checkins: checkins.data ?? [], sessions: sessions.data ?? [], protocol: protocol.data, protocolHistory: protocolHistory.data ?? [], program: nextProgram, nutrition: nextNutrition, notes: notes.data ?? [], events: events.data ?? [], exercises: exercises.data ?? [], scans: scans.data ?? [], subscription: subscription.data, tasks: tasks.data ?? [], audit: audit.data ?? [], usage: usage.data ?? [], roles:(roles.data??[]).map(x=>x.role), assessment:assessment.data as StudentData["assessment"] });
+    setData({ profile: profile.data, score: score.data, onboarding: onboarding.data, checkins: checkins.data ?? [], sessions: sessions.data ?? [], protocol: protocol.data, protocolHistory: protocolHistory.data ?? [], program: nextProgram, nutrition: nextNutrition, notes: notes.data ?? [], events: events.data ?? [], exercises: exercises.data ?? [], scans: scans.data ?? [], subscription: subscription.data, tasks: tasks.data ?? [], audit: audit.data ?? [], usage: usage.data ?? [], roles:(roles.data??[]).map(x=>x.role), assessment:assessment.data as StudentData["assessment"], activation:activation.data as OperationalActivation|null, trainingJob:trainingJob.data as StudentData["trainingJob"] });
     setSubscriptionValue(subscription.data?.subscription_value?.toString() ?? ""); setRenewalDate(subscription.data?.renewal_date ?? "");
     setProtocolTitle(protocol.data?.title ?? "Protocolo executivo"); setProtocolObjective(protocol.data?.objective ?? "");
     setProgramTitle(nextProgram?.title ?? "Programa inicial"); setProgramObjective(nextProgram?.objective ?? ""); setProgramStart(nextProgram?.starts_on ?? ""); setProgramNotes(nextProgram?.notes ?? "");
@@ -130,16 +139,13 @@ function Page() {
     if (!confirmed) return;
     setSaving(true);
     setMessage("");
-    const { error } = await supabase.from("profiles").update({ plan }).eq("id", studentId);
-    if (error) {
+    try {
+      await activatePlan({ data: { clientId: studentId, plan, source: "manual_admin" } });
+    } catch {
       toast.error("Não foi possível alterar o plano.");
       setMessage("O plano anterior foi mantido.");
       setSaving(false);
       return;
-    }
-    if (data.subscription) {
-      const { error: subscriptionError } = await supabase.from("client_subscriptions").update({ plan }).eq("id", data.subscription.id);
-      if (subscriptionError) toast.error("Plano alterado, mas o acompanhamento financeiro precisa ser revisado.");
     }
     toast.success(`Plano alterado para ${planLabels[plan]}.`);
     setMessage(`Acesso atualizado: ${planLabels[previousPlan]} → ${planLabels[plan]}.`);
@@ -147,7 +153,7 @@ function Page() {
     await load();
   }
   async function saveProtocol() { const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; setSaving(true); if (data?.protocol) await supabase.from("protocols").update({ title: protocolTitle, objective: protocolObjective }).eq("id", data.protocol.id); else { const { data: created } = await supabase.from("protocols").insert({ user_id: studentId, title: protocolTitle, objective: protocolObjective, status: "data_received", created_by: auth.user.id }).select("id").single(); if (created) { await supabase.from("protocol_status_history").insert({ protocol_id: created.id, user_id: studentId, status: "data_received", changed_by: auth.user.id }); await supabase.from("crm_events").insert({ user_id: studentId, event_type: "protocol.created", metadata: { protocol_id: created.id } }); } } setSaving(false); await load(); }
-  async function changeStatus(status: ProtocolStatus) { if (!data?.protocol) return; const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; await supabase.from("protocols").update({ status, approved_at: status === "approved" ? new Date().toISOString() : data.protocol.approved_at, published_at: status === "published" ? new Date().toISOString() : data.protocol.published_at }).eq("id", data.protocol.id); await supabase.from("protocol_status_history").insert({ protocol_id: data.protocol.id, user_id: studentId, status, changed_by: auth.user.id }); if (status === "published") await supabase.from("crm_events").insert({ user_id: studentId, event_type: "protocol.published", metadata: { protocol_id: data.protocol.id } }); await load(); }
+  async function changeStatus(status: ProtocolStatus) { if (!data?.protocol) return; const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; await supabase.from("protocols").update({ status, approved_at: status === "approved" ? new Date().toISOString() : data.protocol.approved_at, published_at: status === "published" ? new Date().toISOString() : data.protocol.published_at }).eq("id", data.protocol.id); await supabase.from("protocol_status_history").insert({ protocol_id: data.protocol.id, user_id: studentId, status, changed_by: auth.user.id }); if (status === "published") { await supabase.from("crm_events").insert({ user_id: studentId, event_type: "protocol.published", metadata: { protocol_id: data.protocol.id } }); await refreshOperations({data:{clientId:studentId,event:"protocol.published"}}); } await load(); }
 
   async function saveProgram(status: "draft" | "approved" | "published") {
     const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; setSaving(true);
@@ -169,7 +175,7 @@ function Page() {
         for (const [exerciseSequence, exercise] of workout.exercises.entries()) { const values = { exercise_id: exercise.exercise_id, sets: exercise.sets, reps: exercise.reps, initial_load: exercise.initial_load, rest_seconds: exercise.rest_seconds, target_rpe: exercise.target_rpe, notes: exercise.notes || null, sequence: exerciseSequence }; if (exercise.id) await supabase.from("workout_exercises").update(values).eq("id", exercise.id); else await supabase.from("workout_exercises").insert({ ...values, workout_id: workoutId }); }
       }
       await supabase.from("training_decisions").insert({client_id:studentId,cycle_id:cycleId,program_id:programId,decision_type:`MANUAL_${status.toUpperCase()}`,decision:`Programa manual ${status}`,reason:programNotes||programObjective||"Prescrição construída e revisada pela equipe.",author_type:"BRUNO",author_id:auth.user.id,approval_status:status==="approved"?"approved":"pending"});
-      if (status === "published") await supabase.from("crm_events").insert({ user_id: studentId, event_type: "training.published", metadata: { program_id: programId } });
+      if (status === "published") { await supabase.from("crm_events").insert({ user_id: studentId, event_type: "training.published", metadata: { program_id: programId } }); await refreshOperations({data:{clientId:studentId,event:"training.published"}}); }
     }
     setSaving(false); setMessage(status === "published" ? "Treino publicado." : "Treino salvo."); await load();
   }
@@ -182,7 +188,7 @@ function Page() {
     if (planId) {
       const existingMeals = data?.nutrition?.nutrition_meals ?? []; const keptMealIds = nutrition.meals.flatMap((item) => item.id ? [item.id] : []); const removedMealIds = existingMeals.map((item) => item.id).filter((id) => !keptMealIds.includes(id)); if (removedMealIds.length) await supabase.from("nutrition_meals").delete().in("id", removedMealIds);
       for (const [mealOrder, meal] of nutrition.meals.entries()) { let mealId = meal.id; const mealValues = { name: meal.name, suggested_time: meal.suggested_time || null, instructions: meal.instructions || null, meal_order: mealOrder }; if (mealId) await supabase.from("nutrition_meals").update(mealValues).eq("id", mealId); else { const { data: created } = await supabase.from("nutrition_meals").insert({ ...mealValues, nutrition_plan_id: planId }).select("id").single(); mealId = created?.id; } if (!mealId) continue; const originalItems = existingMeals.find((item) => item.id === mealId)?.nutrition_meal_items ?? []; const keptItemIds = meal.items.flatMap((item) => item.id ? [item.id] : []); const removedItemIds = originalItems.map((item) => item.id).filter((id) => !keptItemIds.includes(id)); if (removedItemIds.length) await supabase.from("nutrition_meal_items").delete().in("id", removedItemIds); for (const [itemOrder, item] of meal.items.entries()) { const itemValues = { food_name: item.food_name, quantity: item.quantity, unit: item.unit || null, calories: item.calories, protein: item.protein, carbs: item.carbs, fat: item.fat, notes: item.notes || null, item_order: itemOrder }; if (item.id) await supabase.from("nutrition_meal_items").update(itemValues).eq("id", item.id); else await supabase.from("nutrition_meal_items").insert({ ...itemValues, meal_id: mealId }); } }
-      if (status === "published") await supabase.from("crm_events").insert({ user_id: studentId, event_type: "nutrition.published", metadata: { nutrition_plan_id: planId } });
+      if (status === "published") { await supabase.from("crm_events").insert({ user_id: studentId, event_type: "nutrition.published", metadata: { nutrition_plan_id: planId } }); await refreshOperations({data:{clientId:studentId,event:"nutrition.published"}}); }
     }
     setSaving(false); setMessage(status === "published" ? "Orientação alimentar publicada." : "Orientação alimentar salva."); await load();
   }
@@ -200,12 +206,14 @@ function Page() {
   const adherence = completedSessions.length ? Math.round(completedSessions.reduce((sum, session) => sum + (session.completion_percent ?? 0), 0) / completedSessions.length) : null;
   const latestActivity=[data.checkins[0]?.created_at,data.sessions[0]?.started_at].filter((value):value is string=>Boolean(value)).sort().at(-1)??null;
   const health=calculateClientHealth({lastActivityAt:latestActivity,checkins30d:data.checkins.length,workouts30d:completedSessions.length,nutritionPublished:data.nutrition?.status==="published",protocolPublished:data.protocol?.status==="published",memberViews30d:data.usage.filter(item=>item.module==="members").length,perceptionActivity30d:data.usage.filter(item=>item.module==="perception").length});
+  const operational=deriveOperationalStatus({activation:data.activation,trainingStatus:data.trainingJob?.status??null,nutritionStatus:data.nutrition?.status??null,perceptionStatus:data.scans[0]?.status??null});
   const updateWorkout = (index: number, next: DraftWorkout) => setWorkouts(workouts.map((item, itemIndex) => itemIndex === index ? next : item));
   const updateMeal = (index: number, next: DraftMeal) => setNutrition({ ...nutrition, meals: nutrition.meals.map((item, itemIndex) => itemIndex === index ? next : item) });
 
   return <AppShell admin><div className="mx-auto max-w-7xl px-5 py-10">
     <Button asChild variant="ghost" className="px-0"><Link to="/admin/students"><ArrowLeft/> Alunos</Link></Button>
     <header className="mt-8 grid gap-8 border-b border-border pb-10 lg:grid-cols-[1fr_auto]"><div><p className="sim-kicker">Cockpit operacional</p><h1 className="mt-4 text-5xl">{data.profile.first_name} {data.profile.last_name}</h1><p className="mt-3 text-muted-foreground">{[data.profile.job_title, data.profile.company, data.profile.city].filter(Boolean).join(" · ") || "Contexto profissional não informado"}</p></div>{data.score ? <ScoreRing score={data.score.total}/> : <div className="self-center text-right"><p className="sim-kicker">SIM Score</p><p className="mt-3 text-muted-foreground">Baseline ainda não realizado.</p></div>}</header>
+    <section className="grid gap-px border-b border-border bg-border sm:grid-cols-5"><div className="bg-background py-5 pr-4"><p className="sim-kicker">Plano</p><p className="mt-2">{planLabels[data.profile.plan]}</p></div><div className="bg-background p-5"><p className="sim-kicker">Etapa</p><p className="mt-2 text-sm">{operational.activationStage?.replaceAll("_"," ")??"Não iniciada"}</p></div><div className="bg-background p-5"><p className="sim-kicker">SLA</p><p className="mt-2 text-sm text-primary">{operational.sla}</p></div><div className="bg-background p-5"><p className="sim-kicker">Responsável</p><p className="mt-2 text-sm">{operational.responsible}</p></div><div className="bg-background p-5"><p className="sim-kicker">Próxima ação</p><p className="mt-2 text-sm">{operational.nextAction}</p></div></section>
 
     <section className={`mt-10 border-y py-8 ${readyCount === 12 ? "border-primary" : "border-border"}`}><div className="flex flex-wrap items-end justify-between gap-5"><div><p className="sim-kicker">Aluno · Readiness</p><h2 className="mt-3 text-4xl">{readyCount} / 12</h2></div>{readyCount === 12 && <p className="border border-primary px-5 py-3 text-xs uppercase tracking-[.16em] text-primary">Full system active</p>}</div><div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{readiness.map(([label, complete]) => <div key={label} className="flex items-center gap-3 border-t border-border pt-3 text-sm"><span className={`grid size-5 place-items-center border ${complete ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{complete && <Check className="size-3"/>}</span>{label}</div>)}</div></section>
 
