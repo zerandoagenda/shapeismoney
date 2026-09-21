@@ -52,7 +52,7 @@ function normalizeLinks(result: FirecrawlResult) {
   const nested = result["data"] && typeof result["data"] === "object" ? result["data"] as Record<string, unknown> : result;
   const values: unknown[] = Array.isArray(result["links"]) ? result["links"] : Array.isArray(nested["links"]) ? nested["links"] : [];
   return [...new Set(values.filter((value): value is string => typeof value === "string")
-    .map((value) => value.split("#")[0])
+    .map((value) => value.split("#")[0] ?? value)
     .filter((value) => /^https:\/\/(www\.)?muscleandstrength\.com\/exercises\/[a-z0-9-]+\/?$/i.test(value))
     .map((value) => value.replace(/\/$/, "")))];
 }
