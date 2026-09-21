@@ -2830,6 +2830,11 @@ export type Database = {
         | "admin_master"
         | "content"
         | "analyst"
+        | "relationship"
+        | "nutrition"
+        | "specialist"
+        | "beta_member"
+        | "member"
       perception_scan_status:
         | "processing"
         | "ai_completed"
@@ -2980,6 +2985,11 @@ export const Constants = {
         "admin_master",
         "content",
         "analyst",
+        "relationship",
+        "nutrition",
+        "specialist",
+        "beta_member",
+        "member",
       ],
       perception_scan_status: [
         "processing",
