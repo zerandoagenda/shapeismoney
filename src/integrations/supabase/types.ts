@@ -3596,12 +3596,14 @@ export type Database = {
           error_message: string | null
           extracted_text: string | null
           id: string
-          mime_type: string
-          original_filename: string
+          import_source: string
+          mime_type: string | null
+          original_filename: string | null
           parsed_payload: Json | null
           program_id: string | null
+          source_text: string | null
           status: string
-          storage_path: string
+          storage_path: string | null
           updated_at: string
           uploaded_by: string
           version: number
@@ -3613,12 +3615,14 @@ export type Database = {
           error_message?: string | null
           extracted_text?: string | null
           id?: string
-          mime_type: string
-          original_filename: string
+          import_source?: string
+          mime_type?: string | null
+          original_filename?: string | null
           parsed_payload?: Json | null
           program_id?: string | null
+          source_text?: string | null
           status?: string
-          storage_path: string
+          storage_path?: string | null
           updated_at?: string
           uploaded_by: string
           version?: number
@@ -3630,12 +3634,14 @@ export type Database = {
           error_message?: string | null
           extracted_text?: string | null
           id?: string
-          mime_type?: string
-          original_filename?: string
+          import_source?: string
+          mime_type?: string | null
+          original_filename?: string | null
           parsed_payload?: Json | null
           program_id?: string | null
+          source_text?: string | null
           status?: string
-          storage_path?: string
+          storage_path?: string | null
           updated_at?: string
           uploaded_by?: string
           version?: number
