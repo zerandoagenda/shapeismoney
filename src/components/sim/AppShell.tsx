@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BarChart3, BrainCircuit, BriefcaseBusiness, CheckSquare, ClipboardList, Dumbbell, FileChartColumn, HeartHandshake, Home, LogOut, Menu, ScanLine, Settings, Shield, Sparkles, UserRound, UsersRound, Utensils, X } from "lucide-react";
+import { BarChart3, BrainCircuit, BriefcaseBusiness, CheckSquare, ClipboardList, Dumbbell, FileChartColumn, HeartHandshake, Home, LogOut, Menu, Network, ScanLine, Settings, Shield, Sparkles, UserRound, UsersRound, Utensils, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brand } from "./Brand";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,9 @@ import { AdminCommandCenter } from "./AdminCommandCenter";
 import { PermissionService } from "@/lib/permissions";
 const memberNav = [
   { group: "Overview", items: [["/dashboard", "Home", Home]] },
-  { group: "Performance", items: [["/performance", "Performance", BarChart3], ["/training", "Treino", Dumbbell], ["/nutrition", "Nutrição", Utensils], ["/perception-lab", "Perception Lab", ScanLine], ["/money-brain", "Money Brain", BrainCircuit]] },
-  { group: "Ecossistema", items: [["/members", "Members", UsersRound], ["/sim-select", "SIM Select", Sparkles]] },
-  { group: "Jornada", items: [["/my-journey", "Minha Jornada", HeartHandshake]] },
+  { group: "Performance", items: [["/performance", "Performance", BarChart3], ["/training", "Treino", Dumbbell], ["/nutrition", "Nutrição", Utensils], ["/food-log", "Food Log", Utensils], ["/perception-lab", "Perception Lab", ScanLine], ["/money-brain", "Money Brain", BrainCircuit]] },
+  { group: "Ecossistema", items: [["/members", "Members", UsersRound], ["/experiences", "Experiences", Sparkles], ["/network", "SIM Network", Network], ["/sim-select", "SIM Select", Sparkles]] },
+  { group: "Jornada", items: [["/my-journey", "Minha Jornada", HeartHandshake], ["/monthly-review", "Revisão mensal", ClipboardList]] },
   { group: "Conta", items: [["/profile", "Perfil", UserRound]] },
 ] as const;
 const mobileNav = [["/dashboard", "Home", Home], ["/training", "Treino", Dumbbell], ["/performance", "Performance", BarChart3], ["/my-journey", "Jornada", HeartHandshake], ["/profile", "Perfil", UserRound]] as const;
