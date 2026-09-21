@@ -23,4 +23,4 @@
 - [x] Registrar carga e repetições individualmente por série
 - [x] Retomar sessão e cronômetro persistente após sair da página
 - [x] Manter Fábio como aluno Plus sem beta ou acesso administrativo
-- [ ] Validar carteira administrativa, treino e vídeos em celular e desktop
+- [x] Validar carteira administrativa, treino e vídeos em celular e desktop
