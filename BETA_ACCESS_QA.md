@@ -13,9 +13,9 @@
 - Roles and configurable SLA are managed by ADMIN_MASTER.
 
 ## Honest development states
-- Community: editorial Members exists; social/community operation is in development.
-- Monthly Review: not exposed as complete; weekly review remains the implemented flow.
-- Food Log: not exposed as complete; published nutritional guidance remains available.
+- SIM Network: editorial posts, private media, likes, comments and saves are operational.
+- Monthly Review: exposed with real member inputs and a non-causality notice.
+- Food Log: manual logging and daily totals are operational; Scan Food remains confirmation-based only.
 - Payments, cart, WhatsApp, wearables and autonomous training/nutrition AI remain outside scope.
 
 ## Security assertions

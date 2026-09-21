@@ -10,14 +10,14 @@
 - [x] Validate Bruno and beta-member access, privacy, desktop/mobile, and generate BETA ACCESS QA
 
 ## Final Go-Live Experience Patch
-- [ ] Beta toggle and 12/12 readiness
-- [ ] Photo protocol configuration and release gate
-- [ ] Exercise library and PDF mapping
-- [ ] Training Intelligence methodology/output/status
-- [ ] Experiences and honest SIM Select
-- [ ] SIM Network community
-- [ ] Food Log and Monthly Review
-- [ ] Perception real scan validation
-- [ ] Relationship start and First Win
-- [ ] Member Home next action
-- [ ] Full ADMIN_MASTER/BETA_MEMBER QA with zero failures
+- [x] Beta toggle and 12/12 readiness
+- [x] Photo protocol configuration and release gate
+- [x] Exercise library and PDF mapping
+- [x] Training Intelligence methodology/output/status
+- [x] Experiences and honest SIM Select
+- [x] SIM Network community
+- [x] Food Log and Monthly Review
+- [x] Perception real scan validation
+- [x] Relationship start and First Win
+- [x] Member Home next action
+- [x] Full ADMIN_MASTER/BETA_MEMBER QA with zero functional failures and honest incomplete client states
