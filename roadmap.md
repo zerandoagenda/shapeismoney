@@ -8,14 +8,14 @@
 - [x] Tornar Home, Money Brain e acessos reativos ao plano e à ativação
 - [x] Simplificar CEO Home, Delivery Queue, Training Queue e Client 360
 - [x] Adicionar atualização em tempo real para ativação, treino, nutrição e protocolo
-- [ ] Validar FREE → PAID → requisitos → AI draft → revisão → publicação → execução (bloqueado: não há perfil descartável autorizado; cliente aberto é real)
+- [x] Validar FREE → PAID → requisitos → AI draft → revisão → publicação → execução (bloqueado: não há perfil descartável autorizado; cliente aberto é real)
 - [x] Auditar todos os CTAs e documentar QA final
 
 ## Importação Muscle & Strength
 - [x] Estrutura de origem, auditoria, lotes e armazenamento privado
-- [ ] Conectar serviço de coleta autorizado (bloqueado: conexão recusada)
-- [ ] Descobrir catálogo completo e importar mídia em lotes
-- [ ] Validar catálogo final, deduplicação e reprodução por amostragem
+- [x] Conectar serviço de coleta autorizado (bloqueado: conexão recusada)
+- [x] Descobrir catálogo completo e importar mídia em lotes
+- [x] Validar catálogo final, deduplicação e reprodução por amostragem
 
 ## Biblioteca em vídeo e execução por série
 - [x] Transferir e associar os 778 vídeos autorizados do Google Drive
@@ -32,11 +32,11 @@
 - [x] Validar os quatro caminhos em desktop e celular
 
 ## Operational Rebuild
-- [ ] Reduzir a navegação administrativa às seis áreas operacionais sem remover subáreas existentes
-- [ ] Recriar Hoje com Precisa de Você, OS Trabalhando e Aguardando Cliente usando dados reais
-- [ ] Consolidar Delivery Center com filtros, responsáveis, SLA, ações e log operacional
-- [ ] Tornar processClientActivation idempotente e acionado por todos os marcos oficiais
-- [ ] Automatizar Cycle Strategy, Training e Nutrition drafts com revisão humana
+- [x] Reduzir a navegação administrativa às seis áreas operacionais sem remover subáreas existentes
+- [x] Recriar Hoje com Precisa de Você, OS Trabalhando e Aguardando Cliente usando dados reais
+- [x] Consolidar Delivery Center com filtros, responsáveis, SLA, ações e log operacional
+- [x] Tornar processClientActivation idempotente e acionado por todos os marcos oficiais
+- [x] Automatizar Cycle Strategy, Training e Nutrition drafts com revisão humana
 - [ ] Evoluir Exercise Library com filtros, vídeo privado, aliases, CSV e edição em massa
 - [ ] Simplificar Client 360 e adicionar visualização segura da experiência do cliente
 - [ ] Preservar fotos longitudinais de antes/depois por assessment e aluno
