@@ -1,0 +1,1 @@
+export { supabaseAdmin as trustedAdmin } from "@/integrations/supabase/client.server";
