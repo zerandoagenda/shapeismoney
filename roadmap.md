@@ -8,14 +8,14 @@
 - [x] Tornar Home, Money Brain e acessos reativos ao plano e à ativação
 - [x] Simplificar CEO Home, Delivery Queue, Training Queue e Client 360
 - [x] Adicionar atualização em tempo real para ativação, treino, nutrição e protocolo
-- [x] Validar FREE → PAID → requisitos → AI draft → revisão → publicação → execução (bloqueado: não há perfil descartável autorizado; cliente aberto é real)
+- [ ] Validar FREE → PAID → requisitos → AI draft → revisão → publicação → execução (bloqueado: não há perfil descartável autorizado; cliente aberto é real)
 - [x] Auditar todos os CTAs e documentar QA final
 
 ## Importação Muscle & Strength
 - [x] Estrutura de origem, auditoria, lotes e armazenamento privado
-- [x] Conectar serviço de coleta autorizado (bloqueado: conexão recusada)
-- [x] Descobrir catálogo completo e importar mídia em lotes
-- [x] Validar catálogo final, deduplicação e reprodução por amostragem
+- [ ] Conectar serviço de coleta autorizado (bloqueado: conexão recusada)
+- [ ] Descobrir catálogo completo e importar mídia em lotes
+- [ ] Validar catálogo final, deduplicação e reprodução por amostragem
 
 ## Biblioteca em vídeo e execução por série
 - [x] Transferir e associar os 778 vídeos autorizados do Google Drive
@@ -37,8 +37,8 @@
 - [x] Consolidar Delivery Center com filtros, responsáveis, SLA, ações e log operacional
 - [x] Tornar processClientActivation idempotente e acionado por todos os marcos oficiais
 - [x] Automatizar Cycle Strategy, Training e Nutrition drafts com revisão humana
-- [ ] Evoluir Exercise Library com filtros, vídeo privado, aliases, CSV e edição em massa
+- [x] Evoluir Exercise Library com filtros, vídeo privado, aliases, CSV e edição em massa
 - [ ] Simplificar Client 360 e adicionar visualização segura da experiência do cliente
-- [ ] Preservar fotos longitudinais de antes/depois por assessment e aluno
-- [ ] Implementar reconciliação, retry, erros visíveis e atualização sem recarregar
+- [x] Preservar fotos longitudinais de antes/depois por assessment e aluno
+- [x] Implementar reconciliação, retry, erros visíveis e atualização sem recarregar
 - [ ] Validar fluxos ALUNO OS TEST, Bruno, cliente e Exercise Library
