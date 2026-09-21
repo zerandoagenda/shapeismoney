@@ -541,6 +541,54 @@ export type Database = {
           },
         ]
       }
+      client_operation_events: {
+        Row: {
+          activation_id: string | null
+          actor_type: string
+          client_id: string
+          event_type: string
+          id: string
+          metadata: Json
+          occurred_at: string
+          summary: string
+        }
+        Insert: {
+          activation_id?: string | null
+          actor_type: string
+          client_id: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          summary: string
+        }
+        Update: {
+          activation_id?: string | null
+          actor_type?: string
+          client_id?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_operation_events_activation_id_fkey"
+            columns: ["activation_id"]
+            isOneToOne: false
+            referencedRelation: "client_activations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_operation_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_relationships: {
         Row: {
           attention_level: string
@@ -942,12 +990,16 @@ export type Database = {
       }
       cycle_strategies: {
         Row: {
+          ai_original: Json | null
+          approved_at: string | null
+          approved_by: string | null
           behavior_goal: string | null
           capacity_goal: string | null
           client_id: string
           contingency_rules: Json
           created_at: string
           created_by: string
+          final_version: Json | null
           id: string
           limitations: string[]
           maintenance_regions: string[]
@@ -966,12 +1018,16 @@ export type Database = {
           weekly_frequency: number
         }
         Insert: {
+          ai_original?: Json | null
+          approved_at?: string | null
+          approved_by?: string | null
           behavior_goal?: string | null
           capacity_goal?: string | null
           client_id: string
           contingency_rules?: Json
           created_at?: string
           created_by: string
+          final_version?: Json | null
           id?: string
           limitations?: string[]
           maintenance_regions?: string[]
@@ -990,12 +1046,16 @@ export type Database = {
           weekly_frequency: number
         }
         Update: {
+          ai_original?: Json | null
+          approved_at?: string | null
+          approved_by?: string | null
           behavior_goal?: string | null
           capacity_goal?: string | null
           client_id?: string
           contingency_rules?: Json
           created_at?: string
           created_by?: string
+          final_version?: Json | null
           id?: string
           limitations?: string[]
           maintenance_regions?: string[]
@@ -1014,6 +1074,13 @@ export type Database = {
           weekly_frequency?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "cycle_strategies_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "cycle_strategies_client_id_fkey"
             columns: ["client_id"]
@@ -1731,6 +1798,85 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nutrition_generation_jobs: {
+        Row: {
+          activation_id: string | null
+          attempts: number
+          client_id: string
+          completed_at: string | null
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          last_attempt_at: string | null
+          missing_prerequisites: Json
+          plan_id: string | null
+          readiness_snapshot: Json
+          started_at: string | null
+          status: Database["public"]["Enums"]["nutrition_generation_status"]
+          trigger_source: string
+          updated_at: string
+        }
+        Insert: {
+          activation_id?: string | null
+          attempts?: number
+          client_id: string
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          missing_prerequisites?: Json
+          plan_id?: string | null
+          readiness_snapshot?: Json
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["nutrition_generation_status"]
+          trigger_source: string
+          updated_at?: string
+        }
+        Update: {
+          activation_id?: string | null
+          attempts?: number
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          missing_prerequisites?: Json
+          plan_id?: string | null
+          readiness_snapshot?: Json
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["nutrition_generation_status"]
+          trigger_source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nutrition_generation_jobs_activation_id_fkey"
+            columns: ["activation_id"]
+            isOneToOne: false
+            referencedRelation: "client_activations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nutrition_generation_jobs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nutrition_generation_jobs_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "nutrition_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -3512,9 +3658,12 @@ export type Database = {
           client_id: string
           created_at: string
           cycle_id: string | null
+          error_code: string | null
           error_message: string | null
           finished_at: string | null
           id: string
+          last_attempt_at: string | null
+          last_error: string | null
           missing_prerequisites: Json
           program_id: string | null
           readiness_snapshot: Json
@@ -3529,9 +3678,12 @@ export type Database = {
           client_id: string
           created_at?: string
           cycle_id?: string | null
+          error_code?: string | null
           error_message?: string | null
           finished_at?: string | null
           id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
           missing_prerequisites?: Json
           program_id?: string | null
           readiness_snapshot?: Json
@@ -3546,9 +3698,12 @@ export type Database = {
           client_id?: string
           created_at?: string
           cycle_id?: string | null
+          error_code?: string | null
           error_message?: string | null
           finished_at?: string | null
           id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
           missing_prerequisites?: Json
           program_id?: string | null
           readiness_snapshot?: Json
@@ -4222,6 +4377,14 @@ export type Database = {
         | "READY"
         | "COMPLETED"
         | "CANCELLED"
+      nutrition_generation_status:
+        | "WAITING_DATA"
+        | "READY"
+        | "GENERATING"
+        | "DRAFT_READY"
+        | "HUMAN_REVIEW"
+        | "PUBLISHED"
+        | "FAILED"
       perception_scan_status:
         | "processing"
         | "ai_completed"
@@ -4239,6 +4402,7 @@ export type Database = {
         | "WAITING_PREREQUISITES"
         | "READY"
         | "GENERATING"
+        | "NEEDS_LIBRARY"
         | "DRAFT_READY"
         | "HUMAN_REVIEW"
         | "APPROVED"
@@ -4409,6 +4573,15 @@ export const Constants = {
         "COMPLETED",
         "CANCELLED",
       ],
+      nutrition_generation_status: [
+        "WAITING_DATA",
+        "READY",
+        "GENERATING",
+        "DRAFT_READY",
+        "HUMAN_REVIEW",
+        "PUBLISHED",
+        "FAILED",
+      ],
       perception_scan_status: [
         "processing",
         "ai_completed",
@@ -4428,6 +4601,7 @@ export const Constants = {
         "WAITING_PREREQUISITES",
         "READY",
         "GENERATING",
+        "NEEDS_LIBRARY",
         "DRAFT_READY",
         "HUMAN_REVIEW",
         "APPROVED",
