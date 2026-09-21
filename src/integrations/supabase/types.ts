@@ -631,6 +631,158 @@ export type Database = {
           },
         ]
       }
+      community_comments: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_posts: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          image_mime_type: string | null
+          image_path: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          image_mime_type?: string | null
+          image_path?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          image_mime_type?: string | null
+          image_path?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_saves: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_saves_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_saves_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_events: {
         Row: {
           created_at: string
@@ -855,10 +1007,12 @@ export type Database = {
           avatar_animation_url: string | null
           category: string | null
           common_errors: string | null
+          common_errors_list: string[]
           created_at: string
           description: string | null
           difficulty: string | null
           equipment: string | null
+          equipment_options: string[]
           execution_cues: string[]
           fatigue_cost: string | null
           id: string
@@ -886,10 +1040,12 @@ export type Database = {
           avatar_animation_url?: string | null
           category?: string | null
           common_errors?: string | null
+          common_errors_list?: string[]
           created_at?: string
           description?: string | null
           difficulty?: string | null
           equipment?: string | null
+          equipment_options?: string[]
           execution_cues?: string[]
           fatigue_cost?: string | null
           id?: string
@@ -917,10 +1073,12 @@ export type Database = {
           avatar_animation_url?: string | null
           category?: string | null
           common_errors?: string | null
+          common_errors_list?: string[]
           created_at?: string
           description?: string | null
           difficulty?: string | null
           equipment?: string | null
+          equipment_options?: string[]
           execution_cues?: string[]
           fatigue_cost?: string | null
           id?: string
@@ -1018,18 +1176,21 @@ export type Database = {
           created_at: string
           experience_id: string
           id: string
+          status: string
           user_id: string
         }
         Insert: {
           created_at?: string
           experience_id: string
           id?: string
+          status?: string
           user_id: string
         }
         Update: {
           created_at?: string
           experience_id?: string
           id?: string
+          status?: string
           user_id?: string
         }
         Relationships: [
@@ -1042,6 +1203,68 @@ export type Database = {
           },
           {
             foreignKeyName: "experience_interests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      food_log_entries: {
+        Row: {
+          calories: number | null
+          carbs: number | null
+          created_at: string
+          estimate_confirmed: boolean
+          fat: number | null
+          food_name: string
+          id: string
+          logged_at: string
+          meal_name: string
+          protein: number | null
+          quantity: number | null
+          source: string
+          unit: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calories?: number | null
+          carbs?: number | null
+          created_at?: string
+          estimate_confirmed?: boolean
+          fat?: number | null
+          food_name: string
+          id?: string
+          logged_at?: string
+          meal_name: string
+          protein?: number | null
+          quantity?: number | null
+          source?: string
+          unit?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calories?: number | null
+          carbs?: number | null
+          created_at?: string
+          estimate_confirmed?: boolean
+          fat?: number | null
+          food_name?: string
+          id?: string
+          logged_at?: string
+          meal_name?: string
+          protein?: number | null
+          quantity?: number | null
+          source?: string
+          unit?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_log_entries_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1159,6 +1382,7 @@ export type Database = {
       member_experiences: {
         Row: {
           active: boolean
+          capacity: number | null
           cover_url: string | null
           created_at: string
           description: string
@@ -1172,6 +1396,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          capacity?: number | null
           cover_url?: string | null
           created_at?: string
           description: string
@@ -1185,6 +1410,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          capacity?: number | null
           cover_url?: string | null
           created_at?: string
           description?: string
@@ -1197,6 +1423,74 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      monthly_reviews: {
+        Row: {
+          confidence: number
+          consistency: number
+          created_at: string
+          energy: number
+          id: string
+          month_start: string
+          notes: string | null
+          productivity: number
+          professional_performance: number
+          quality_time: number
+          revenue: number | null
+          schedule_control: number
+          sim_score: number | null
+          sleep: number
+          stress: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence: number
+          consistency: number
+          created_at?: string
+          energy: number
+          id?: string
+          month_start: string
+          notes?: string | null
+          productivity: number
+          professional_performance: number
+          quality_time: number
+          revenue?: number | null
+          schedule_control: number
+          sim_score?: number | null
+          sleep: number
+          stress: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence?: number
+          consistency?: number
+          created_at?: string
+          energy?: number
+          id?: string
+          month_start?: string
+          notes?: string | null
+          productivity?: number
+          professional_performance?: number
+          quality_time?: number
+          revenue?: number | null
+          schedule_control?: number
+          sim_score?: number | null
+          sleep?: number
+          stress?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nutrition_meal_items: {
         Row: {
@@ -1719,6 +2013,7 @@ export type Database = {
           pose_code: string | null
           protocol_code: string
           public_name: string | null
+          purpose: string | null
           reference_asset_url: string | null
           required: boolean
           slot_number: number
@@ -1735,6 +2030,7 @@ export type Database = {
           pose_code?: string | null
           protocol_code?: string
           public_name?: string | null
+          purpose?: string | null
           reference_asset_url?: string | null
           required?: boolean
           slot_number: number
@@ -1751,6 +2047,7 @@ export type Database = {
           pose_code?: string | null
           protocol_code?: string
           public_name?: string | null
+          purpose?: string | null
           reference_asset_url?: string | null
           required?: boolean
           slot_number?: number
