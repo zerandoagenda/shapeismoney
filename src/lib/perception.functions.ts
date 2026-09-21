@@ -27,8 +27,9 @@ export const analyzePerceptionScan = createServerFn({ method: "POST" })
       context.supabase.from("profiles").select("plan").eq("id", context.userId).single(),
     ]);
     if (!profile) throw new Error("Perfil não encontrado.");
-    const { data: entitlement } = await context.supabase.from("plan_entitlements").select("enabled").eq("feature_key", "can_access_perception_lab").eq("plan", profile.plan).maybeSingle();
-    if (!scan || entitlement?.enabled !== true) throw new Error("Seu plano não libera o Perception Lab.");
+    const [{ data: entitlement }, { data: roles }] = await Promise.all([context.supabase.from("plan_entitlements").select("enabled").eq("feature_key", "can_access_perception_lab").eq("plan", profile.plan).maybeSingle(), context.supabase.from("user_roles").select("role").eq("user_id", context.userId)]);
+    const betaAccess=(roles??[]).some(item=>item.role==="beta_member"||item.role==="admin_master");
+    if (!scan || (entitlement?.enabled !== true && !betaAccess)) throw new Error("O Perception Lab não está liberado para esta conta.");
     const { data: imageRows } = await context.supabase.from("perception_scan_images").select("*").eq("scan_id", scan.id).order("created_at");
     if (!imageRows || !imageRows.some((item) => item.image_type === "front") || !imageRows.some((item) => item.image_type === "profile") || !imageRows.some((item) => item.image_type === "back")) throw new Error("Envie as fotos de frente, perfil e costas antes da análise.");
     const key = process.env['LOVABLE_API_KEY'];

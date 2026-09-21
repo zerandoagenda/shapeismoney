@@ -15,3 +15,6 @@ export function createPerceptionModel(apiKey: string) {
 export function createTrainingArchitectModel(apiKey: string) {
   return createLovableResponsesProvider(apiKey).responses("openai/gpt-6-astra");
 }
+export function createRelationshipIntelligenceModel(apiKey: string) {
+  return createLovableResponsesProvider(apiKey).responses("openai/gpt-6-astra");
+}

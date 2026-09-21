@@ -19,6 +19,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDiagnosisRouteImport } from './routes/_authenticated/diagnosis'
 import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticated/members'
 import { Route as AuthenticatedMoneyBrainRouteImport } from './routes/_authenticated/money-brain'
+import { Route as AuthenticatedMyJourneyRouteImport } from './routes/_authenticated/my-journey'
 import { Route as AuthenticatedNutritionRouteImport } from './routes/_authenticated/nutrition'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPerceptionLabRouteImport } from './routes/_authenticated/perception-lab'
@@ -34,6 +35,7 @@ import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminMoneyBrainRouteImport } from './routes/_authenticated/admin.money-brain'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminPerceptionRouteImport } from './routes/_authenticated/admin.perception'
+import { Route as AuthenticatedAdminRelationshipRouteImport } from './routes/_authenticated/admin.relationship'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminSimSelectRouteImport } from './routes/_authenticated/admin.sim-select'
@@ -41,6 +43,7 @@ import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/admin.tasks'
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
 import { Route as AuthenticatedTrainingAssessmentRouteImport } from './routes/_authenticated/training.assessment'
+import { Route as AuthenticatedAdminRelationshipStudentIdRouteImport } from './routes/_authenticated/admin.relationship.$studentId'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
 import { Route as AuthenticatedAdminTrainingIndexRouteImport } from './routes/_authenticated/admin.training.index'
@@ -94,6 +97,11 @@ const AuthenticatedMembersRoute = AuthenticatedMembersRouteImport.update({
 const AuthenticatedMoneyBrainRoute = AuthenticatedMoneyBrainRouteImport.update({
   id: '/money-brain',
   path: '/money-brain',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMyJourneyRoute = AuthenticatedMyJourneyRouteImport.update({
+  id: '/my-journey',
+  path: '/my-journey',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNutritionRoute = AuthenticatedNutritionRouteImport.update({
@@ -180,6 +188,12 @@ const AuthenticatedAdminPerceptionRoute =
     path: '/admin/perception',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminRelationshipRoute =
+  AuthenticatedAdminRelationshipRouteImport.update({
+    id: '/admin/relationship',
+    path: '/admin/relationship',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminReportsRoute =
   AuthenticatedAdminReportsRouteImport.update({
     id: '/admin/reports',
@@ -220,6 +234,12 @@ const AuthenticatedTrainingAssessmentRoute =
     id: '/assessment',
     path: '/assessment',
     getParentRoute: () => AuthenticatedTrainingRoute,
+  } as any)
+const AuthenticatedAdminRelationshipStudentIdRoute =
+  AuthenticatedAdminRelationshipStudentIdRouteImport.update({
+    id: '/$studentId',
+    path: '/$studentId',
+    getParentRoute: () => AuthenticatedAdminRelationshipRoute,
   } as any)
 const AuthenticatedAdminStudentsIndexRoute =
   AuthenticatedAdminStudentsIndexRouteImport.update({
@@ -262,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/members': typeof AuthenticatedMembersRouteWithChildren
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
+  '/my-journey': typeof AuthenticatedMyJourneyRoute
   '/nutrition': typeof AuthenticatedNutritionRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perception-lab': typeof AuthenticatedPerceptionLabRoute
@@ -276,6 +297,7 @@ export interface FileRoutesByFullPath {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -284,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -300,6 +323,7 @@ export interface FileRoutesByTo {
   '/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/members': typeof AuthenticatedMembersRouteWithChildren
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
+  '/my-journey': typeof AuthenticatedMyJourneyRoute
   '/nutrition': typeof AuthenticatedNutritionRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perception-lab': typeof AuthenticatedPerceptionLabRoute
@@ -314,6 +338,7 @@ export interface FileRoutesByTo {
   '/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -321,6 +346,7 @@ export interface FileRoutesByTo {
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -339,6 +365,7 @@ export interface FileRoutesById {
   '/_authenticated/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/_authenticated/members': typeof AuthenticatedMembersRouteWithChildren
   '/_authenticated/money-brain': typeof AuthenticatedMoneyBrainRoute
+  '/_authenticated/my-journey': typeof AuthenticatedMyJourneyRoute
   '/_authenticated/nutrition': typeof AuthenticatedNutritionRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/perception-lab': typeof AuthenticatedPerceptionLabRoute
@@ -353,6 +380,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/money-brain': typeof AuthenticatedAdminMoneyBrainRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/perception': typeof AuthenticatedAdminPerceptionRoute
+  '/_authenticated/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/sim-select': typeof AuthenticatedAdminSimSelectRoute
@@ -361,6 +389,7 @@ export interface FileRoutesById {
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/_authenticated/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/_authenticated/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
   '/_authenticated/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
@@ -379,6 +408,7 @@ export interface FileRouteTypes {
     | '/diagnosis'
     | '/members'
     | '/money-brain'
+    | '/my-journey'
     | '/nutrition'
     | '/onboarding'
     | '/perception-lab'
@@ -393,6 +423,7 @@ export interface FileRouteTypes {
     | '/admin/money-brain'
     | '/admin/operations'
     | '/admin/perception'
+    | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
     | '/admin/sim-select'
@@ -401,6 +432,7 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/training/assessment'
     | '/admin/'
+    | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
     | '/admin/training/knowledge'
@@ -417,6 +449,7 @@ export interface FileRouteTypes {
     | '/diagnosis'
     | '/members'
     | '/money-brain'
+    | '/my-journey'
     | '/nutrition'
     | '/onboarding'
     | '/perception-lab'
@@ -431,6 +464,7 @@ export interface FileRouteTypes {
     | '/admin/money-brain'
     | '/admin/operations'
     | '/admin/perception'
+    | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
     | '/admin/sim-select'
@@ -438,6 +472,7 @@ export interface FileRouteTypes {
     | '/members/$slug'
     | '/training/assessment'
     | '/admin'
+    | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
     | '/admin/training/knowledge'
@@ -455,6 +490,7 @@ export interface FileRouteTypes {
     | '/_authenticated/diagnosis'
     | '/_authenticated/members'
     | '/_authenticated/money-brain'
+    | '/_authenticated/my-journey'
     | '/_authenticated/nutrition'
     | '/_authenticated/onboarding'
     | '/_authenticated/perception-lab'
@@ -469,6 +505,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/money-brain'
     | '/_authenticated/admin/operations'
     | '/_authenticated/admin/perception'
+    | '/_authenticated/admin/relationship'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/sim-select'
@@ -477,6 +514,7 @@ export interface FileRouteTypes {
     | '/_authenticated/members/$slug'
     | '/_authenticated/training/assessment'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/relationship/$studentId'
     | '/_authenticated/admin/students/$studentId'
     | '/_authenticated/admin/training/$studentId'
     | '/_authenticated/admin/training/knowledge'
@@ -562,6 +600,13 @@ declare module '@tanstack/react-router' {
       path: '/money-brain'
       fullPath: '/money-brain'
       preLoaderRoute: typeof AuthenticatedMoneyBrainRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/my-journey': {
+      id: '/_authenticated/my-journey'
+      path: '/my-journey'
+      fullPath: '/my-journey'
+      preLoaderRoute: typeof AuthenticatedMyJourneyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/nutrition': {
@@ -669,6 +714,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPerceptionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/relationship': {
+      id: '/_authenticated/admin/relationship'
+      path: '/admin/relationship'
+      fullPath: '/admin/relationship'
+      preLoaderRoute: typeof AuthenticatedAdminRelationshipRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/reports': {
       id: '/_authenticated/admin/reports'
       path: '/admin/reports'
@@ -717,6 +769,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/training/assessment'
       preLoaderRoute: typeof AuthenticatedTrainingAssessmentRouteImport
       parentRoute: typeof AuthenticatedTrainingRoute
+    }
+    '/_authenticated/admin/relationship/$studentId': {
+      id: '/_authenticated/admin/relationship/$studentId'
+      path: '/$studentId'
+      fullPath: '/admin/relationship/$studentId'
+      preLoaderRoute: typeof AuthenticatedAdminRelationshipStudentIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRelationshipRoute
     }
     '/_authenticated/admin/students/': {
       id: '/_authenticated/admin/students/'
@@ -780,6 +839,21 @@ const AuthenticatedTrainingRouteWithChildren =
     AuthenticatedTrainingRouteChildren,
   )
 
+interface AuthenticatedAdminRelationshipRouteChildren {
+  AuthenticatedAdminRelationshipStudentIdRoute: typeof AuthenticatedAdminRelationshipStudentIdRoute
+}
+
+const AuthenticatedAdminRelationshipRouteChildren: AuthenticatedAdminRelationshipRouteChildren =
+  {
+    AuthenticatedAdminRelationshipStudentIdRoute:
+      AuthenticatedAdminRelationshipStudentIdRoute,
+  }
+
+const AuthenticatedAdminRelationshipRouteWithChildren =
+  AuthenticatedAdminRelationshipRoute._addFileChildren(
+    AuthenticatedAdminRelationshipRouteChildren,
+  )
+
 interface AuthenticatedAdminStudentsRouteChildren {
   AuthenticatedAdminStudentsStudentIdRoute: typeof AuthenticatedAdminStudentsStudentIdRoute
   AuthenticatedAdminStudentsIndexRoute: typeof AuthenticatedAdminStudentsIndexRoute
@@ -803,6 +877,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDiagnosisRoute: typeof AuthenticatedDiagnosisRoute
   AuthenticatedMembersRoute: typeof AuthenticatedMembersRouteWithChildren
   AuthenticatedMoneyBrainRoute: typeof AuthenticatedMoneyBrainRoute
+  AuthenticatedMyJourneyRoute: typeof AuthenticatedMyJourneyRoute
   AuthenticatedNutritionRoute: typeof AuthenticatedNutritionRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPerceptionLabRoute: typeof AuthenticatedPerceptionLabRoute
@@ -817,6 +892,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminMoneyBrainRoute: typeof AuthenticatedAdminMoneyBrainRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPerceptionRoute: typeof AuthenticatedAdminPerceptionRoute
+  AuthenticatedAdminRelationshipRoute: typeof AuthenticatedAdminRelationshipRouteWithChildren
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSimSelectRoute: typeof AuthenticatedAdminSimSelectRoute
@@ -834,6 +910,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDiagnosisRoute: AuthenticatedDiagnosisRoute,
   AuthenticatedMembersRoute: AuthenticatedMembersRouteWithChildren,
   AuthenticatedMoneyBrainRoute: AuthenticatedMoneyBrainRoute,
+  AuthenticatedMyJourneyRoute: AuthenticatedMyJourneyRoute,
   AuthenticatedNutritionRoute: AuthenticatedNutritionRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPerceptionLabRoute: AuthenticatedPerceptionLabRoute,
@@ -848,6 +925,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminMoneyBrainRoute: AuthenticatedAdminMoneyBrainRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminPerceptionRoute: AuthenticatedAdminPerceptionRoute,
+  AuthenticatedAdminRelationshipRoute:
+    AuthenticatedAdminRelationshipRouteWithChildren,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSimSelectRoute: AuthenticatedAdminSimSelectRoute,
