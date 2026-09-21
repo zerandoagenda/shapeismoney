@@ -38,7 +38,7 @@
 - [x] Tornar processClientActivation idempotente e acionado por todos os marcos oficiais
 - [x] Automatizar Cycle Strategy, Training e Nutrition drafts com revisão humana
 - [x] Evoluir Exercise Library com filtros, vídeo privado, aliases, CSV e edição em massa
-- [ ] Simplificar Client 360 e adicionar visualização segura da experiência do cliente
+- [x] Simplificar Client 360 e adicionar visualização segura da experiência do cliente
 - [x] Preservar fotos longitudinais de antes/depois por assessment e aluno
 - [x] Implementar reconciliação, retry, erros visíveis e atualização sem recarregar
 - [ ] Validar fluxos ALUNO OS TEST, Bruno, cliente e Exercise Library
