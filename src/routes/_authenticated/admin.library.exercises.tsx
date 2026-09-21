@@ -1,0 +1,3 @@
+import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { requireStaff } from "@/lib/admin-guard";
+export const Route=createFileRoute("/_authenticated/admin/library/exercises")({beforeLoad:requireStaff,head:()=>({meta:[{title:"Exercise Library — Shape Is Money"},{name:"description",content:"Catálogo oficial de exercícios e mídia."},{property:"og:title",content:"Exercise Library — Shape Is Money"},{property:"og:description",content:"Catálogo oficial de exercícios e mídia."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary"}]}),component:()=> <Navigate to="/admin/training/exercises" replace/>});
