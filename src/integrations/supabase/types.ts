@@ -999,6 +999,135 @@ export type Database = {
           },
         ]
       }
+      exercise_import_batches: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          cursor_url: string | null
+          discovered_count: number
+          duplicate_count: number
+          error_count: number
+          error_summary: string | null
+          id: string
+          imported_count: number
+          processed_count: number
+          requested_by: string
+          source_catalog_url: string
+          source_name: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          updated_count: number
+          without_video_count: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          cursor_url?: string | null
+          discovered_count?: number
+          duplicate_count?: number
+          error_count?: number
+          error_summary?: string | null
+          id?: string
+          imported_count?: number
+          processed_count?: number
+          requested_by: string
+          source_catalog_url: string
+          source_name: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          updated_count?: number
+          without_video_count?: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          cursor_url?: string | null
+          discovered_count?: number
+          duplicate_count?: number
+          error_count?: number
+          error_summary?: string | null
+          id?: string
+          imported_count?: number
+          processed_count?: number
+          requested_by?: string
+          source_catalog_url?: string
+          source_name?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          updated_count?: number
+          without_video_count?: number
+        }
+        Relationships: []
+      }
+      exercise_import_items: {
+        Row: {
+          batch_id: string
+          created_at: string
+          error_message: string | null
+          exercise_id: string | null
+          id: string
+          image_storage_path: string | null
+          processed_at: string | null
+          raw_metadata: Json
+          source_external_id: string | null
+          source_name: string | null
+          source_url: string
+          status: string
+          updated_at: string
+          video_storage_path: string | null
+        }
+        Insert: {
+          batch_id: string
+          created_at?: string
+          error_message?: string | null
+          exercise_id?: string | null
+          id?: string
+          image_storage_path?: string | null
+          processed_at?: string | null
+          raw_metadata?: Json
+          source_external_id?: string | null
+          source_name?: string | null
+          source_url: string
+          status?: string
+          updated_at?: string
+          video_storage_path?: string | null
+        }
+        Update: {
+          batch_id?: string
+          created_at?: string
+          error_message?: string | null
+          exercise_id?: string | null
+          id?: string
+          image_storage_path?: string | null
+          processed_at?: string | null
+          raw_metadata?: Json
+          source_external_id?: string | null
+          source_name?: string | null
+          source_url?: string
+          status?: string
+          updated_at?: string
+          video_storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_import_items_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_import_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_import_items_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_library"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercise_library: {
         Row: {
           active: boolean
@@ -1016,8 +1145,11 @@ export type Database = {
           execution_cues: string[]
           fatigue_cost: string | null
           id: string
+          image_storage_path: string | null
           image_url: string | null
+          import_status: string
           joint_considerations: string[]
+          last_synced_at: string | null
           level: string | null
           mobility_requirement: string | null
           movement_pattern: string | null
@@ -1029,8 +1161,16 @@ export type Database = {
           red_flags: string[]
           regressions: string[]
           secondary_muscles: string[]
+          source_attribution: string | null
+          source_authorized: boolean
+          source_external_id: string | null
+          source_image_url: string | null
+          source_name: string | null
+          source_url: string | null
+          source_video_url: string | null
           stability_requirement: string | null
           technique: string | null
+          video_storage_path: string | null
           video_url: string | null
         }
         Insert: {
@@ -1049,8 +1189,11 @@ export type Database = {
           execution_cues?: string[]
           fatigue_cost?: string | null
           id?: string
+          image_storage_path?: string | null
           image_url?: string | null
+          import_status?: string
           joint_considerations?: string[]
+          last_synced_at?: string | null
           level?: string | null
           mobility_requirement?: string | null
           movement_pattern?: string | null
@@ -1062,8 +1205,16 @@ export type Database = {
           red_flags?: string[]
           regressions?: string[]
           secondary_muscles?: string[]
+          source_attribution?: string | null
+          source_authorized?: boolean
+          source_external_id?: string | null
+          source_image_url?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          source_video_url?: string | null
           stability_requirement?: string | null
           technique?: string | null
+          video_storage_path?: string | null
           video_url?: string | null
         }
         Update: {
@@ -1082,8 +1233,11 @@ export type Database = {
           execution_cues?: string[]
           fatigue_cost?: string | null
           id?: string
+          image_storage_path?: string | null
           image_url?: string | null
+          import_status?: string
           joint_considerations?: string[]
+          last_synced_at?: string | null
           level?: string | null
           mobility_requirement?: string | null
           movement_pattern?: string | null
@@ -1095,8 +1249,16 @@ export type Database = {
           red_flags?: string[]
           regressions?: string[]
           secondary_muscles?: string[]
+          source_attribution?: string | null
+          source_authorized?: boolean
+          source_external_id?: string | null
+          source_image_url?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          source_video_url?: string | null
           stability_requirement?: string | null
           technique?: string | null
+          video_storage_path?: string | null
           video_url?: string | null
         }
         Relationships: []
