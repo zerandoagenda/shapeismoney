@@ -36,6 +36,11 @@ async function modelForRequest() {
   return createTrainingArchitectModel(key);
 }
 
+async function completeTrainingPrinciples() {
+  const { SIM_TRAINING_SPEC_V1 } = await import("@/lib/training-spec.server");
+  return `${trainingPrinciples}\n\nMETODOLOGIA OFICIAL INTEGRAL:\n${SIM_TRAINING_SPEC_V1}`;
+}
+
 const trainingPrinciples = `Você é o Training Architect do Shape Is Money. Siga a SIM TRAINING INTELLIGENCE SPEC v1.0 como regra operacional, não como referência superficial.
 ORDEM OBRIGATÓRIA: DADO → EVIDÊNCIA → INTERPRETAÇÃO → PRIORIDADE → DECISÃO → PRESCRIÇÃO → EXECUÇÃO → RESPOSTA → REAVALIAÇÃO. Responda primeiro qual decisão o cliente precisa agora e depois qual treino materializa a decisão.
 PRESCRIÇÃO: justifique ordem, volume, frequência, recuperação e aderência; use somente exercícios da biblioteca; detalhe progressão e regressão; custo de fadiga; cardio e mobilidade quando sustentados por evidência.
@@ -59,7 +64,7 @@ export const parseTrainingPdf = createServerFn({ method: "POST" })
       const model = await modelForRequest();
       const result = streamText({
         model,
-        instructions: `${trainingPrinciples}\nExtraia fielmente o PDF. Não substitua nomes desconhecidos. Preserve carga, tempo, cardio, mobilidade, observações e alternativas quando existirem.`,
+        instructions: `${await completeTrainingPrinciples()}\nExtraia fielmente o PDF. Não substitua nomes desconhecidos. Preserve carga, tempo, cardio, mobilidade, observações e alternativas quando existirem.`,
         messages: [{ role: "user", content: [{ type: "text", text: "Estruture este PDF de treino individual para revisão. Retorne todos os campos, usando texto vazio ou null quando ausentes." }, { type: "file", data: new Uint8Array(await file.arrayBuffer()), mediaType: item.mime_type, filename: item.original_filename ?? "treino.pdf" }] }],
         output: Output.object({ schema: planSchema, name: "training_pdf" }), providerOptions: aiOptions,
       });
@@ -90,7 +95,7 @@ export const parseTrainingText = createServerFn({ method: "POST" })
       const model = await modelForRequest();
       const result = streamText({
         model,
-        instructions: `${trainingPrinciples}\nEstruture fielmente o texto recebido. Não substitua nomes desconhecidos, não invente séries, cargas ou equivalências.`,
+        instructions: `${await completeTrainingPrinciples()}\nEstruture fielmente o texto recebido. Não substitua nomes desconhecidos, não invente séries, cargas ou equivalências.`,
         prompt: `Converta o texto abaixo em um programa estruturado para revisão humana. Use texto vazio ou null quando o dado não existir:\n\n${item.source_text}`,
         output: Output.object({ schema: planSchema, name: "training_text" }),
         providerOptions: aiOptions,
@@ -129,7 +134,7 @@ export const generateTrainingDraft = createServerFn({ method: "POST" })
     if (!profile.data || !cycle.data) throw new Error("Cliente ou ciclo não encontrado.");
     const model = await modelForRequest();
     const evidence = { profile: profile.data, onboarding: onboarding.data?.responses ?? {}, sim_score: score.data, cycle: cycle.data, recent_checkins: checkins.data ?? [], weekly_reviews: reviews.data ?? [], previous_training: sessions.data ?? [], exercise_library: library.data ?? [], knowledge_base: knowledge.data ?? [] };
-    const result = streamText({ model, instructions: trainingPrinciples, prompt: `Crie o draft completo exigido pela metodologia. Use exclusivamente nomes da biblioteca fornecida. Cada exercício precisa de rationale em reason_for_inclusion e ligação explícita à prioridade/evidência. Contexto completo:\n${JSON.stringify(evidence)}`, output: Output.object({ schema: architectSchema, name: "training_draft" }), providerOptions: aiOptions });
+    const result = streamText({ model, instructions: await completeTrainingPrinciples(), prompt: `Crie o draft completo exigido pela metodologia. Use exclusivamente nomes da biblioteca fornecida. Cada exercício precisa de rationale em reason_for_inclusion e ligação explícita à prioridade/evidência. Contexto completo:\n${JSON.stringify(evidence)}`, output: Output.object({ schema: architectSchema, name: "training_draft" }), providerOptions: aiOptions });
     const draft = await result.output;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: program, error: programError } = await supabaseAdmin.from("workout_programs").insert({ user_id:data.clientId, cycle_id:data.cycleId, title:draft.program_name, objective:draft.primary_goal, primary_goal:draft.primary_goal, why_this_plan:draft.why_this_plan, notes:draft.strategy_summary, creation_source:"AI_DRAFT", status:"draft", created_by:context.userId, starts_on:cycle.data.start_date, ends_on:cycle.data.target_date }).select("id").single();

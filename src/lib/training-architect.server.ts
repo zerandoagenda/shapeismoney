@@ -1,5 +1,6 @@
 import { Output, streamText } from "ai";
 import { z } from "zod";
+import { SIM_TRAINING_SPEC_V1 } from "@/lib/training-spec.server";
 
 const exerciseSchema = z.object({ raw_name:z.string(),order:z.number(),sets:z.number(),rep_min:z.number().nullable(),rep_max:z.number().nullable(),reps:z.string(),target_effort_type:z.enum(["RPE","RIR"]),target_effort:z.number().nullable(),rest_seconds:z.number(),tempo:z.string().nullable(),execution_notes:z.string(),load:z.number().nullable(),pain_rule:z.string(),video_reference:z.string().nullable(),reason_for_inclusion:z.string(),priority_relation:z.string(),alternatives:z.array(z.string()) });
 const workoutSchema = z.object({ name:z.string(),objective:z.string(),estimated_minutes:z.number(),variant_type:z.enum(["MAIN_WORKOUT","HOME_OR_LIMITED_EQUIPMENT","TRAVEL_WORKOUT","EMERGENCY_20_MIN","OPTIONAL_30_MIN","OPTIONAL_40_MIN","STANDARD_SESSION"]),notes:z.string(),exercises:z.array(exerciseSchema) });
@@ -31,7 +32,7 @@ export async function generateTrainingDraftCore(input:{ clientId:string; cycleId
   if(redFlags.length) throw new Error("Geração bloqueada por sinal de saúde que exige revisão humana.");
   const { createTrainingArchitectModel }=await import("@/lib/ai-gateway.server");
   const evidence={profile:profile.data,onboarding:onboarding.data?.responses??{},sim_score:score.data,assessment:assessment.data,photo_protocol:{captured:(photos.data??[]).length},cycle:cycle.data,recent_checkins:checkins.data??[],weekly_reviews:reviews.data??[],training_history:sessions.data??[],pain_and_restrictions:pain.data??[],exercise_library:library.data??[],knowledge_base:knowledge.data??[]};
-  const result=streamText({model:createTrainingArchitectModel(key),instructions:principles,prompt:`Crie o draft completo usando exclusivamente nomes da biblioteca. Contexto:\n${JSON.stringify(evidence)}`,output:Output.object({schema:trainingArchitectSchema,name:"training_draft"}),providerOptions:{openai:{forceReasoning:true,reasoningEffort:"medium",reasoningSummary:"auto",store:false,include:["reasoning.encrypted_content"]}}});
+  const result=streamText({model:createTrainingArchitectModel(key),instructions:`${principles}\n\nMETODOLOGIA OFICIAL INTEGRAL:\n${SIM_TRAINING_SPEC_V1}`,prompt:`Crie o draft completo usando exclusivamente nomes da biblioteca. Contexto:\n${JSON.stringify(evidence)}`,output:Output.object({schema:trainingArchitectSchema,name:"training_draft"}),providerOptions:{openai:{forceReasoning:true,reasoningEffort:"medium",reasoningSummary:"auto",store:false,include:["reasoning.encrypted_content"]}}});
   const draft=await result.output;
   const {data:program,error}=await admin.from("workout_programs").insert({user_id:clientId,cycle_id:cycleId,title:draft.program_name,objective:draft.primary_goal,primary_goal:draft.primary_goal,why_this_plan:draft.why_this_plan,notes:draft.strategy_summary,creation_source:"AI_DRAFT",status:"draft",created_by:actorId,starts_on:cycle.data.start_date,ends_on:cycle.data.target_date}).select("id").single();
   if(error||!program) throw error??new Error("Não foi possível salvar o draft.");
