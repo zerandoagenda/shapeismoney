@@ -7,4 +7,4 @@
 - [x] Expand member and admin navigation with honest feature states
 - [x] Remove paywalls and plan locks for beta members and admin master
 - [x] Audit and repair visible actions across requested routes
-- [ ] Validate Bruno and beta-member access, privacy, desktop/mobile, and generate BETA ACCESS QA
+- [x] Validate Bruno and beta-member access, privacy, desktop/mobile, and generate BETA ACCESS QA
