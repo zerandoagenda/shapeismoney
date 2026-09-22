@@ -16,6 +16,11 @@ export const completeClientAnamnesis = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { trustedAdmin } = await import("@/lib/trusted-admin.server");
     const { data: latest } = await trustedAdmin.from("client_anamnesis").select("id,version,status,sections").eq("client_id", context.userId).order("version", { ascending: false }).limit(1).maybeSingle();
+    if (latest?.status === "completed" && JSON.stringify(latest.sections) === JSON.stringify(data.answers)) {
+      const { processClientActivation } = await import("@/lib/sim-orchestrator.server");
+      await processClientActivation({ admin: trustedAdmin, clientId: context.userId, event: "anamnesis.completed", actorId: context.userId });
+      return { ok: true, anamnesisId: latest.id, analysisStatus: "completed" };
+    }
     const sameDraft = latest?.status === "draft";
     const version = sameDraft ? latest.version : (latest?.version ?? 0) + 1;
     if (latest?.status === "completed") await trustedAdmin.from("client_anamnesis").update({ status: "superseded" }).eq("id", latest.id);
@@ -45,7 +50,15 @@ export const getTrainingEvidenceSummary = createServerFn({ method: "POST" })
     await requireOperator(context);
     const { trustedAdmin } = await import("@/lib/trusted-admin.server");
     const { buildTrainingEvidenceBundle } = await import("@/lib/training-architect.server");
-    return buildTrainingEvidenceBundle({ admin: trustedAdmin, clientId: data.clientId });
+    const bundle = await buildTrainingEvidenceBundle({ admin: trustedAdmin, clientId: data.clientId });
+    return {
+      profile: bundle.profile, anamnesis: bundle.anamnesis, analysis: bundle.analysis, simScore: bundle.sim_score,
+      cycle: bundle.cycle, assessment: bundle.assessment, photoProtocol: bundle.photo_protocol,
+      perception: bundle.perception, safety: bundle.safety, readiness: bundle.readiness,
+      recentCheckins: bundle.recent_checkins.length, weeklyReviews: bundle.weekly_reviews.length,
+      trainingSessions: bundle.training_history.length, habits: bundle.habits,
+      exerciseLibraryCount: bundle.exercise_library.length,
+    };
   });
 
 export const retryAnamnesisAnalysis = createServerFn({ method: "POST" })

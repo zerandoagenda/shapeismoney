@@ -45,11 +45,11 @@
 
 ## Rebuild 1.0
 - [x] Criar fundação privada para anamnese versionada, análises, pilares, hábitos, sinais e comentários
-- [ ] Conectar conclusão da anamnese à análise automática e ao Orchestrator
-- [ ] Permitir draft inicial seguro sem bloquear por fotos ou assessment
-- [ ] Criar Training Evidence Bundle único e geração idempotente por decisão
+- [x] Conectar conclusão da anamnese à análise automática e ao Orchestrator
+- [x] Permitir draft inicial seguro sem bloquear por fotos ou assessment
+- [x] Criar Training Evidence Bundle único e geração idempotente por decisão
 - [ ] Completar Anamnese e evidências no Client 360
-- [ ] Implementar Hábitos em construção e comentários contextuais
-- [ ] Simplificar a experiência do membro e explicar os cinco pilares
+- [x] Implementar Hábitos em construção e comentários contextuais
+- [x] Simplificar a experiência do membro e explicar os cinco pilares
 - [ ] Completar filas administrativas, reconciliação e decisões pendentes
 - [ ] Validar E2E descartável, falha/retry, upgrades, persistência e isolamento
