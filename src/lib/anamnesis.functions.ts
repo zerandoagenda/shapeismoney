@@ -16,6 +16,11 @@ export const completeClientAnamnesis = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { trustedAdmin } = await import("@/lib/trusted-admin.server");
     const { data: latest } = await trustedAdmin.from("client_anamnesis").select("id,version,status,sections").eq("client_id", context.userId).order("version", { ascending: false }).limit(1).maybeSingle();
+    if (latest?.status === "completed" && JSON.stringify(latest.sections) === JSON.stringify(data.answers)) {
+      const { processClientActivation } = await import("@/lib/sim-orchestrator.server");
+      await processClientActivation({ admin: trustedAdmin, clientId: context.userId, event: "anamnesis.completed", actorId: context.userId });
+      return { ok: true, anamnesisId: latest.id, analysisStatus: "completed" };
+    }
     const sameDraft = latest?.status === "draft";
     const version = sameDraft ? latest.version : (latest?.version ?? 0) + 1;
     if (latest?.status === "completed") await trustedAdmin.from("client_anamnesis").update({ status: "superseded" }).eq("id", latest.id);
