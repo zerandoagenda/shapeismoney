@@ -19,6 +19,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDiagnosisRouteImport } from './routes/_authenticated/diagnosis'
 import { Route as AuthenticatedExperiencesRouteImport } from './routes/_authenticated/experiences'
 import { Route as AuthenticatedFoodLogRouteImport } from './routes/_authenticated/food-log'
+import { Route as AuthenticatedHabitsRouteImport } from './routes/_authenticated/habits'
 import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticated/members'
 import { Route as AuthenticatedMoneyBrainRouteImport } from './routes/_authenticated/money-brain'
 import { Route as AuthenticatedMonthlyReviewRouteImport } from './routes/_authenticated/monthly-review'
@@ -112,6 +113,11 @@ const AuthenticatedExperiencesRoute =
 const AuthenticatedFoodLogRoute = AuthenticatedFoodLogRouteImport.update({
   id: '/food-log',
   path: '/food-log',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHabitsRoute = AuthenticatedHabitsRouteImport.update({
+  id: '/habits',
+  path: '/habits',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMembersRoute = AuthenticatedMembersRouteImport.update({
@@ -378,6 +384,7 @@ export interface FileRoutesByFullPath {
   '/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/experiences': typeof AuthenticatedExperiencesRoute
   '/food-log': typeof AuthenticatedFoodLogRoute
+  '/habits': typeof AuthenticatedHabitsRoute
   '/members': typeof AuthenticatedMembersRouteWithChildren
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
   '/monthly-review': typeof AuthenticatedMonthlyReviewRoute
@@ -433,6 +440,7 @@ export interface FileRoutesByTo {
   '/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/experiences': typeof AuthenticatedExperiencesRoute
   '/food-log': typeof AuthenticatedFoodLogRoute
+  '/habits': typeof AuthenticatedHabitsRoute
   '/members': typeof AuthenticatedMembersRouteWithChildren
   '/money-brain': typeof AuthenticatedMoneyBrainRoute
   '/monthly-review': typeof AuthenticatedMonthlyReviewRoute
@@ -489,6 +497,7 @@ export interface FileRoutesById {
   '/_authenticated/diagnosis': typeof AuthenticatedDiagnosisRoute
   '/_authenticated/experiences': typeof AuthenticatedExperiencesRoute
   '/_authenticated/food-log': typeof AuthenticatedFoodLogRoute
+  '/_authenticated/habits': typeof AuthenticatedHabitsRoute
   '/_authenticated/members': typeof AuthenticatedMembersRouteWithChildren
   '/_authenticated/money-brain': typeof AuthenticatedMoneyBrainRoute
   '/_authenticated/monthly-review': typeof AuthenticatedMonthlyReviewRoute
@@ -546,6 +555,7 @@ export interface FileRouteTypes {
     | '/diagnosis'
     | '/experiences'
     | '/food-log'
+    | '/habits'
     | '/members'
     | '/money-brain'
     | '/monthly-review'
@@ -601,6 +611,7 @@ export interface FileRouteTypes {
     | '/diagnosis'
     | '/experiences'
     | '/food-log'
+    | '/habits'
     | '/members'
     | '/money-brain'
     | '/monthly-review'
@@ -656,6 +667,7 @@ export interface FileRouteTypes {
     | '/_authenticated/diagnosis'
     | '/_authenticated/experiences'
     | '/_authenticated/food-log'
+    | '/_authenticated/habits'
     | '/_authenticated/members'
     | '/_authenticated/money-brain'
     | '/_authenticated/monthly-review'
@@ -780,6 +792,13 @@ declare module '@tanstack/react-router' {
       path: '/food-log'
       fullPath: '/food-log'
       preLoaderRoute: typeof AuthenticatedFoodLogRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/habits': {
+      id: '/_authenticated/habits'
+      path: '/habits'
+      fullPath: '/habits'
+      preLoaderRoute: typeof AuthenticatedHabitsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/members': {
@@ -1170,6 +1189,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDiagnosisRoute: typeof AuthenticatedDiagnosisRoute
   AuthenticatedExperiencesRoute: typeof AuthenticatedExperiencesRoute
   AuthenticatedFoodLogRoute: typeof AuthenticatedFoodLogRoute
+  AuthenticatedHabitsRoute: typeof AuthenticatedHabitsRoute
   AuthenticatedMembersRoute: typeof AuthenticatedMembersRouteWithChildren
   AuthenticatedMoneyBrainRoute: typeof AuthenticatedMoneyBrainRoute
   AuthenticatedMonthlyReviewRoute: typeof AuthenticatedMonthlyReviewRoute
@@ -1216,6 +1236,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDiagnosisRoute: AuthenticatedDiagnosisRoute,
   AuthenticatedExperiencesRoute: AuthenticatedExperiencesRoute,
   AuthenticatedFoodLogRoute: AuthenticatedFoodLogRoute,
+  AuthenticatedHabitsRoute: AuthenticatedHabitsRoute,
   AuthenticatedMembersRoute: AuthenticatedMembersRouteWithChildren,
   AuthenticatedMoneyBrainRoute: AuthenticatedMoneyBrainRoute,
   AuthenticatedMonthlyReviewRoute: AuthenticatedMonthlyReviewRoute,
