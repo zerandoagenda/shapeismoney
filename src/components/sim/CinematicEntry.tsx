@@ -1,0 +1,38 @@
+import { useEffect, useState } from "react";
+import officialLogo from "@/assets/shape-is-money-official.png.asset.json";
+
+type SystemSignal = { label: string; status: string; active: boolean };
+
+export function CinematicEntry({ name, priority, signals, protocolTitle }: { name: string; priority: string; signals: SystemSignal[]; protocolTitle?: string | null }) {
+  const [visible, setVisible] = useState(false);
+  const [frame, setFrame] = useState(0);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches || window.localStorage.getItem("sim-reduced-motion") === "true";
+    if (reduced || window.sessionStorage.getItem("sim-command-entry") === "seen") return;
+    window.sessionStorage.setItem("sim-command-entry", "seen");
+    setVisible(true);
+    const first = window.setTimeout(() => setFrame(1), 760);
+    const second = window.setTimeout(() => setFrame(2), 1700);
+    const finish = window.setTimeout(() => setVisible(false), 2850);
+    return () => { window.clearTimeout(first); window.clearTimeout(second); window.clearTimeout(finish); };
+  }, []);
+
+  if (!visible) return null;
+  return <div className={`sim-entry fixed inset-0 z-[100] ${frame===2?"sim-entry-leaving":""}`} role="status" aria-live="polite">
+    <div className="sim-grain absolute inset-0"/><div className="sim-entry-light absolute inset-0"/>
+    <div className="relative flex h-full items-center justify-center px-6">
+      <div className={`absolute text-center transition-all duration-700 ${frame===0?"opacity-100 blur-0":"pointer-events-none -translate-y-3 opacity-0 blur-sm"}`}>
+        <img src={officialLogo.url} alt="Shape Is Money" className="mx-auto h-auto w-40 invert sm:w-52"/>
+        <p className="mt-8 text-[9px] uppercase tracking-[0.38em] text-foreground/55">Executive Performance System</p>
+      </div>
+      <div className={`absolute w-full max-w-xl transition-all duration-700 ${frame===1?"opacity-100":"pointer-events-none translate-y-3 opacity-0"}`}>
+        <p className="sim-kicker text-center">Performance OS</p><h2 className="mt-4 text-center text-3xl sm:text-5xl">Inicializando seu ambiente</h2>
+        <div className="mt-10 divide-y divide-border border-y border-border">{signals.map(signal=><div key={signal.label} className="flex items-center justify-between py-3 text-[10px] uppercase tracking-[0.2em]"><span>{signal.label}</span><span className={signal.active?"text-primary":"text-muted-foreground"}><i className="mr-2 inline-block size-1 rounded-full bg-current"/>{signal.status}</span></div>)}</div>
+      </div>
+      <div className={`absolute text-center transition-all duration-700 ${frame===2?"opacity-100":"pointer-events-none translate-y-3 opacity-0"}`}>
+        {protocolTitle&&<p className="sim-kicker mb-5">{protocolTitle} · ativo</p>}<p className="font-display text-6xl uppercase sm:text-8xl">{name},</p><p className="mt-4 max-w-3xl font-display text-3xl leading-tight sm:text-5xl">{priority === "Construir evidência" ? "você tem uma prioridade agora." : <><span className="text-primary">{priority}</span> é sua prioridade agora.</>}</p>
+      </div>
+    </div>
+  </div>;
+}

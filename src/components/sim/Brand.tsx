@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import officialLockup from "@/assets/sim-official-lockup.png.asset.json";
+import officialLockup from "@/assets/shape-is-money-official.png.asset.json";
 
 export function Brand({ compact = false, impact = false }: { compact?: boolean; impact?: boolean }) {
   return (
@@ -7,9 +7,9 @@ export function Brand({ compact = false, impact = false }: { compact?: boolean; 
       <img
         src={officialLockup.url}
         alt="Shape Is Money"
-        width={430}
-        height={518}
-        className={impact ? "h-auto w-48 sm:w-64" : compact ? "h-11 w-auto" : "h-16 w-auto"}
+        width={349}
+        height={239}
+        className={`object-contain invert ${impact ? "h-auto w-52 sm:w-72" : compact ? "h-10 w-auto" : "h-16 w-auto"}`}
       />
     </Link>
   );

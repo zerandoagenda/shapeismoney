@@ -198,9 +198,47 @@
   animation: sim-reveal 1.4s cubic-bezier(.2,.65,.25,1) both;
 }
 
+@utility sim-entry {
+  background: var(--surface-black);
+  animation: sim-entry-in .45s ease-out both;
+}
+
+@utility sim-entry-leaving {
+  animation: sim-entry-out .7s cubic-bezier(.5,0,.75,0) both;
+}
+
+@utility sim-entry-light {
+  background: radial-gradient(circle at 52% 46%, color-mix(in oklab, var(--accent-gold) 8%, transparent), transparent 28%);
+  animation: sim-breathe 2.8s ease-in-out both;
+}
+
+@utility sim-core-orbit {
+  animation: sim-orbit 32s linear infinite;
+  background: radial-gradient(circle at 18% 30%, var(--primary) 0 1px, transparent 2px), radial-gradient(circle at 78% 72%, var(--foreground) 0 1px, transparent 2px);
+}
+
+@utility sim-core-orbit-reverse {
+  animation: sim-orbit 44s linear infinite reverse;
+}
+
+@utility sim-core-node {
+  --angle: calc(var(--node) * 72deg - 90deg);
+  left: calc(50% + cos(var(--angle)) * 45%);
+  top: calc(50% + sin(var(--angle)) * 45%);
+  transform: translate(-50%, -50%);
+}
+
+@utility sim-command-surface {
+  background-image: radial-gradient(circle at 78% 16%, color-mix(in oklab, var(--primary) 7%, transparent), transparent 22%), linear-gradient(115deg, color-mix(in oklab, var(--surface-coffee) 34%, transparent), transparent 42%);
+}
+
 @keyframes sim-camera { from { transform: scale(1.01); } to { transform: scale(1.065) translate3d(-.7%, -.4%, 0); } }
 @keyframes sim-sweep { 0%,30% { transform: translateX(0) skewX(-12deg); opacity:0; } 55% { opacity:1; } 80%,100% { transform: translateX(650%) skewX(-12deg); opacity:0; } }
 @keyframes sim-reveal { from { opacity:0; transform:translateY(18px); clip-path:inset(0 0 100% 0); } to { opacity:1; transform:none; clip-path:inset(0); } }
+@keyframes sim-entry-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sim-entry-out { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+@keyframes sim-breathe { 0% { opacity: 0; transform: scale(.95); } 45% { opacity: 1; } 100% { opacity: .45; transform: scale(1.06); } }
+@keyframes sim-orbit { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
