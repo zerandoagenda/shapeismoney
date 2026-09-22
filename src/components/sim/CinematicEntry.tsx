@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import officialLogo from "@/assets/shape-is-money-official.png.asset.json";
+import officialLogo from "@/assets/shape-is-money-transparent.png";
 
 type SystemSignal = { label: string; status: string; active: boolean };
 
@@ -25,7 +25,11 @@ export function CinematicEntry({ name, priority, signals, protocolTitle }: { nam
     <div className="sim-grain absolute inset-0"/><div className="sim-entry-light absolute inset-0"/>
     <div className="relative flex h-full items-center justify-center px-6">
       <div className={`absolute text-center transition-all duration-700 ${frame===0?"opacity-100 blur-0":"pointer-events-none -translate-y-3 opacity-0 blur-sm"}`}>
-        <img src={officialLogo.url} alt="Shape Is Money" className="mx-auto h-auto w-40 invert sm:w-52"/>
+        <div className="sim-entry-logo-stage mx-auto w-44 sm:w-60">
+          <span className="sim-entry-logo-halo" aria-hidden="true"/>
+          <img src={officialLogo} alt="Shape Is Money" className="sim-entry-logo relative h-auto w-full"/>
+          <span className="sim-entry-logo-glint" aria-hidden="true"/>
+        </div>
         <p className="mt-8 text-[9px] uppercase tracking-[0.38em] text-foreground/55">Executive Performance System</p>
       </div>
       <div className={`absolute w-full max-w-xl transition-all duration-700 ${frame===1?"opacity-100":"pointer-events-none translate-y-3 opacity-0"}`}>
