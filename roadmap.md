@@ -55,7 +55,7 @@
 - [ ] Validar E2E descartável, falha/retry, upgrades, persistência e isolamento
 
 ## Cinematic Command Center
-- [ ] Isolar e aplicar o logotipo oficial SHAPE IS MONEY
+- [x] Isolar e aplicar o logotipo oficial SHAPE IS MONEY
 - [ ] Criar entrada cinematográfica contextual e preferência de movimento
 - [ ] Reconstruir Home com prioridade, Core e próxima ação reais
 - [ ] Adicionar leitura, hábito, evolução e direção editorial com dados reais
