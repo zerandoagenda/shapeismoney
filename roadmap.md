@@ -67,3 +67,10 @@
 - [x] Reorganizar o Admin em resumo operacional, filas, pulso e atenção
 - [x] Preservar logo, identidade, dados, regras e rotas existentes
 - [x] Validar comparação visual, responsividade, ações e ausência de erros
+
+## Revisão responsiva completa
+- [x] Eliminar sobreposições e largura excedente em celular, tablet e desktop
+- [x] Adaptar Produção e Clientes para listas compactas em telas menores
+- [x] Reorganizar registro de séries sem rolagem lateral no celular
+- [x] Proteger cabeçalhos, KPIs, filas, formulários e navegação contra cortes
+- [x] Validar rotas principais em 390, 768, 950 e 1280 px sem erros
