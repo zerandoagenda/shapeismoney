@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { calculateSimScore, type PillarKey, type ScoreAnswers } from "@/lib/sim-score";
+import type { PillarKey } from "@/lib/sim-score";
 import { Brand } from "@/components/sim/Brand";
 import { CinematicBackdrop } from "@/components/sim/CinematicBackdrop";
 import { Button } from "@/components/ui/button";

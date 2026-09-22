@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BarChart3, BrainCircuit, BriefcaseBusiness, ClipboardList, Dumbbell, Factory, HeartHandshake, Home, LibraryBig, LogOut, Menu, Network, ScanLine, Settings, Shield, Sparkles, UserRound, Utensils, X } from "lucide-react";
+import { BarChart3, BriefcaseBusiness, CalendarCheck2, ClipboardList, Dumbbell, Factory, HeartHandshake, Home, LibraryBig, LogOut, Menu, Network, ScanLine, Settings, Shield, Sparkles, UserRound, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brand } from "./Brand";
 import { Button } from "@/components/ui/button";
 import { AdminCommandCenter } from "./AdminCommandCenter";
 import { PermissionService } from "@/lib/permissions";
 const memberNav = [
-  { group: "Overview", items: [["/dashboard", "Home", Home]] },
-  { group: "Performance", items: [["/performance", "Performance", BarChart3], ["/training", "Treino", Dumbbell], ["/nutrition", "Nutrição", Utensils], ["/food-log", "Food Log", Utensils], ["/perception-lab", "Perception Lab", ScanLine], ["/money-brain", "Money Brain", BrainCircuit]] },
-  { group: "Ecossistema", items: [["/experiences", "Experiences", Sparkles], ["/network", "SIM Network", Network], ["/sim-select", "SIM Select", Sparkles]] },
+  { group: "Sua direção", items: [["/dashboard", "Hoje", Home], ["/training", "Meu plano", Dumbbell], ["/habits", "Hábitos", CalendarCheck2], ["/check-ins", "Check-in", ClipboardList], ["/performance", "Evolução", BarChart3], ["/perception-lab", "Percepção", ScanLine]] },
+  { group: "Ecossistema", items: [["/network", "SIM Network", Network], ["/sim-select", "SIM Select", Sparkles], ["/experiences", "Experiences", Sparkles]] },
   { group: "Jornada", items: [["/my-journey", "Minha Jornada", HeartHandshake], ["/monthly-review", "Revisão mensal", ClipboardList]] },
   { group: "Conta", items: [["/profile", "Perfil", UserRound]] },
 ] as const;
-const mobileNav = [["/dashboard", "Home", Home], ["/training", "Treino", Dumbbell], ["/performance", "Performance", BarChart3], ["/my-journey", "Jornada", HeartHandshake], ["/profile", "Perfil", UserRound]] as const;
+const mobileNav = [["/dashboard", "Hoje", Home], ["/training", "Plano", Dumbbell], ["/habits", "Hábitos", CalendarCheck2], ["/check-ins", "Check-in", ClipboardList], ["/profile", "Perfil", UserRound]] as const;
 const adminNav = [
   ["/admin", "Hoje", Home], ["/admin/clients", "Clientes", BriefcaseBusiness], ["/admin/production", "Produção", Factory], ["/admin/library", "Biblioteca", LibraryBig], ["/admin/business", "Negócio", BarChart3], ["/admin/settings", "Configurações", Settings],
 ] as const;
