@@ -32,12 +32,12 @@ export function CinematicEntry({ name, priority, signals, protocolTitle }: { nam
         </div>
         <p className="mt-8 text-[9px] uppercase tracking-[0.38em] text-foreground/55">Executive Performance System</p>
       </div>
-      <div className={`absolute w-full max-w-xl transition-all duration-700 ${frame===1?"opacity-100":"pointer-events-none translate-y-3 opacity-0"}`}>
+      <div className={`absolute inset-x-5 max-h-[calc(100dvh-3rem)] overflow-hidden sm:inset-x-auto sm:w-full sm:max-w-xl transition-all duration-700 ${frame===1?"opacity-100":"pointer-events-none translate-y-3 opacity-0"}`}>
         <p className="sim-kicker text-center">Performance OS</p><h2 className="mt-4 text-center text-3xl sm:text-5xl">Inicializando seu ambiente</h2>
-        <div className="mt-10 divide-y divide-border border-y border-border">{signals.map(signal=><div key={signal.label} className="flex items-center justify-between py-3 text-[10px] uppercase tracking-[0.2em]"><span>{signal.label}</span><span className={signal.active?"text-primary":"text-muted-foreground"}><i className="mr-2 inline-block size-1 rounded-full bg-current"/>{signal.status}</span></div>)}</div>
+        <div className="mt-8 divide-y divide-border border-y border-border sm:mt-10">{signals.map(signal=><div key={signal.label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3 text-[9px] uppercase sm:text-[10px]"><span className="truncate">{signal.label}</span><span className={`shrink-0 ${signal.active?"text-primary":"text-muted-foreground"}`}><i className="mr-2 inline-block size-1 rounded-full bg-current"/>{signal.status}</span></div>)}</div>
       </div>
-      <div className={`absolute text-center transition-all duration-700 ${frame===2?"opacity-100":"pointer-events-none translate-y-3 opacity-0"}`}>
-        {protocolTitle&&<p className="sim-kicker mb-5">{protocolTitle} · ativo</p>}<p className="font-display text-6xl uppercase sm:text-8xl">{name},</p><p className="mt-4 max-w-3xl font-display text-3xl leading-tight sm:text-5xl">{priority === "Construir evidência" ? "você tem uma prioridade agora." : <><span className="text-primary">{priority}</span> é sua prioridade agora.</>}</p>
+      <div className={`absolute inset-x-5 min-w-0 text-center transition-all duration-700 sm:inset-x-auto sm:max-w-3xl ${frame===2?"opacity-100":"pointer-events-none translate-y-3 opacity-0"}`}>
+        {protocolTitle&&<p className="sim-kicker mb-5 line-clamp-2">{protocolTitle} · ativo</p>}<p className="break-words font-display text-5xl uppercase sm:text-8xl">{name},</p><p className="mt-4 break-words font-display text-3xl leading-tight sm:text-5xl">{priority === "Construir evidência" ? "você tem uma prioridade agora." : <><span className="text-primary">{priority}</span> é sua prioridade agora.</>}</p>
       </div>
     </div>
   </div>;

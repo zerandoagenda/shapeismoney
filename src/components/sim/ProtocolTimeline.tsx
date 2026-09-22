@@ -5,5 +5,5 @@ const statuses = [
 
 export function ProtocolTimeline({ status = "data_received" }: { status?: string }) {
   const active = Math.max(0, statuses.findIndex(([key]) => key === status));
-  return <ol className="mt-8 grid gap-0 sm:grid-cols-6">{statuses.map(([key, label], index) => <li key={key} className="relative border-t border-border pt-5 sm:px-3"><span className={`absolute -top-1.5 left-0 size-3 rounded-full border ${index <= active ? "border-primary bg-primary" : "border-border bg-background"}`}/><p className={`text-[9px] uppercase tracking-[0.14em] ${index <= active ? "text-foreground" : "text-muted-foreground"}`}>{label}</p></li>)}</ol>;
+  return <ol className="mt-8 grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 lg:grid-cols-6">{statuses.map(([key, label], index) => <li key={key} className="relative min-w-0 border-t border-border pt-4 lg:px-2"><span className={`absolute -top-1.5 left-0 size-3 rounded-full border ${index <= active ? "border-primary bg-primary" : "border-border bg-background"}`}/><p className={`break-words text-[8px] uppercase sm:text-[9px] ${index <= active ? "text-foreground" : "text-muted-foreground"}`}>{label}</p></li>)}</ol>;
 }
