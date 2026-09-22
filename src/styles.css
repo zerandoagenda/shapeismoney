@@ -221,13 +221,6 @@
   animation: sim-orbit 44s linear infinite reverse;
 }
 
-@utility sim-core-node {
-  --angle: calc(var(--node) * 72deg - 90deg);
-  left: calc(50% + cos(var(--angle)) * 45%);
-  top: calc(50% + sin(var(--angle)) * 45%);
-  transform: translate(-50%, -50%);
-}
-
 @utility sim-command-surface {
   background-image: radial-gradient(circle at 78% 16%, color-mix(in oklab, var(--primary) 7%, transparent), transparent 22%), linear-gradient(115deg, color-mix(in oklab, var(--surface-coffee) 34%, transparent), transparent 42%);
 }
