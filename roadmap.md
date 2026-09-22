@@ -60,3 +60,10 @@
 - [x] Reconstruir Home com prioridade, Core e próxima ação reais
 - [x] Adicionar leitura, hábito, evolução e direção editorial com dados reais
 - [x] Validar desktop, mobile, teclado, ações e desempenho
+
+## Visual Correction 2.0
+- [x] Compactar a Home em prioridade, KPIs, construção, evolução, agora e direcionamento
+- [x] Criar estado de calibração compacto sem métricas fictícias
+- [x] Reorganizar o Admin em resumo operacional, filas, pulso e atenção
+- [x] Preservar logo, identidade, dados, regras e rotas existentes
+- [ ] Validar comparação visual, responsividade, ações e ausência de erros
