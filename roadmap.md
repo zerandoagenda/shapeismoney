@@ -53,3 +53,10 @@
 - [x] Simplificar a experiência do membro e explicar os cinco pilares
 - [ ] Completar filas administrativas, reconciliação e decisões pendentes
 - [ ] Validar E2E descartável, falha/retry, upgrades, persistência e isolamento
+
+## Cinematic Command Center
+- [ ] Isolar e aplicar o logotipo oficial SHAPE IS MONEY
+- [ ] Criar entrada cinematográfica contextual e preferência de movimento
+- [ ] Reconstruir Home com prioridade, Core e próxima ação reais
+- [ ] Adicionar leitura, hábito, evolução e direção editorial com dados reais
+- [ ] Validar desktop, mobile, teclado, ações e desempenho
