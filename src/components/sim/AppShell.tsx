@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { AdminCommandCenter } from "./AdminCommandCenter";
 import { PermissionService } from "@/lib/permissions";
 const memberNav = [
-  { group: "Sua direção", items: [["/dashboard", "Hoje", Home], ["/training", "Meu plano", Dumbbell], ["/habits", "Hábitos", CalendarCheck2], ["/check-ins", "Check-in", ClipboardList], ["/performance", "Evolução", BarChart3], ["/perception-lab", "Percepção", ScanLine]] },
+  { group: "Construção", items: [["/dashboard", "Hoje", Home], ["/training", "Meu plano", Dumbbell], ["/habits", "Hábitos", CalendarCheck2], ["/check-ins", "Check-in", ClipboardList], ["/performance", "Evolução", BarChart3], ["/perception-lab", "Percepção", ScanLine]] },
   { group: "Ecossistema", items: [["/network", "SIM Network", Network], ["/sim-select", "SIM Select", Sparkles], ["/experiences", "Experiences", Sparkles]] },
   { group: "Jornada", items: [["/my-journey", "Minha Jornada", HeartHandshake], ["/monthly-review", "Revisão mensal", ClipboardList]] },
   { group: "Conta", items: [["/profile", "Perfil", UserRound]] },
