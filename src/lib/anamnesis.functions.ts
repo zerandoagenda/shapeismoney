@@ -45,7 +45,15 @@ export const getTrainingEvidenceSummary = createServerFn({ method: "POST" })
     await requireOperator(context);
     const { trustedAdmin } = await import("@/lib/trusted-admin.server");
     const { buildTrainingEvidenceBundle } = await import("@/lib/training-architect.server");
-    return buildTrainingEvidenceBundle({ admin: trustedAdmin, clientId: data.clientId });
+    const bundle = await buildTrainingEvidenceBundle({ admin: trustedAdmin, clientId: data.clientId });
+    return {
+      profile: bundle.profile, anamnesis: bundle.anamnesis, analysis: bundle.analysis, simScore: bundle.sim_score,
+      cycle: bundle.cycle, assessment: bundle.assessment, photoProtocol: bundle.photo_protocol,
+      perception: bundle.perception, safety: bundle.safety, readiness: bundle.readiness,
+      recentCheckins: bundle.recent_checkins.length, weeklyReviews: bundle.weekly_reviews.length,
+      trainingSessions: bundle.training_history.length, habits: bundle.habits,
+      exerciseLibraryCount: bundle.exercise_library.length,
+    };
   });
 
 export const retryAnamnesisAnalysis = createServerFn({ method: "POST" })

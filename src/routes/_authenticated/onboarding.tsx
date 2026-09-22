@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { useServerFn } from "@tanstack/react-start";
-import { refreshClientOperations } from "@/lib/sim-orchestrator.functions";
+import { completeClientAnamnesis } from "@/lib/anamnesis.functions";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({ meta: [{ title: "Calibração inicial — Shape Is Money" }, { name: "description", content: "Calibre sua jornada de performance executiva." }, { property: "og:title", content: "Calibração inicial — Shape Is Money" }, { property: "og:description", content: "Entenda a vida que seu corpo precisa sustentar." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -51,7 +51,7 @@ function Page() {
   const [scoreValue, setScoreValue] = useState(3);
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
-  const refreshOperations = useServerFn(refreshClientOperations);
+  const completeAnamnesis = useServerFn(completeClientAnamnesis);
   const step = steps[index];
 
   useEffect(() => { void (async () => {
@@ -79,16 +79,8 @@ function Page() {
       const nextAnswers = currentStep.type === "score" ? { ...answers, [currentStep.key]: scoreValue } : answers;
       setAnswers(nextAnswers);
       if (index < steps.length - 1) { await persist(nextAnswers, index + 1); setIndex(index + 1); return; }
-      const completedAt = new Date().toISOString();
-      const userId = await persist(nextAnswers, steps.length, completedAt);
-      const score = calculateSimScore(nextAnswers as ScoreAnswers);
-      await supabase.from("profiles").update({ first_name: String(nextAnswers['first_name'] ?? ""), birth_date: String(nextAnswers['birth_date'] || "") || null, height_cm: Number(nextAnswers['height_cm']) || null, weight_kg: Number(nextAnswers['weight_kg']) || null, profession: String(nextAnswers['profession'] || "") || null, company: String(nextAnswers['company'] || "") || null, job_title: String(nextAnswers['job_title'] || "") || null, onboarding_completed_at: completedAt }).eq("id", userId);
-      const { error: scoreError } = await supabase.from("sim_scores").insert({ user_id: userId, ...score, source: "onboarding" }); if (scoreError) throw scoreError;
-      await supabase.from("crm_events").insert([
-        { user_id: userId, event_type: "onboarding.completed", metadata: { score: score.total } },
-        { user_id: userId, event_type: "baseline.completed", metadata: { score: score.total } },
-      ]);
-      await refreshOperations({ data: { clientId: userId, event: "onboarding.completed" } });
+      await persist(nextAnswers, steps.length, new Date().toISOString());
+      await completeAnamnesis({ data: { answers: nextAnswers } });
       await navigate({ to: "/diagnosis" });
     } finally { setSaving(false); }
   }
