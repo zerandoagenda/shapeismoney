@@ -66,4 +66,4 @@
 - [x] Criar estado de calibração compacto sem métricas fictícias
 - [x] Reorganizar o Admin em resumo operacional, filas, pulso e atenção
 - [x] Preservar logo, identidade, dados, regras e rotas existentes
-- [ ] Validar comparação visual, responsividade, ações e ausência de erros
+- [x] Validar comparação visual, responsividade, ações e ausência de erros
