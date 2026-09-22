@@ -3,7 +3,7 @@ import officialLogo from "@/assets/shape-is-money-official.png.asset.json";
 
 type SystemSignal = { label: string; status: string; active: boolean };
 
-export function CinematicEntry({ name, priority, signals, protocolTitle }: { name: string; priority: string; signals: SystemSignal[]; protocolTitle?: string | null }) {
+export function CinematicEntry({ name, priority, signals, protocolTitle }: { name: string; priority: string; signals: SystemSignal[]; protocolTitle?: string | null | undefined }) {
   const [visible, setVisible] = useState(false);
   const [frame, setFrame] = useState(0);
 

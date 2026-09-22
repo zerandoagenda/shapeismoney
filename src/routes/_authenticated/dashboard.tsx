@@ -16,7 +16,7 @@ export const Route=createFileRoute("/_authenticated/dashboard")({head:()=>({meta
 
 type WorkoutPreview={id:string;name:string;estimated_minutes:number|null;sequence:number};
 type Program=Tables<"workout_programs">&{workouts:WorkoutPreview[]};
-type Habit=Pick<Tables<"client_habits">,"id"|"title"|"description"|"target_frequency"|"current_streak"|"pillar">&{habit_logs:Array<Pick<Tables<"habit_logs">,"log_date"|"completed">>};
+type Habit=Pick<Tables<"client_habits">,"id"|"title"|"description"|"target_frequency"|"current_streak"|"pillar"|"period">&{habit_logs:Array<Pick<Tables<"habit_logs">,"log_date"|"completed">>};
 type PillarInsight=Pick<Tables<"pillar_insights">,"id"|"pillar"|"advance"|"bottleneck"|"next_action">;
 type Data={profile:Tables<"profiles">;roles:string[];score:Tables<"sim_scores">|null;previousScore:Tables<"sim_scores">|null;checkins:Tables<"daily_checkins">[];sessions:Tables<"workout_sessions">[];protocol:Tables<"protocols">|null;program:Program|null;nutrition:Tables<"nutrition_plans">|null;scan:Tables<"perception_scans">|null;activation:OperationalActivation|null;job:{status:TrainingJobStatus}|null;photoCount:number;assessmentApproved:boolean;habits:Habit[];pillarInsights:PillarInsight[]};
 const pillarMeta=[{key:"construction",label:"Corpo"},{key:"capacity",label:"Capacidade"},{key:"governance",label:"Governo"},{key:"perception",label:"Percepção"},{key:"execution",label:"Execução"}] as const;
