@@ -42,3 +42,14 @@
 - [x] Preservar fotos longitudinais de antes/depois por assessment e aluno
 - [x] Implementar reconciliação, retry, erros visíveis e atualização sem recarregar
 - [ ] Validar fluxos ALUNO OS TEST, Bruno, cliente e Exercise Library
+
+## Rebuild 1.0
+- [x] Criar fundação privada para anamnese versionada, análises, pilares, hábitos, sinais e comentários
+- [ ] Conectar conclusão da anamnese à análise automática e ao Orchestrator
+- [ ] Permitir draft inicial seguro sem bloquear por fotos ou assessment
+- [ ] Criar Training Evidence Bundle único e geração idempotente por decisão
+- [ ] Completar Anamnese e evidências no Client 360
+- [ ] Implementar Hábitos em construção e comentários contextuais
+- [ ] Simplificar a experiência do membro e explicar os cinco pilares
+- [ ] Completar filas administrativas, reconciliação e decisões pendentes
+- [ ] Validar E2E descartável, falha/retry, upgrades, persistência e isolamento

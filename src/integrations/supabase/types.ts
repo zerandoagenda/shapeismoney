@@ -231,6 +231,102 @@ export type Database = {
           },
         ]
       }
+      anamnesis_analyses: {
+        Row: {
+          adherence_factors: Json
+          anamnesis_id: string
+          attempts: number
+          client_id: string
+          completed_at: string | null
+          confidence: number | null
+          created_at: string
+          error_message: string | null
+          evidence_used: Json
+          executive_context: string | null
+          id: string
+          limiting_factors: Json
+          missing_information: Json
+          model: string | null
+          model_version: string | null
+          primary_objective: string | null
+          readiness: Json
+          recovery_factors: Json
+          safety_level: string
+          safety_notes: Json
+          started_at: string | null
+          status: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          adherence_factors?: Json
+          anamnesis_id: string
+          attempts?: number
+          client_id: string
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          error_message?: string | null
+          evidence_used?: Json
+          executive_context?: string | null
+          id?: string
+          limiting_factors?: Json
+          missing_information?: Json
+          model?: string | null
+          model_version?: string | null
+          primary_objective?: string | null
+          readiness?: Json
+          recovery_factors?: Json
+          safety_level?: string
+          safety_notes?: Json
+          started_at?: string | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adherence_factors?: Json
+          anamnesis_id?: string
+          attempts?: number
+          client_id?: string
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          error_message?: string | null
+          evidence_used?: Json
+          executive_context?: string | null
+          id?: string
+          limiting_factors?: Json
+          missing_information?: Json
+          model?: string | null
+          model_version?: string | null
+          primary_objective?: string | null
+          readiness?: Json
+          recovery_factors?: Json
+          safety_level?: string
+          safety_notes?: Json
+          started_at?: string | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anamnesis_analyses_anamnesis_id_fkey"
+            columns: ["anamnesis_id"]
+            isOneToOne: true
+            referencedRelation: "client_anamnesis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anamnesis_analyses_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_photos: {
         Row: {
           assessment_id: string
@@ -438,6 +534,60 @@ export type Database = {
           },
         ]
       }
+      client_anamnesis: {
+        Row: {
+          client_id: string
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          id: string
+          sections: Json
+          source: string
+          status: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          client_id: string
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          sections?: Json
+          source?: string
+          status?: string
+          updated_at?: string
+          version: number
+        }
+        Update: {
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          sections?: Json
+          source?: string
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_anamnesis_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_anamnesis_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_assignments: {
         Row: {
           active: boolean
@@ -484,6 +634,81 @@ export type Database = {
           {
             foreignKeyName: "client_assignments_staff_id_fkey"
             columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_habits: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          best_streak: number
+          client_id: string
+          created_at: string
+          current_streak: number
+          description: string | null
+          ends_on: string | null
+          id: string
+          period: string
+          pillar: string
+          source: string
+          starts_on: string | null
+          status: string
+          target_frequency: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          best_streak?: number
+          client_id: string
+          created_at?: string
+          current_streak?: number
+          description?: string | null
+          ends_on?: string | null
+          id?: string
+          period?: string
+          pillar: string
+          source?: string
+          starts_on?: string | null
+          status?: string
+          target_frequency: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          best_streak?: number
+          client_id?: string
+          created_at?: string
+          current_streak?: number
+          description?: string | null
+          ends_on?: string | null
+          id?: string
+          period?: string
+          pillar?: string
+          source?: string
+          starts_on?: string | null
+          status?: string
+          target_frequency?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_habits_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_habits_client_id_fkey"
+            columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -906,6 +1131,80 @@ export type Database = {
           {
             foreignKeyName: "community_saves_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contextual_comments: {
+        Row: {
+          author_id: string
+          client_id: string
+          context_id: string | null
+          context_type: string
+          created_at: string
+          id: string
+          message: string
+          parent_id: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          client_id: string
+          context_id?: string | null
+          context_type: string
+          created_at?: string
+          id?: string
+          message: string
+          parent_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          client_id?: string
+          context_id?: string | null
+          context_type?: string
+          created_at?: string
+          id?: string
+          message?: string
+          parent_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contextual_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contextual_comments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contextual_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "contextual_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contextual_comments_resolved_by_fkey"
+            columns: ["resolved_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1582,6 +1881,54 @@ export type Database = {
           },
         ]
       }
+      habit_logs: {
+        Row: {
+          client_id: string
+          completed: boolean
+          created_at: string
+          habit_id: string
+          id: string
+          log_date: string
+          note: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          completed?: boolean
+          created_at?: string
+          habit_id: string
+          id?: string
+          log_date?: string
+          note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          completed?: boolean
+          created_at?: string
+          habit_id?: string
+          id?: string
+          log_date?: string
+          note?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "habit_logs_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "client_habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_content_views: {
         Row: {
           content_id: string
@@ -1733,6 +2080,63 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      mindset_signals: {
+        Row: {
+          client_id: string
+          confidence: number | null
+          created_at: string
+          description: string
+          evidence: Json
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          signal_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          confidence?: number | null
+          created_at?: string
+          description: string
+          evidence?: Json
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          signal_type: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          confidence?: number | null
+          created_at?: string
+          description?: string
+          evidence?: Json
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          signal_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mindset_signals_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mindset_signals_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       monthly_reviews: {
         Row: {
@@ -2443,6 +2847,73 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      pillar_insights: {
+        Row: {
+          advance: string | null
+          anamnesis_analysis_id: string | null
+          bottleneck: string | null
+          client_id: string
+          components: Json
+          created_at: string
+          id: string
+          next_action: string | null
+          pillar: string
+          score: number | null
+          score_id: string | null
+          sources: Json
+        }
+        Insert: {
+          advance?: string | null
+          anamnesis_analysis_id?: string | null
+          bottleneck?: string | null
+          client_id: string
+          components?: Json
+          created_at?: string
+          id?: string
+          next_action?: string | null
+          pillar: string
+          score?: number | null
+          score_id?: string | null
+          sources?: Json
+        }
+        Update: {
+          advance?: string | null
+          anamnesis_analysis_id?: string | null
+          bottleneck?: string | null
+          client_id?: string
+          components?: Json
+          created_at?: string
+          id?: string
+          next_action?: string | null
+          pillar?: string
+          score?: number | null
+          score_id?: string | null
+          sources?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_insights_anamnesis_analysis_id_fkey"
+            columns: ["anamnesis_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "anamnesis_analyses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pillar_insights_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pillar_insights_score_id_fkey"
+            columns: ["score_id"]
+            isOneToOne: false
+            referencedRelation: "sim_scores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plan_entitlements: {
         Row: {
