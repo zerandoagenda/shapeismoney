@@ -10,11 +10,13 @@ export function CinematicEntry({ name, priority, signals, protocolTitle }: { nam
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches || window.localStorage.getItem("sim-reduced-motion") === "true";
     if (reduced || window.sessionStorage.getItem("sim-command-entry") === "seen") return;
-    window.sessionStorage.setItem("sim-command-entry", "seen");
     setVisible(true);
     const first = window.setTimeout(() => setFrame(1), 760);
     const second = window.setTimeout(() => setFrame(2), 1700);
-    const finish = window.setTimeout(() => setVisible(false), 2850);
+    const finish = window.setTimeout(() => {
+      window.sessionStorage.setItem("sim-command-entry", "seen");
+      setVisible(false);
+    }, 2850);
     return () => { window.clearTimeout(first); window.clearTimeout(second); window.clearTimeout(finish); };
   }, []);
 
