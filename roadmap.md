@@ -74,3 +74,9 @@
 - [x] Reorganizar registro de séries sem rolagem lateral no celular
 - [x] Proteger cabeçalhos, KPIs, filas, formulários e navegação contra cortes
 - [x] Validar rotas principais em 390, 768, 950 e 1280 px sem erros
+
+## Fábio — FOCO 11/11
+- [ ] Arquivar o protocolo de viagem sem apagar histórico
+- [ ] Publicar o novo programa completo com exercícios e vídeos associados
+- [ ] Elevar a experiência tecnológica de seleção e execução do treino
+- [ ] Validar perfil, cronômetro, séries, vídeos e responsividade
