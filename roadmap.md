@@ -80,3 +80,8 @@
 - [x] Publicar o novo programa completo com exercícios e vídeos associados
 - [x] Elevar a experiência tecnológica de seleção e execução do treino
 - [ ] Validar perfil, cronômetro, séries, vídeos e responsividade
+
+## Visualização do aluno na carteira
+- [x] Adicionar ação “Ver como aluno” em celular e desktop
+- [x] Mostrar Dashboard e Treino com dados reais em modo somente leitura
+- [ ] Validar aluno com treino, aluno sem treino e responsividade
