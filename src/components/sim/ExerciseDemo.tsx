@@ -22,6 +22,6 @@ export function ExerciseDemo({ name, videoPath, imagePath, externalVideo, extern
   }, [videoPath, imagePath]);
   if (!video) return <p className="mt-3 text-xs text-muted-foreground">Demonstração ainda não disponível.</p>;
   return <div className="mt-4">
-    {!open ? <Button variant="quiet" onClick={() => setOpen(true)}><Play /> Ver demonstração</Button> : <video className="aspect-video w-full max-w-2xl border border-border bg-muted" controls preload="metadata" poster={image ?? undefined} aria-label={`Demonstração de ${name}`}><source src={video} /></video>}
+    {!open ? <Button variant="ghost" className="h-8 text-[10px] border border-primary/20 hover:border-primary/50" onClick={() => setOpen(true)}><Play /> Ver demonstração</Button> : <video className="aspect-video w-full max-w-2xl border border-primary/20 bg-black/40 shadow-2xl" controls preload="metadata" poster={image ?? undefined} aria-label={`Demonstração de ${name}`}><source src={video} /></video>}
   </div>;
 }
