@@ -84,4 +84,4 @@
 ## Visualização do aluno na carteira
 - [x] Adicionar ação “Ver como aluno” em celular e desktop
 - [x] Mostrar Dashboard e Treino com dados reais em modo somente leitura
-- [ ] Validar aluno com treino, aluno sem treino e responsividade
+- [x] Validar aluno com treino, aluno sem treino e responsividade
