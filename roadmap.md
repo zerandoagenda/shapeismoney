@@ -76,7 +76,7 @@
 - [x] Validar rotas principais em 390, 768, 950 e 1280 px sem erros
 
 ## Fábio — FOCO 11/11
-- [ ] Arquivar o protocolo de viagem sem apagar histórico
-- [ ] Publicar o novo programa completo com exercícios e vídeos associados
-- [ ] Elevar a experiência tecnológica de seleção e execução do treino
+- [x] Arquivar o protocolo de viagem sem apagar histórico
+- [x] Publicar o novo programa completo com exercícios e vídeos associados
+- [x] Elevar a experiência tecnológica de seleção e execução do treino
 - [ ] Validar perfil, cronômetro, séries, vídeos e responsividade

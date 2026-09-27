@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { createFileRoute,Link } from "@tanstack/react-router";
-import { Check, Clock3, Play, ShieldAlert } from "lucide-react";
+import { Activity, Check, Clock3, Dumbbell, Play, ShieldAlert, TimerReset } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/sim/AppShell";import{UsageTracker}from"@/components/sim/UsageTracker";
 import { LockedFeature } from "@/components/sim/LockedFeature";
 import { ProtocolTimeline } from "@/components/sim/ProtocolTimeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { useEntitlement } from "@/hooks/use-entitlement";
 import { progressionDecision } from "@/lib/training-rules";
 import { ExerciseDemo } from "@/components/sim/ExerciseDemo";
 import { TeamConversation } from "@/components/sim/TeamConversation";
 
 export const Route = createFileRoute("/_authenticated/training")({ head: () => ({ meta: [{ title: "Treino — SIM OS" }, { name: "description", content: "Seu protocolo de construção e capacidade." }, { property: "og:title", content: "Treino — SIM OS" }, { property: "og:description", content: "Execute seu protocolo com clareza." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: Page });
-type Exercise = { id: string; sets: number; reps: string; rep_min:number|null; rep_max:number|null; initial_load: number | null; rest_seconds: number; target_effort_type:string; target_effort:number|null; target_rpe: number | null; notes: string | null; reason_for_inclusion:string|null; pain_rule:string|null; sequence: number; exercise_library: { id:string; name: string; muscle_group: string; video_storage_path:string|null; image_storage_path:string|null; video_url:string|null; image_url:string|null } | null };
+type Exercise = { id: string; sets: number; reps: string; rep_min:number|null; rep_max:number|null; initial_load: number | null; rest_seconds: number; target_effort_type:string; target_effort:number|null; target_rpe: number | null; notes: string | null; execution_notes:string|null; reason_for_inclusion:string|null; pain_rule:string|null; sequence: number; exercise_library: { id:string; name: string; muscle_group: string; video_storage_path:string|null; image_storage_path:string|null; video_url:string|null; image_url:string|null } | null };
 type Workout = { id: string; name: string; estimated_minutes: number | null; notes: string | null; variant_type:string; workout_exercises: Exercise[] };
 type Program = { id: string; cycle_id:string|null; title: string; objective: string | null; why_this_plan:string|null; workouts: Workout[] };
 type SetEntry = { load: string; reps: string; rpe: string; pain: string; techniqueOk: boolean; completed: boolean };
@@ -29,6 +30,8 @@ function Page() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [startedAt, setStartedAt] = useState<Date | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [restUntil, setRestUntil] = useState<number | null>(null);
+  const [restRemaining, setRestRemaining] = useState(0);
   const [log, setLog] = useState<Log>({});
   const [sessionRpe, setSessionRpe] = useState("");
   const [comment, setComment] = useState("");
@@ -40,7 +43,7 @@ function Page() {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) return;
       const [programResult, protocol] = await Promise.all([
-        supabase.from("workout_programs").select("id,cycle_id,title,objective,why_this_plan,workouts(id,name,estimated_minutes,notes,sequence,variant_type,workout_exercises(id,sets,reps,rep_min,rep_max,initial_load,rest_seconds,target_rpe,target_effort_type,target_effort,notes,reason_for_inclusion,pain_rule,sequence,exercise_library(id,name,muscle_group,video_storage_path,image_storage_path,video_url,image_url)))").eq("user_id", auth.user.id).eq("status", "published").order("published_at", { ascending: false }).limit(1).maybeSingle(),
+        supabase.from("workout_programs").select("id,cycle_id,title,objective,why_this_plan,workouts(id,name,estimated_minutes,notes,sequence,variant_type,workout_exercises(id,sets,reps,rep_min,rep_max,initial_load,rest_seconds,target_rpe,target_effort_type,target_effort,notes,execution_notes,reason_for_inclusion,pain_rule,sequence,exercise_library(id,name,muscle_group,video_storage_path,image_storage_path,video_url,image_url)))").eq("user_id", auth.user.id).eq("status", "published").order("published_at", { ascending: false }).limit(1).maybeSingle(),
         supabase.from("protocols").select("status").eq("user_id", auth.user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
       ]);
       const loadedProgram = programResult.data as unknown as Program | null;
@@ -79,6 +82,18 @@ function Page() {
     return () => window.clearInterval(timer);
   }, [startedAt, done]);
 
+  useEffect(() => {
+    if (!restUntil) { setRestRemaining(0); return; }
+    const update = () => {
+      const remaining = Math.max(0, Math.ceil((restUntil - Date.now()) / 1000));
+      setRestRemaining(remaining);
+      if (remaining === 0) setRestUntil(null);
+    };
+    update();
+    const timer = window.setInterval(update, 250);
+    return () => window.clearInterval(timer);
+  }, [restUntil]);
+
   function initialExerciseLog(workout: Workout): Log {
     return Object.fromEntries(workout.workout_exercises.map(exercise => [exercise.id, { sets: Object.fromEntries(Array.from({ length: exercise.sets }, (_, index) => [index + 1, emptySet()])) }]));
   }
@@ -101,6 +116,7 @@ function Page() {
     const nextSet = { ...currentSet, ...patch };
     const next = { ...log, [exercise.id]: { sets: { ...currentExercise.sets, [setNumber]: nextSet } } };
     setLog(next);
+    if (patch.completed === true && !currentSet.completed && exercise.rest_seconds > 0) setRestUntil(Date.now() + exercise.rest_seconds * 1000);
     if (!sessionId) return;
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) return;
@@ -146,6 +162,9 @@ function Page() {
   if (!entitlement.enabled) return <AppShell><div className="mx-auto max-w-4xl px-5 py-16"><LockedFeature title="Treino orientado" description="Seu plano atual inclui o diagnóstico. O protocolo de treino é liberado nos planos com acompanhamento."/></div></AppShell>;
   if (!program) return <AppShell><div className="mx-auto max-w-5xl px-4 py-10 sm:px-5 sm:py-16"><p className="sim-kicker">Protocolo executivo</p><h1 className="mt-5 text-4xl leading-tight sm:text-5xl">Seu protocolo está sendo construído.</h1><p className="mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">A equipe está organizando os dados recebidos antes de publicar sua direção.</p><ProtocolTimeline status={protocolStatus}/></div></AppShell>;
   if (done) return <AppShell><div className="grid min-h-[75vh] place-items-center px-5 text-center"><div className="min-w-0"><Check className="mx-auto size-10 text-primary"/><p className="sim-kicker mt-5">Execução registrada</p><h1 className="mt-4 text-4xl sm:text-5xl">Treino concluído.</h1><p className="mt-4 text-muted-foreground">Sua execução foi incorporada à carteira.</p></div></div></AppShell>;
+  const activeTotalSets = active?.workout_exercises.reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
+  const activeCompletedSets = active?.workout_exercises.reduce((sum, exercise) => sum + Array.from({ length: exercise.sets }, (_, index) => log[exercise.id]?.sets[index + 1]?.completed).filter(Boolean).length, 0) ?? 0;
+  const activeProgress = activeTotalSets ? Math.round(activeCompletedSets / activeTotalSets * 100) : 0;
   if (active) return (
     <AppShell>
       <UsageTracker module="training"/>
@@ -158,26 +177,30 @@ function Page() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
                 </span>
-                Sessão em andamento · {active.variant_type.replaceAll("_", " ")}
+                Sessão em andamento · {activeCompletedSets}/{activeTotalSets} séries
               </p>
               <h1 className="mt-2 text-3xl leading-tight font-display sm:text-5xl">{active.name}</h1>
             </div>
-            <div className="flex items-center gap-3 rounded-lg border border-border bg-card/50 p-3 sm:p-4 shadow-2xl shadow-black/20" aria-label={`Tempo de treino ${formatElapsed(elapsed)}`}>
-              <Clock3 className="size-5 text-primary shrink-0" />
-              <span className="font-mono text-2xl tabular-nums tracking-tight sm:text-3xl text-primary">{formatElapsed(elapsed)}</span>
+            <div className="flex items-center gap-4 border border-border bg-card/50 p-3 sm:p-4" aria-label={`Tempo de treino ${formatElapsed(elapsed)}`}>
+              <div><span className="block text-[8px] uppercase text-muted-foreground">Tempo total</span><span className="mt-1 flex items-center gap-2 font-mono text-xl tabular-nums text-primary sm:text-2xl"><Clock3 className="size-4 shrink-0" />{formatElapsed(elapsed)}</span></div>
+              {restRemaining > 0 && <button className="border-l border-primary pl-4 text-left" onClick={() => setRestUntil(null)} aria-label="Encerrar descanso"><span className="block text-[8px] uppercase text-primary">Descanso</span><span className="mt-1 flex items-center gap-2 font-mono text-xl tabular-nums"><TimerReset className="size-4 text-primary"/>{formatElapsed(restRemaining).slice(3)}</span></button>}
             </div>
           </div>
+          <Progress className="mt-4 h-1 rounded-none bg-muted" value={activeProgress}/>
         </header>
 
         <div className="space-y-8 sm:space-y-12">
-          {active.workout_exercises.map((exercise) => {
+          {active.workout_exercises.map((exercise, exerciseIndex) => {
             const current = log[exercise.id] ?? { sets: {} };
+            const completedHere = Array.from({ length: exercise.sets }, (_, index) => current.sets[index + 1]?.completed).filter(Boolean).length;
+            const priorIncomplete = active.workout_exercises.slice(0, exerciseIndex).some(previous => Array.from({ length: previous.sets }, (_, index) => !log[previous.id]?.sets[index + 1]?.completed).some(Boolean));
+            const isCurrent = completedHere < exercise.sets && !priorIncomplete;
             return (
-              <article key={exercise.id} className="sim-panel overflow-hidden border-primary/10 transition-all hover:border-primary/20">
+              <article key={exercise.id} className={`sim-panel overflow-hidden transition-colors ${isCurrent ? "border-primary/70" : "border-primary/10"}`}>
                 <div className="p-5 sm:p-8">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1">
-                      <h2 className="text-xl sm:text-2xl font-display group-hover:text-primary transition-colors">{exercise.exercise_library?.name ?? "Exercício"}</h2>
+                      <div className="flex flex-wrap items-center gap-3"><span className="grid size-8 place-items-center border border-border font-mono text-[10px] text-primary">{completedHere === exercise.sets ? <Check className="size-4"/> : String(exerciseIndex + 1).padStart(2, "0")}</span><h2 className="text-xl font-display sm:text-2xl">{exercise.exercise_library?.name ?? "Exercício"}</h2>{isCurrent && <span className="border border-primary px-2 py-1 text-[8px] uppercase text-primary">Agora</span>}</div>
                       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded border border-border/50"><Check className="size-3 text-primary"/> {exercise.sets} séries</span>
                         <span className="bg-muted/30 px-2 py-0.5 rounded border border-border/50 font-medium text-foreground/80">{exercise.reps} reps</span>
@@ -189,6 +212,8 @@ function Page() {
                           {exercise.reason_for_inclusion}
                         </p>
                       )}
+                      {exercise.execution_notes && <p className="mt-3 text-sm text-foreground/80">{exercise.execution_notes}</p>}
+                      {exercise.notes && <p className="mt-2 text-xs text-muted-foreground">{exercise.notes}</p>}
                       {exercise.pain_rule && (
                         <p className="mt-3 flex items-start gap-2 text-xs text-destructive/80">
                           <ShieldAlert className="mt-0.5 size-3.5 shrink-0" />
@@ -274,7 +299,7 @@ function Page() {
                   
                   <div className="mt-8 flex justify-end">
                     <label className="group relative flex cursor-pointer items-center gap-2 rounded-lg border border-border/60 px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-muted-foreground transition-all hover:border-primary/50 hover:text-primary hover:bg-primary/5 overflow-hidden">
-                      <span className="relative z-10">Upload Vídeo Técnico</span>
+                      <Dumbbell className="relative z-10 size-4 text-primary"/><span className="relative z-10">Enviar vídeo técnico</span>
                       <div className="absolute inset-0 translate-y-full bg-primary/5 transition-transform group-hover:translate-y-0" />
                       <input className="hidden" type="file" accept="video/*" onChange={event => { const file = event.target.files?.[0]; if (file) void uploadTechnique(exercise, file); }}/>
                     </label>
@@ -319,15 +344,15 @@ function Page() {
     <AppShell>
       <UsageTracker module="training"/>
       <div className="mx-auto min-w-0 max-w-5xl px-4 py-10 sm:px-8 sm:py-20">
-        <header className="relative mb-16 sm:mb-24">
+        <header className="relative mb-10 sm:mb-14">
           <div className="absolute -left-4 top-0 h-full w-1 bg-primary/40 hidden sm:block" />
-          <p className="sim-kicker mb-4 text-primary tracking-[0.3em]">Protocolo de Capacidade</p>
-          <h1 className="text-5xl leading-tight font-display sm:text-7xl lg:text-8xl tracking-tight">{program.title}</h1>
-          <p className="mt-8 max-w-3xl text-lg text-muted-foreground/80 leading-relaxed font-sans border-l border-primary/10 pl-6 py-2">
+          <p className="sim-kicker mb-4 inline-flex items-center gap-2"><Activity className="size-4"/> Protocolo ativo</p>
+          <h1 className="text-4xl leading-tight font-display sm:text-6xl">{program.title}</h1>
+          <p className="mt-6 max-w-3xl border-l border-primary/30 py-1 pl-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
             {program.why_this_plan ?? program.objective ?? "Direção estratégica publicada pela equipe técnica SIM."}
           </p>
           
-          <nav className="mt-12 flex flex-wrap gap-8 text-[10px] font-bold uppercase tracking-[0.25em]">
+          <nav className="mt-8 flex flex-wrap gap-5 text-[10px] font-bold uppercase">
             <span className="flex items-center gap-2.5 text-primary">
               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"/> 
               Status: Ativo
@@ -337,15 +362,16 @@ function Page() {
           </nav>
         </header>
 
-        <div className="grid gap-6 sm:gap-10">
-          {[...program.workouts].sort((a, b) => a.name.localeCompare(b.name)).map(workout => (
-            <article key={workout.id} className="sim-panel sim-workout-card group relative grid min-w-0 gap-8 overflow-hidden p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-12 transition-all hover:shadow-[0_0_50px_rgba(var(--accent-gold),0.05)] border-primary/5 hover:border-primary/20">
+        <div className="grid grid-cols-3 border-y border-border py-4 text-center"><div><strong className="block font-mono text-xl text-primary">{program.workouts.length}</strong><span className="text-[8px] uppercase text-muted-foreground">Sessões</span></div><div className="border-x border-border"><strong className="block font-mono text-xl">{program.workouts.reduce((sum, workout) => sum + workout.workout_exercises.reduce((sets, exercise) => sets + exercise.sets, 0), 0)}</strong><span className="text-[8px] uppercase text-muted-foreground">Séries</span></div><div><strong className="block font-mono text-xl">{program.workouts.reduce((sum, workout) => sum + (workout.estimated_minutes ?? 0), 0)}</strong><span className="text-[8px] uppercase text-muted-foreground">Min previstos</span></div></div>
+        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+          {[...program.workouts].sort((a, b) => a.name.localeCompare(b.name)).map((workout, index) => (
+            <article key={workout.id} className="sim-panel sim-workout-card group relative grid min-w-0 gap-5 overflow-hidden p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-6 transition-colors border-primary/5 hover:border-primary/40">
               <div className="absolute -right-12 top-0 h-full w-48 translate-x-12 skew-x-[-25deg] bg-primary/[0.02] transition-all group-hover:bg-primary/[0.05] group-hover:translate-x-0" />
               
-              <div className="relative z-10 min-w-0">
+              <div className="relative z-10 grid size-11 place-items-center border border-border font-mono text-xs text-primary">{String(index + 1).padStart(2, "0")}</div><div className="relative z-10 min-w-0">
                 <p className="sim-kicker text-primary/50 group-hover:text-primary/80 transition-colors">{workout.variant_type.replaceAll("_", " ")}</p>
-                <h2 className="mt-5 text-4xl font-display sm:text-5xl group-hover:tracking-tight transition-all">{workout.name}</h2>
-                <div className="mt-8 flex items-center gap-6 text-xs font-medium text-muted-foreground/70">
+                 <h2 className="mt-2 text-2xl font-display leading-tight">{workout.name.replace(/^DIA \d+ — /, "")}</h2>
+                 <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground/70">
                   <span className="flex items-center gap-2"><Check className="size-3.5 text-primary/40"/> {workout.workout_exercises.length} movimentos</span>
                   {workout.estimated_minutes && (
                     <span className="flex items-center gap-2"><Clock3 className="size-3.5 text-primary/40"/> ~{workout.estimated_minutes} min</span>
@@ -355,12 +381,13 @@ function Page() {
               
               <div className="relative z-10">
                 <Button 
-                  className="group/btn h-16 w-full gap-4 px-10 text-base font-bold tracking-widest sm:w-auto overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/5" 
+                  className="group/btn h-11 w-full gap-3 px-4 text-xs font-bold sm:w-11" 
+                  size="icon"
                   variant="gold" 
                   onClick={() => void start(workout)}
                 >
-                  <Play className="size-5 fill-current transition-transform group-hover/btn:scale-125" /> 
-                  INICIAR SESSÃO
+                   <Play className="size-4 fill-current" />
+                   <span className="sm:hidden">INICIAR SESSÃO</span>
                 </Button>
               </div>
             </article>
