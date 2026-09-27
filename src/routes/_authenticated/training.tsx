@@ -146,13 +146,234 @@ function Page() {
   if (!entitlement.enabled) return <AppShell><div className="mx-auto max-w-4xl px-5 py-16"><LockedFeature title="Treino orientado" description="Seu plano atual inclui o diagnóstico. O protocolo de treino é liberado nos planos com acompanhamento."/></div></AppShell>;
   if (!program) return <AppShell><div className="mx-auto max-w-5xl px-4 py-10 sm:px-5 sm:py-16"><p className="sim-kicker">Protocolo executivo</p><h1 className="mt-5 text-4xl leading-tight sm:text-5xl">Seu protocolo está sendo construído.</h1><p className="mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">A equipe está organizando os dados recebidos antes de publicar sua direção.</p><ProtocolTimeline status={protocolStatus}/></div></AppShell>;
   if (done) return <AppShell><div className="grid min-h-[75vh] place-items-center px-5 text-center"><div className="min-w-0"><Check className="mx-auto size-10 text-primary"/><p className="sim-kicker mt-5">Execução registrada</p><h1 className="mt-4 text-4xl sm:text-5xl">Treino concluído.</h1><p className="mt-4 text-muted-foreground">Sua execução foi incorporada à carteira.</p></div></div></AppShell>;
-  if (active) return <AppShell><div className="mx-auto min-w-0 max-w-4xl px-4 py-7 sm:px-5 sm:py-10"><div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end"><div className="min-w-0"><p className="sim-kicker break-words">Sessão em andamento · {active.variant_type.replaceAll("_", " ")}</p><h1 className="mt-3 break-words text-4xl leading-tight sm:mt-4 sm:text-5xl">{active.name}</h1></div><div className="flex w-fit shrink-0 items-center gap-2 border-y border-border py-3 font-mono text-xl tabular-nums text-primary sm:text-2xl" aria-label={`Tempo de treino ${formatElapsed(elapsed)}`}><Clock3 className="size-5 shrink-0"/>{formatElapsed(elapsed)}</div></div><div className="mt-8 divide-y divide-border border-y border-border sm:mt-10">{active.workout_exercises.map(exercise => {
-    const current = log[exercise.id] ?? { sets: {} };
-    return <article key={exercise.id} className="min-w-0 py-7"><div className="min-w-0"><h2 className="break-words text-lg">{exercise.exercise_library?.name ?? "Exercício"}</h2><p className="mt-1 break-words text-xs text-muted-foreground">{exercise.sets} séries · {exercise.reps} reps · {exercise.rest_seconds}s · {exercise.target_effort_type} alvo {exercise.target_effort ?? exercise.target_rpe ?? "—"}</p>{exercise.exercise_library && <ExerciseDemo name={exercise.exercise_library.name} videoPath={exercise.exercise_library.video_storage_path} imagePath={exercise.exercise_library.image_storage_path} externalVideo={exercise.exercise_library.video_url} externalImage={exercise.exercise_library.image_url}/>} {exercise.reason_for_inclusion && <p className="mt-3 max-w-2xl break-words text-sm text-primary">Por que existe: {exercise.reason_for_inclusion}</p>}{exercise.pain_rule && <p className="mt-2 flex items-start gap-2 text-xs text-muted-foreground"><ShieldAlert className="mt-0.5 size-4 shrink-0"/><span className="break-words">{exercise.pain_rule}</span></p>}</div><div className="mt-5"><div className="hidden grid-cols-[52px_repeat(4,minmax(0,1fr))_76px_48px] gap-2 px-1 pb-2 text-center sm:grid"><span className="sim-kicker">Série</span>{["Carga", "Reps", "RPE", "Dor"].map(label => <span key={label} className="sim-kicker">{label}</span>)}<span className="sim-kicker">Técnica</span><span className="sim-kicker">Feita</span></div>{Array.from({ length: exercise.sets }, (_, index) => {
-      const setNumber = index + 1;
-      const set = current.sets[setNumber] ?? emptySet();
-      return <div key={setNumber} className="grid min-w-0 grid-cols-2 gap-3 border-t border-border/60 py-4 sm:grid-cols-[52px_repeat(4,minmax(0,1fr))_76px_48px] sm:items-center sm:gap-2 sm:py-2"><span className="col-span-2 font-mono text-xs text-muted-foreground sm:col-span-1 sm:text-center sm:text-sm">Série {setNumber}</span>{(["load", "reps", "rpe", "pain"] as const).map(key => <label key={key} className="min-w-0"><span className="mb-1 block text-[8px] uppercase text-muted-foreground sm:hidden">{{load:"Carga",reps:"Reps",rpe:"RPE",pain:"Dor"}[key]}</span><Input className="min-w-0" aria-label={`${exercise.exercise_library?.name ?? "Exercício"} série ${setNumber} ${key}`} type="number" min={key === "pain" ? 0 : undefined} max={key === "pain" ? 10 : undefined} value={set[key]} onChange={event => void updateSet(exercise, setNumber, { [key]: event.target.value })}/></label>)}<div className="flex min-w-0 items-center gap-2 sm:contents"><Button className="flex-1 sm:flex-none" size="icon" variant={set.techniqueOk ? "quiet" : "gold"} aria-label={`Técnica da série ${setNumber}`} onClick={() => void updateSet(exercise, setNumber, { techniqueOk: !set.techniqueOk })}><ShieldAlert/></Button><span className="text-[9px] uppercase text-muted-foreground sm:hidden">Técnica</span></div><div className="flex min-w-0 items-center justify-end gap-2 sm:contents"><span className="text-[9px] uppercase text-muted-foreground sm:hidden">Feita</span><Button size="icon" variant={set.completed ? "gold" : "quiet"} aria-label={`Concluir série ${setNumber}`} onClick={() => void updateSet(exercise, setNumber, { completed: !set.completed })}><Check/></Button></div></div>;
-    })}</div><label className="mt-4 inline-flex max-w-full cursor-pointer items-center border border-border px-4 py-2 text-xs">Enviar vídeo técnico<input className="hidden" type="file" accept="video/*" onChange={event => { const file = event.target.files?.[0]; if (file) void uploadTechnique(exercise, file); }}/></label></article>;
-  })}</div><div className="mt-8 grid gap-3 sm:grid-cols-2"><Input type="number" min={1} max={10} value={sessionRpe} onChange={event => setSessionRpe(event.target.value)} placeholder="RPE da sessão"/><Input value={comment} onChange={event => setComment(event.target.value)} placeholder="Comentário para a equipe"/></div><Button variant="gold" className="mt-4 h-12 w-full" onClick={() => void finish()}>Concluir treino</Button></div></AppShell>;
-  return <AppShell><div className="mx-auto min-w-0 max-w-5xl px-4 py-7 sm:px-5 sm:py-10"><p className="sim-kicker">O que eu preciso fazer hoje?</p><h1 className="mt-3 break-words text-4xl leading-tight sm:mt-4 sm:text-5xl">{program.title}</h1><p className="mt-3 max-w-2xl break-words text-sm text-muted-foreground sm:text-base">{program.why_this_plan ?? program.objective ?? "Direção publicada pela equipe."}</p><div className="mt-6 grid gap-2 border-y border-border py-4 text-xs uppercase text-muted-foreground min-[480px]:grid-cols-[auto_auto_auto] min-[480px]:justify-start min-[480px]:gap-4"><span>Treino publicado</span><Link to="/weekly-review" className="text-primary">Check-in semanal</Link><Link to="/training/assessment" className="text-primary">Protocolo fotográfico</Link></div><div className="mt-8 space-y-4 sm:mt-10">{[...program.workouts].sort((a, b) => a.name.localeCompare(b.name)).map(workout => <article key={workout.id} className="sim-panel grid min-w-0 gap-5 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-6"><div className="min-w-0"><p className="sim-kicker break-words">{workout.variant_type.replaceAll("_", " ")}</p><h2 className="mt-2 break-words text-3xl">{workout.name}</h2><p className="mt-2 break-words text-xs text-muted-foreground">{workout.workout_exercises.length} exercícios{workout.estimated_minutes ? ` · ${workout.estimated_minutes} minutos estimados` : ""}</p></div><Button className="w-full sm:w-auto" variant="gold" onClick={() => void start(workout)}><Play/> Iniciar treino</Button></article>)}</div><div className="mt-12"><TeamConversation contextType="training" contextId={program.id}/></div></div></AppShell>;
+  if (active) return (
+    <AppShell>
+      <UsageTracker module="training"/>
+      <div className="mx-auto min-w-0 max-w-4xl px-4 py-7 sm:px-6 sm:py-12">
+        <header className="sticky top-0 z-20 -mx-4 mb-8 bg-background/95 px-4 pb-6 pt-2 backdrop-blur-md sm:-mx-6 sm:px-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="min-w-0">
+              <p className="sim-kicker inline-flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+                </span>
+                Sessão em andamento · {active.variant_type.replaceAll("_", " ")}
+              </p>
+              <h1 className="mt-2 text-3xl leading-tight font-display sm:text-5xl">{active.name}</h1>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg border border-border bg-card/50 p-3 sm:p-4 shadow-2xl shadow-black/20" aria-label={`Tempo de treino ${formatElapsed(elapsed)}`}>
+              <Clock3 className="size-5 text-primary shrink-0" />
+              <span className="font-mono text-2xl tabular-nums tracking-tight sm:text-3xl text-primary">{formatElapsed(elapsed)}</span>
+            </div>
+          </div>
+        </header>
+
+        <div className="space-y-8 sm:space-y-12">
+          {active.workout_exercises.map((exercise) => {
+            const current = log[exercise.id] ?? { sets: {} };
+            return (
+              <article key={exercise.id} className="sim-panel overflow-hidden border-primary/10 transition-all hover:border-primary/20">
+                <div className="p-5 sm:p-8">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <h2 className="text-xl sm:text-2xl font-display group-hover:text-primary transition-colors">{exercise.exercise_library?.name ?? "Exercício"}</h2>
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded border border-border/50"><Check className="size-3 text-primary"/> {exercise.sets} séries</span>
+                        <span className="bg-muted/30 px-2 py-0.5 rounded border border-border/50 font-medium text-foreground/80">{exercise.reps} reps</span>
+                        <span className="bg-muted/30 px-2 py-0.5 rounded border border-border/50 italic">{exercise.rest_seconds}s rest</span>
+                        <span className="text-primary font-bold uppercase tracking-wider">{exercise.target_effort_type} {exercise.target_effort ?? exercise.target_rpe ?? "—"}</span>
+                      </div>
+                      {exercise.reason_for_inclusion && (
+                        <p className="mt-4 border-l-2 border-primary/30 pl-3 text-sm italic text-muted-foreground/90">
+                          {exercise.reason_for_inclusion}
+                        </p>
+                      )}
+                      {exercise.pain_rule && (
+                        <p className="mt-3 flex items-start gap-2 text-xs text-destructive/80">
+                          <ShieldAlert className="mt-0.5 size-3.5 shrink-0" />
+                          <span>{exercise.pain_rule}</span>
+                        </p>
+                      )}
+                    </div>
+                    {exercise.exercise_library && (
+                      <div className="shrink-0">
+                        <ExerciseDemo 
+                          name={exercise.exercise_library.name} 
+                          videoPath={exercise.exercise_library.video_storage_path} 
+                          imagePath={exercise.exercise_library.image_storage_path} 
+                          externalVideo={exercise.exercise_library.video_url} 
+                          externalImage={exercise.exercise_library.image_url} 
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-8">
+                    <div className="hidden grid-cols-[60px_1fr_1fr_1fr_1fr_80px_60px] gap-3 px-2 pb-3 text-center sm:grid">
+                      <span className="sim-kicker">Série</span>
+                      {["Carga", "Reps", "RPE", "Dor"].map(label => <span key={label} className="sim-kicker">{label}</span>)}
+                      <span className="sim-kicker">Status</span>
+                      <span className="sim-kicker">Check</span>
+                    </div>
+                    
+                    <div className="divide-y divide-border/40">
+                      {Array.from({ length: exercise.sets }, (_, index) => {
+                        const setNumber = index + 1;
+                        const set = current.sets[setNumber] ?? emptySet();
+                        const isDone = set.completed;
+                        
+                        return (
+                          <div key={setNumber} className={`grid grid-cols-2 gap-4 py-5 sm:grid-cols-[60px_1fr_1fr_1fr_1fr_80px_60px] sm:items-center sm:gap-3 sm:py-2.5 transition-all duration-300 ${isDone ? "bg-primary/5 -mx-2 px-2" : ""}`}>
+                            <span className="col-span-2 font-mono text-[10px] text-muted-foreground sm:col-span-1 sm:text-center sm:text-sm">
+                              #{setNumber}
+                            </span>
+                            {(["load", "reps", "rpe", "pain"] as const).map(key => (
+                              <label key={key} className="flex flex-col gap-1.5 sm:block">
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 sm:hidden">
+                                  {{load:"Carga (kg)",reps:"Reps",rpe:"RPE",pain:"Dor"}[key]}
+                                </span>
+                                <Input 
+                                  className={`sim-training-input h-10 text-center text-base sm:h-9 sm:text-sm ${isDone ? "opacity-60 grayscale-[0.5]" : ""}`}
+                                  aria-label={`${exercise.exercise_library?.name ?? "Exercício"} série ${setNumber} ${key}`} 
+                                  type="number" 
+                                  min={key === "pain" ? 0 : undefined} 
+                                  max={key === "pain" ? 10 : undefined} 
+                                  value={set[key]} 
+                                  onChange={event => void updateSet(exercise, setNumber, { [key]: event.target.value })} 
+                                />
+                              </label>
+                            ))}
+                            <div className="flex items-center gap-3 sm:justify-center">
+                              <Button 
+                                className={`flex-1 sm:flex-none transition-all duration-300 ${!set.techniqueOk ? "bg-destructive/20 text-destructive hover:bg-destructive/30" : "text-muted-foreground/30 hover:text-destructive/50"}`}
+                                size="sm" 
+                                variant="ghost"
+                                onClick={() => void updateSet(exercise, setNumber, { techniqueOk: !set.techniqueOk })}
+                                aria-label="Alerta de técnica"
+                              >
+                                <ShieldAlert className="size-4" />
+                                <span className="ml-2 text-[10px] uppercase font-bold sm:hidden">Técnica</span>
+                              </Button>
+                            </div>
+                            <div className="flex items-center justify-end sm:justify-center">
+                              <Button 
+                                size="sm" 
+                                variant={isDone ? "gold" : "outline"}
+                                className={`h-10 w-full sm:h-8 sm:w-8 sm:rounded-full transition-all duration-500 ${isDone ? "shadow-lg shadow-primary/20 scale-105" : "border-muted-foreground/20 text-muted-foreground/40"}`}
+                                onClick={() => void updateSet(exercise, setNumber, { completed: !isDone })}
+                              >
+                                <Check className={`size-4 ${isDone ? "scale-110" : "opacity-30"}`} />
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 flex justify-end">
+                    <label className="group relative flex cursor-pointer items-center gap-2 rounded-lg border border-border/60 px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-muted-foreground transition-all hover:border-primary/50 hover:text-primary hover:bg-primary/5 overflow-hidden">
+                      <span className="relative z-10">Upload Vídeo Técnico</span>
+                      <div className="absolute inset-0 translate-y-full bg-primary/5 transition-transform group-hover:translate-y-0" />
+                      <input className="hidden" type="file" accept="video/*" onChange={event => { const file = event.target.files?.[0]; if (file) void uploadTechnique(exercise, file); }}/>
+                    </label>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <footer className="mt-12 space-y-6 rounded-2xl border border-primary/20 bg-card/40 p-6 backdrop-blur-md sm:p-10 shadow-2xl">
+          <div className="grid gap-8 sm:grid-cols-2">
+            <div className="space-y-3">
+              <label className="sim-kicker ml-1 block text-primary/80">Esforço Total da Sessão (RPE 1-10)</label>
+              <Input 
+                type="number" min={1} max={10} 
+                value={sessionRpe} 
+                onChange={event => setSessionRpe(event.target.value)} 
+                placeholder="Ex: 8"
+                className="sim-training-input h-14 text-xl font-display"
+              />
+            </div>
+            <div className="space-y-3">
+              <label className="sim-kicker ml-1 block text-primary/80">Observações Estratégicas</label>
+              <Input 
+                value={comment} 
+                onChange={event => setComment(event.target.value)} 
+                placeholder="Ex: Senti fadiga no 3º bloco..."
+                className="sim-training-input h-14 italic"
+              />
+            </div>
+          </div>
+          <Button variant="gold" className="group relative h-16 w-full overflow-hidden text-lg font-bold tracking-widest shadow-2xl shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99]" onClick={() => void finish()}>
+            <div className="absolute inset-0 -translate-x-full bg-white/10 transition-transform group-hover:translate-x-full duration-1000 skew-x-[-20deg]" />
+            CONCLUIR E SINCRONIZAR TREINO
+          </Button>
+        </footer>
+      </div>
+    </AppShell>
+  );
+  return (
+    <AppShell>
+      <UsageTracker module="training"/>
+      <div className="mx-auto min-w-0 max-w-5xl px-4 py-10 sm:px-8 sm:py-20">
+        <header className="relative mb-16 sm:mb-24">
+          <div className="absolute -left-4 top-0 h-full w-1 bg-primary/40 hidden sm:block" />
+          <p className="sim-kicker mb-4 text-primary tracking-[0.3em]">Protocolo de Capacidade</p>
+          <h1 className="text-5xl leading-tight font-display sm:text-7xl lg:text-8xl tracking-tight">{program.title}</h1>
+          <p className="mt-8 max-w-3xl text-lg text-muted-foreground/80 leading-relaxed font-sans border-l border-primary/10 pl-6 py-2">
+            {program.why_this_plan ?? program.objective ?? "Direção estratégica publicada pela equipe técnica SIM."}
+          </p>
+          
+          <nav className="mt-12 flex flex-wrap gap-8 text-[10px] font-bold uppercase tracking-[0.25em]">
+            <span className="flex items-center gap-2.5 text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"/> 
+              Status: Ativo
+            </span>
+            <Link to="/weekly-review" className="text-muted-foreground/60 transition-all hover:text-primary hover:tracking-[0.3em] underline decoration-primary/20 underline-offset-8">Check-in semanal</Link>
+            <Link to="/training/assessment" className="text-muted-foreground/60 transition-all hover:text-primary hover:tracking-[0.3em] underline decoration-primary/20 underline-offset-8">Protocolo fotográfico</Link>
+          </nav>
+        </header>
+
+        <div className="grid gap-6 sm:gap-10">
+          {[...program.workouts].sort((a, b) => a.name.localeCompare(b.name)).map(workout => (
+            <article key={workout.id} className="sim-panel sim-workout-card group relative grid min-w-0 gap-8 overflow-hidden p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-12 transition-all hover:shadow-[0_0_50px_rgba(var(--accent-gold),0.05)] border-primary/5 hover:border-primary/20">
+              <div className="absolute -right-12 top-0 h-full w-48 translate-x-12 skew-x-[-25deg] bg-primary/[0.02] transition-all group-hover:bg-primary/[0.05] group-hover:translate-x-0" />
+              
+              <div className="relative z-10 min-w-0">
+                <p className="sim-kicker text-primary/50 group-hover:text-primary/80 transition-colors">{workout.variant_type.replaceAll("_", " ")}</p>
+                <h2 className="mt-5 text-4xl font-display sm:text-5xl group-hover:tracking-tight transition-all">{workout.name}</h2>
+                <div className="mt-8 flex items-center gap-6 text-xs font-medium text-muted-foreground/70">
+                  <span className="flex items-center gap-2"><Check className="size-3.5 text-primary/40"/> {workout.workout_exercises.length} movimentos</span>
+                  {workout.estimated_minutes && (
+                    <span className="flex items-center gap-2"><Clock3 className="size-3.5 text-primary/40"/> ~{workout.estimated_minutes} min</span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="relative z-10">
+                <Button 
+                  className="group/btn h-16 w-full gap-4 px-10 text-base font-bold tracking-widest sm:w-auto overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/5" 
+                  variant="gold" 
+                  onClick={() => void start(workout)}
+                >
+                  <Play className="size-5 fill-current transition-transform group-hover/btn:scale-125" /> 
+                  INICIAR SESSÃO
+                </Button>
+              </div>
+            </article>
+          ))}
+        </div>
+        
+        <div className="mt-32 border-t border-primary/5 pt-16">
+          <div className="max-w-2xl">
+            <h3 className="sim-kicker mb-6">Suporte Estratégico</h3>
+            <TeamConversation contextType="training" contextId={program.id}/>
+          </div>
+        </div>
+      </div>
+    </AppShell>
+  );
 }
