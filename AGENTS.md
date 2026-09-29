@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Derive workout timers and progress from persisted session records so execution remains continuous across navigation.
+- Keep public Radar lead data behind server functions with hashed session/result tokens; never grant anonymous table access.
