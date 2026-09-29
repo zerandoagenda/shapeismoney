@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedCheckInsRouteImport } from './routes/_authenticated/check-ins'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -82,6 +83,11 @@ const AuthRoute = AuthRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -378,6 +384,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/check-ins': typeof AuthenticatedCheckInsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -434,6 +441,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/check-ins': typeof AuthenticatedCheckInsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -491,6 +499,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/check-ins': typeof AuthenticatedCheckInsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -549,6 +558,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
     | '/check-ins'
     | '/dashboard'
@@ -605,6 +615,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
     | '/check-ins'
     | '/dashboard'
@@ -661,6 +672,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
     | '/_authenticated/check-ins'
     | '/_authenticated/dashboard'
@@ -719,6 +731,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
@@ -750,6 +763,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -1293,6 +1313,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
