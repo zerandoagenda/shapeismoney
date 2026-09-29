@@ -54,6 +54,7 @@ import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/admin.tasks'
 import { Route as AuthenticatedMembersSlugRouteImport } from './routes/_authenticated/members.$slug'
 import { Route as AuthenticatedTrainingAssessmentRouteImport } from './routes/_authenticated/training.assessment'
+import { Route as RadarResultTokenRouteImport } from './routes/radar.result.$token'
 import { Route as AuthenticatedAdminClientExperienceStudentIdRouteImport } from './routes/_authenticated/admin.client-experience.$studentId'
 import { Route as AuthenticatedAdminLibraryExercisesRouteImport } from './routes/_authenticated/admin.library.exercises'
 import { Route as AuthenticatedAdminRelationshipStudentIdRouteImport } from './routes/_authenticated/admin.relationship.$studentId'
@@ -313,6 +314,11 @@ const AuthenticatedTrainingAssessmentRoute =
     path: '/assessment',
     getParentRoute: () => AuthenticatedTrainingRoute,
   } as any)
+const RadarResultTokenRoute = RadarResultTokenRouteImport.update({
+  id: '/result/$token',
+  path: '/result/$token',
+  getParentRoute: () => RadarRoute,
+} as any)
 const AuthenticatedAdminClientExperienceStudentIdRoute =
   AuthenticatedAdminClientExperienceStudentIdRouteImport.update({
     id: '/admin/client-experience/$studentId',
@@ -391,7 +397,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/privacy': typeof PrivacyRoute
-  '/radar': typeof RadarRoute
+  '/radar': typeof RadarRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/check-ins': typeof AuthenticatedCheckInsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -430,6 +436,7 @@ export interface FileRoutesByFullPath {
   '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
+  '/radar/result/$token': typeof RadarResultTokenRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/client-experience/$studentId': typeof AuthenticatedAdminClientExperienceStudentIdRoute
   '/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
@@ -449,7 +456,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/privacy': typeof PrivacyRoute
-  '/radar': typeof RadarRoute
+  '/radar': typeof RadarRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/check-ins': typeof AuthenticatedCheckInsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -487,6 +494,7 @@ export interface FileRoutesByTo {
   '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
+  '/radar/result/$token': typeof RadarResultTokenRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/client-experience/$studentId': typeof AuthenticatedAdminClientExperienceStudentIdRoute
   '/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
@@ -508,7 +516,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/privacy': typeof PrivacyRoute
-  '/radar': typeof RadarRoute
+  '/radar': typeof RadarRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/check-ins': typeof AuthenticatedCheckInsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -547,6 +555,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/_authenticated/members/$slug': typeof AuthenticatedMembersSlugRoute
   '/_authenticated/training/assessment': typeof AuthenticatedTrainingAssessmentRoute
+  '/radar/result/$token': typeof RadarResultTokenRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/client-experience/$studentId': typeof AuthenticatedAdminClientExperienceStudentIdRoute
   '/_authenticated/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
@@ -607,6 +616,7 @@ export interface FileRouteTypes {
     | '/admin/tasks'
     | '/members/$slug'
     | '/training/assessment'
+    | '/radar/result/$token'
     | '/admin/'
     | '/admin/client-experience/$studentId'
     | '/admin/library/exercises'
@@ -664,6 +674,7 @@ export interface FileRouteTypes {
     | '/admin/tasks'
     | '/members/$slug'
     | '/training/assessment'
+    | '/radar/result/$token'
     | '/admin'
     | '/admin/client-experience/$studentId'
     | '/admin/library/exercises'
@@ -723,6 +734,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/tasks'
     | '/_authenticated/members/$slug'
     | '/_authenticated/training/assessment'
+    | '/radar/result/$token'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/client-experience/$studentId'
     | '/_authenticated/admin/library/exercises'
@@ -744,7 +756,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   PrivacyRoute: typeof PrivacyRoute
-  RadarRoute: typeof RadarRoute
+  RadarRoute: typeof RadarRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
@@ -1065,6 +1077,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrainingAssessmentRouteImport
       parentRoute: typeof AuthenticatedTrainingRoute
     }
+    '/radar/result/$token': {
+      id: '/radar/result/$token'
+      path: '/result/$token'
+      fullPath: '/radar/result/$token'
+      preLoaderRoute: typeof RadarResultTokenRouteImport
+      parentRoute: typeof RadarRoute
+    }
     '/_authenticated/admin/client-experience/$studentId': {
       id: '/_authenticated/admin/client-experience/$studentId'
       path: '/admin/client-experience/$studentId'
@@ -1328,13 +1347,23 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface RadarRouteChildren {
+  RadarResultTokenRoute: typeof RadarResultTokenRoute
+}
+
+const RadarRouteChildren: RadarRouteChildren = {
+  RadarResultTokenRoute: RadarResultTokenRoute,
+}
+
+const RadarRouteWithChildren = RadarRoute._addFileChildren(RadarRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   PrivacyRoute: PrivacyRoute,
-  RadarRoute: RadarRoute,
+  RadarRoute: RadarRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
