@@ -91,4 +91,4 @@
 - [x] Implementar score determinístico, análise estruturada e geração de PDF
 - [x] Criar experiência pública com identificação, autosave, resultado e WhatsApp
 - [x] Criar funil, lista de leads, Lead 360 e configurações administrativas
-- [ ] Validar E2E, isolamento, falhas, PDF e responsividade
+- [x] Validar E2E público, score, análise, PDF, CRM administrativo e responsividade
