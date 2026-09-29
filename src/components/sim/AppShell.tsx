@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BarChart3, BriefcaseBusiness, CalendarCheck2, ClipboardList, Dumbbell, Factory, HeartHandshake, Home, LibraryBig, LogOut, Menu, Network, ScanLine, Settings, Shield, Sparkles, UserRound, X } from "lucide-react";
+import { BarChart3, BriefcaseBusiness, CalendarCheck2, ClipboardList, Dumbbell, Factory, HeartHandshake, Home, LibraryBig, LogOut, Menu, Network, Radar, ScanLine, Settings, Shield, Sparkles, UserRound, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brand } from "./Brand";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ const memberNav = [
 ] as const;
 const mobileNav = [["/dashboard", "Hoje", Home], ["/training", "Plano", Dumbbell], ["/habits", "Hábitos", CalendarCheck2], ["/check-ins", "Check-in", ClipboardList], ["/profile", "Perfil", UserRound]] as const;
 const adminNav = [
-  ["/admin", "Hoje", Home], ["/admin/clients", "Clientes", BriefcaseBusiness], ["/admin/production", "Produção", Factory], ["/admin/library", "Biblioteca", LibraryBig], ["/admin/business", "Negócio", BarChart3], ["/admin/settings", "Configurações", Settings],
+  ["/admin", "Hoje", Home], ["/admin/clients", "Clientes", BriefcaseBusiness], ["/admin/production", "Produção", Factory], ["/admin/library", "Biblioteca", LibraryBig], ["/admin/business", "Negócio", BarChart3], ["/admin/radar", "Radar & Leads", Radar], ["/admin/settings", "Configurações", Settings],
 ] as const;
 export function AppShell({ children, admin = false }: { children: React.ReactNode; admin?: boolean }) { const navigate = useNavigate(); const [staff,setStaff]=useState(admin); const [menuOpen,setMenuOpen]=useState(false); useEffect(()=>{if(admin)return;void(async()=>{const{data:user}=await supabase.auth.getUser();if(!user.user)return;const{data}=await supabase.from("user_roles").select("role").eq("user_id",user.user.id);setStaff(PermissionService.isStaff((data??[]).map(item=>item.role)))})()},[admin]); async function signOut() { await supabase.auth.signOut(); await navigate({ to: "/auth", replace: true }); }
   const navLink = (to:string,label:string,Icon:typeof Home) => <Link key={to} to={to} onClick={()=>setMenuOpen(false)} className="group flex min-w-0 items-center gap-3 border-l border-transparent px-3 py-2.5 text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-all duration-500 hover:border-primary hover:text-foreground" activeProps={{className:"border-primary bg-muted/40 text-foreground"}}><Icon className="size-3.5 shrink-0"/><span className="truncate">{label}</span></Link>;
