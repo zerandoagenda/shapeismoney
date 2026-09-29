@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { calculateRadarScore, type RadarQuestion } from "@/lib/radar-score";
+import { radarAnalysisSchema, type RadarAnalysis } from "@/lib/radar-analysis.server";
 
 const identificationSchema = z.object({
   fullName: z.string().trim().min(3).max(140), whatsapp: z.string().trim().min(8).max(30), email: z.string().trim().email().max(180),
@@ -97,7 +98,7 @@ export const finalizeRadar = createServerFn({ method: "POST" }).inputValidator((
   if (!questions?.length || answers?.length !== questions.length) throw new Error("Responda todas as perguntas antes de concluir.");
   const score = calculateRadarScore(questions as RadarQuestion[], answers);
   if (!existingScore) await admin.from("radar_scores").insert({ session_id: session.id, score_version: session.radar_version, construction_score: score.construction, capacity_score: score.capacity, governance_score: score.governance, perception_score: score.perception, execution_score: score.execution, sim_performance_score: score.total, strongest_pillar: score.strongestPillar, weakest_pillar: score.weakestPillar, raw_answers: Object.fromEntries(answers.map((answer: any) => [answer.question_id, answer.answer_value])), normalized_scores: score.normalized });
-  let analysis = existingAnalysis?.status === "completed" ? existingAnalysis : null;
+  let analysis: RadarAnalysis | null = existingAnalysis?.status === "completed" ? radarAnalysisSchema.safeParse(existingAnalysis).data ?? null : null;
   if (!analysis) {
     const attempts = (existingAnalysis?.attempts ?? 0) + 1;
     const { data: row } = await admin.from("radar_ai_analyses").upsert({ session_id: session.id, status: "processing", model: "openai/gpt-6-astra", model_version: "radar-v1", prompt_version: "1.0", attempts, error_message: null }, { onConflict: "session_id" }).select("id").single();
@@ -105,10 +106,12 @@ export const finalizeRadar = createServerFn({ method: "POST" }).inputValidator((
     try {
       const { generateRadarAnalysis } = await import("@/lib/radar-analysis.server");
       const generated = await generateRadarAnalysis({ lead: { age: session.radar_leads.age, job_title: session.radar_leads.job_title, company: session.radar_leads.company, segment: session.radar_leads.segment }, questions, answers, score });
-      const { data: saved, error } = await admin.from("radar_ai_analyses").update({ ...generated, status: "completed", generated_at: new Date().toISOString() }).eq("id", row?.id).select("*").single(); if (error || !saved) throw error ?? new Error("Não foi possível salvar a análise."); analysis = saved;
+      if (!row?.id) throw new Error("Não foi possível preparar a análise.");
+      const { data: saved, error } = await admin.from("radar_ai_analyses").update({ ...generated, status: "completed", generated_at: new Date().toISOString() }).eq("id", row.id).select("*").single(); if (error || !saved) throw error ?? new Error("Não foi possível salvar a análise."); analysis = radarAnalysisSchema.parse(saved);
       await admin.from("lead_events").insert({ lead_id: session.lead_id, session_id: session.id, event_type: "RADAR_AI_ANALYZED", metadata: { model: "openai/gpt-6-astra", prompt_version: "1.0" } });
-    } catch (error) { const message = error instanceof Error ? error.message : "A análise não pôde ser concluída."; await Promise.all([admin.from("radar_ai_analyses").update({ status: "failed", error_message: message }).eq("id", row?.id), admin.from("radar_leads").update({ operational_status: "ANALYSIS_FAILED" }).eq("id", session.lead_id)]); throw new Error(message); }
+    } catch (error) { const message = error instanceof Error ? error.message : "A análise não pôde ser concluída."; if (row?.id) await admin.from("radar_ai_analyses").update({ status: "failed", error_message: message }).eq("id", row.id); await admin.from("radar_leads").update({ operational_status: "ANALYSIS_FAILED" }).eq("id", session.lead_id); throw new Error(message); }
   }
+  if (!analysis) throw new Error("A análise não pôde ser concluída.");
   const now = new Date().toISOString();
   const responseList = questions.map((question: any) => ({ question: question.prompt, answer: answers.find((answer: any) => answer.question_id === question.id)?.answer_value ?? 0, low: question.low_label, high: question.high_label }));
   const snapshot = { lead: { name: session.radar_leads.full_name, company: session.radar_leads.company, job_title: session.radar_leads.job_title }, score, analysis, responses: responseList, radarVersion: session.radar_version, generatedAt: now };
@@ -116,9 +119,10 @@ export const finalizeRadar = createServerFn({ method: "POST" }).inputValidator((
   try {
     const { buildRadarPdf } = await import("@/lib/radar-pdf.server"); const bytes = await buildRadarPdf({ name: session.radar_leads.full_name, date: new Intl.DateTimeFormat("pt-BR").format(new Date()), score, analysis, responses: responseList }); const path = `${session.lead_id}/${session.id}.pdf`;
     const { error } = await admin.storage.from("radar-reports").upload(path, bytes, { contentType: "application/pdf", upsert: true }); if (error) throw error;
-    await admin.from("radar_reports").update({ status: "ready", storage_path: path, generated_at: now, error_message: null }).eq("id", report?.id);
+    if (!report?.id) throw new Error("Não foi possível registrar o relatório.");
+    await admin.from("radar_reports").update({ status: "ready", storage_path: path, generated_at: now, error_message: null }).eq("id", report.id);
     await admin.from("lead_events").insert({ lead_id: session.lead_id, session_id: session.id, event_type: "RADAR_PDF_GENERATED" });
-  } catch (error) { await admin.from("radar_reports").update({ status: "failed", error_message: error instanceof Error ? error.message : "Falha ao gerar relatório." }).eq("id", report?.id); }
+  } catch (error) { if (report?.id) await admin.from("radar_reports").update({ status: "failed", error_message: error instanceof Error ? error.message : "Falha ao gerar relatório." }).eq("id", report.id); }
   await Promise.all([
     admin.from("radar_sessions").update({ completed_at: session.completed_at ?? now, current_question: questions.length, last_activity_at: now }).eq("id", session.id),
     admin.from("radar_leads").update({ commercial_status: "RADAR_COMPLETED", operational_status: "RESULT_READY", questions_answered: questions.length, completion_percentage: 100, last_activity_at: now }).eq("id", session.lead_id),
