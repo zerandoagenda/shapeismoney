@@ -3713,6 +3713,39 @@ export type Database = {
           },
         ]
       }
+      radar_visits: {
+        Row: {
+          id: string
+          landing_page: string | null
+          source: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          visited_at: string
+          visitor_hash: string
+        }
+        Insert: {
+          id?: string
+          landing_page?: string | null
+          source?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          visited_at?: string
+          visitor_hash: string
+        }
+        Update: {
+          id?: string
+          landing_page?: string | null
+          source?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          visited_at?: string
+          visitor_hash?: string
+        }
+        Relationships: []
+      }
       relationship_alerts: {
         Row: {
           attention_level: string
