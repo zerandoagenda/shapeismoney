@@ -46,6 +46,7 @@ import { Route as AuthenticatedAdminMoneyBrainRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminPerceptionRouteImport } from './routes/_authenticated/admin.perception'
 import { Route as AuthenticatedAdminProductionRouteImport } from './routes/_authenticated/admin.production'
+import { Route as AuthenticatedAdminRadarRouteImport } from './routes/_authenticated/admin.radar'
 import { Route as AuthenticatedAdminRelationshipRouteImport } from './routes/_authenticated/admin.relationship'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -57,6 +58,8 @@ import { Route as AuthenticatedTrainingAssessmentRouteImport } from './routes/_a
 import { Route as RadarResultTokenRouteImport } from './routes/radar.result.$token'
 import { Route as AuthenticatedAdminClientExperienceStudentIdRouteImport } from './routes/_authenticated/admin.client-experience.$studentId'
 import { Route as AuthenticatedAdminLibraryExercisesRouteImport } from './routes/_authenticated/admin.library.exercises'
+import { Route as AuthenticatedAdminRadarLeadIdRouteImport } from './routes/_authenticated/admin.radar.$leadId'
+import { Route as AuthenticatedAdminRadarSettingsRouteImport } from './routes/_authenticated/admin.radar.settings'
 import { Route as AuthenticatedAdminRelationshipStudentIdRouteImport } from './routes/_authenticated/admin.relationship.$studentId'
 import { Route as AuthenticatedAdminStudentsIndexRouteImport } from './routes/_authenticated/admin.students.index'
 import { Route as AuthenticatedAdminStudentsStudentIdRouteImport } from './routes/_authenticated/admin.students.$studentId'
@@ -267,6 +270,11 @@ const AuthenticatedAdminProductionRoute =
     path: '/admin/production',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminRadarRoute = AuthenticatedAdminRadarRouteImport.update({
+  id: '/admin/radar',
+  path: '/admin/radar',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRelationshipRoute =
   AuthenticatedAdminRelationshipRouteImport.update({
     id: '/admin/relationship',
@@ -330,6 +338,18 @@ const AuthenticatedAdminLibraryExercisesRoute =
     id: '/exercises',
     path: '/exercises',
     getParentRoute: () => AuthenticatedAdminLibraryRoute,
+  } as any)
+const AuthenticatedAdminRadarLeadIdRoute =
+  AuthenticatedAdminRadarLeadIdRouteImport.update({
+    id: '/$leadId',
+    path: '/$leadId',
+    getParentRoute: () => AuthenticatedAdminRadarRoute,
+  } as any)
+const AuthenticatedAdminRadarSettingsRoute =
+  AuthenticatedAdminRadarSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRadarRoute,
   } as any)
 const AuthenticatedAdminRelationshipStudentIdRoute =
   AuthenticatedAdminRelationshipStudentIdRouteImport.update({
@@ -428,6 +448,7 @@ export interface FileRoutesByFullPath {
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
   '/admin/production': typeof AuthenticatedAdminProductionRoute
+  '/admin/radar': typeof AuthenticatedAdminRadarRouteWithChildren
   '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -440,6 +461,8 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/client-experience/$studentId': typeof AuthenticatedAdminClientExperienceStudentIdRoute
   '/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
+  '/admin/radar/$leadId': typeof AuthenticatedAdminRadarLeadIdRoute
+  '/admin/radar/settings': typeof AuthenticatedAdminRadarSettingsRoute
   '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -487,6 +510,7 @@ export interface FileRoutesByTo {
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
   '/admin/production': typeof AuthenticatedAdminProductionRoute
+  '/admin/radar': typeof AuthenticatedAdminRadarRouteWithChildren
   '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -498,6 +522,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/client-experience/$studentId': typeof AuthenticatedAdminClientExperienceStudentIdRoute
   '/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
+  '/admin/radar/$leadId': typeof AuthenticatedAdminRadarLeadIdRoute
+  '/admin/radar/settings': typeof AuthenticatedAdminRadarSettingsRoute
   '/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -547,6 +573,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/perception': typeof AuthenticatedAdminPerceptionRoute
   '/_authenticated/admin/production': typeof AuthenticatedAdminProductionRoute
+  '/_authenticated/admin/radar': typeof AuthenticatedAdminRadarRouteWithChildren
   '/_authenticated/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -559,6 +586,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/client-experience/$studentId': typeof AuthenticatedAdminClientExperienceStudentIdRoute
   '/_authenticated/admin/library/exercises': typeof AuthenticatedAdminLibraryExercisesRoute
+  '/_authenticated/admin/radar/$leadId': typeof AuthenticatedAdminRadarLeadIdRoute
+  '/_authenticated/admin/radar/settings': typeof AuthenticatedAdminRadarSettingsRoute
   '/_authenticated/admin/relationship/$studentId': typeof AuthenticatedAdminRelationshipStudentIdRoute
   '/_authenticated/admin/students/$studentId': typeof AuthenticatedAdminStudentsStudentIdRoute
   '/_authenticated/admin/training/$studentId': typeof AuthenticatedAdminTrainingStudentIdRoute
@@ -608,6 +637,7 @@ export interface FileRouteTypes {
     | '/admin/operations'
     | '/admin/perception'
     | '/admin/production'
+    | '/admin/radar'
     | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
@@ -620,6 +650,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/client-experience/$studentId'
     | '/admin/library/exercises'
+    | '/admin/radar/$leadId'
+    | '/admin/radar/settings'
     | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
@@ -667,6 +699,7 @@ export interface FileRouteTypes {
     | '/admin/operations'
     | '/admin/perception'
     | '/admin/production'
+    | '/admin/radar'
     | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
@@ -678,6 +711,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/client-experience/$studentId'
     | '/admin/library/exercises'
+    | '/admin/radar/$leadId'
+    | '/admin/radar/settings'
     | '/admin/relationship/$studentId'
     | '/admin/students/$studentId'
     | '/admin/training/$studentId'
@@ -726,6 +761,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/operations'
     | '/_authenticated/admin/perception'
     | '/_authenticated/admin/production'
+    | '/_authenticated/admin/radar'
     | '/_authenticated/admin/relationship'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/settings'
@@ -738,6 +774,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/client-experience/$studentId'
     | '/_authenticated/admin/library/exercises'
+    | '/_authenticated/admin/radar/$leadId'
+    | '/_authenticated/admin/radar/settings'
     | '/_authenticated/admin/relationship/$studentId'
     | '/_authenticated/admin/students/$studentId'
     | '/_authenticated/admin/training/$studentId'
@@ -1021,6 +1059,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProductionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/radar': {
+      id: '/_authenticated/admin/radar'
+      path: '/admin/radar'
+      fullPath: '/admin/radar'
+      preLoaderRoute: typeof AuthenticatedAdminRadarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/relationship': {
       id: '/_authenticated/admin/relationship'
       path: '/admin/relationship'
@@ -1097,6 +1142,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/library/exercises'
       preLoaderRoute: typeof AuthenticatedAdminLibraryExercisesRouteImport
       parentRoute: typeof AuthenticatedAdminLibraryRoute
+    }
+    '/_authenticated/admin/radar/$leadId': {
+      id: '/_authenticated/admin/radar/$leadId'
+      path: '/$leadId'
+      fullPath: '/admin/radar/$leadId'
+      preLoaderRoute: typeof AuthenticatedAdminRadarLeadIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRadarRoute
+    }
+    '/_authenticated/admin/radar/settings': {
+      id: '/_authenticated/admin/radar/settings'
+      path: '/settings'
+      fullPath: '/admin/radar/settings'
+      preLoaderRoute: typeof AuthenticatedAdminRadarSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRadarRoute
     }
     '/_authenticated/admin/relationship/$studentId': {
       id: '/_authenticated/admin/relationship/$studentId'
@@ -1210,6 +1269,22 @@ const AuthenticatedAdminLibraryRouteWithChildren =
     AuthenticatedAdminLibraryRouteChildren,
   )
 
+interface AuthenticatedAdminRadarRouteChildren {
+  AuthenticatedAdminRadarLeadIdRoute: typeof AuthenticatedAdminRadarLeadIdRoute
+  AuthenticatedAdminRadarSettingsRoute: typeof AuthenticatedAdminRadarSettingsRoute
+}
+
+const AuthenticatedAdminRadarRouteChildren: AuthenticatedAdminRadarRouteChildren =
+  {
+    AuthenticatedAdminRadarLeadIdRoute: AuthenticatedAdminRadarLeadIdRoute,
+    AuthenticatedAdminRadarSettingsRoute: AuthenticatedAdminRadarSettingsRoute,
+  }
+
+const AuthenticatedAdminRadarRouteWithChildren =
+  AuthenticatedAdminRadarRoute._addFileChildren(
+    AuthenticatedAdminRadarRouteChildren,
+  )
+
 interface AuthenticatedAdminRelationshipRouteChildren {
   AuthenticatedAdminRelationshipStudentIdRoute: typeof AuthenticatedAdminRelationshipStudentIdRoute
 }
@@ -1272,6 +1347,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPerceptionRoute: typeof AuthenticatedAdminPerceptionRoute
   AuthenticatedAdminProductionRoute: typeof AuthenticatedAdminProductionRoute
+  AuthenticatedAdminRadarRoute: typeof AuthenticatedAdminRadarRouteWithChildren
   AuthenticatedAdminRelationshipRoute: typeof AuthenticatedAdminRelationshipRouteWithChildren
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -1319,6 +1395,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminPerceptionRoute: AuthenticatedAdminPerceptionRoute,
   AuthenticatedAdminProductionRoute: AuthenticatedAdminProductionRoute,
+  AuthenticatedAdminRadarRoute: AuthenticatedAdminRadarRouteWithChildren,
   AuthenticatedAdminRelationshipRoute:
     AuthenticatedAdminRelationshipRouteWithChildren,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
