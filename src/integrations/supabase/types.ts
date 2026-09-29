@@ -1929,6 +1929,96 @@ export type Database = {
           },
         ]
       }
+      lead_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          lead_id: string | null
+          metadata: Json
+          session_id: string | null
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          lead_id?: string | null
+          metadata?: Json
+          session_id?: string | null
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          lead_id?: string | null
+          metadata?: Json
+          session_id?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "radar_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "radar_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          new_status: string
+          previous_status: string | null
+          reason: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          new_status: string
+          previous_status?: string | null
+          reason?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          new_status?: string
+          previous_status?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_status_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "radar_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_content_views: {
         Row: {
           content_id: string
@@ -3167,6 +3257,462 @@ export type Database = {
           },
         ]
       }
+      radar_ai_analyses: {
+        Row: {
+          attempts: number
+          capacity_analysis: string | null
+          closing_statement: string | null
+          construction_analysis: string | null
+          created_at: string
+          current_state: string | null
+          error_message: string | null
+          execution_analysis: string | null
+          executive_summary: string | null
+          generated_at: string | null
+          governance_analysis: string | null
+          id: string
+          main_incoherence: string | null
+          model: string
+          model_version: string
+          next_movement: string | null
+          perception_analysis: string | null
+          primary_bottleneck: Json | null
+          primary_strength: Json | null
+          priority: string | null
+          prompt_version: string
+          session_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          capacity_analysis?: string | null
+          closing_statement?: string | null
+          construction_analysis?: string | null
+          created_at?: string
+          current_state?: string | null
+          error_message?: string | null
+          execution_analysis?: string | null
+          executive_summary?: string | null
+          generated_at?: string | null
+          governance_analysis?: string | null
+          id?: string
+          main_incoherence?: string | null
+          model: string
+          model_version: string
+          next_movement?: string | null
+          perception_analysis?: string | null
+          primary_bottleneck?: Json | null
+          primary_strength?: Json | null
+          priority?: string | null
+          prompt_version: string
+          session_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          capacity_analysis?: string | null
+          closing_statement?: string | null
+          construction_analysis?: string | null
+          created_at?: string
+          current_state?: string | null
+          error_message?: string | null
+          execution_analysis?: string | null
+          executive_summary?: string | null
+          generated_at?: string | null
+          governance_analysis?: string | null
+          id?: string
+          main_incoherence?: string | null
+          model?: string
+          model_version?: string
+          next_movement?: string | null
+          perception_analysis?: string | null
+          primary_bottleneck?: Json | null
+          primary_strength?: Json | null
+          priority?: string | null
+          prompt_version?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_ai_analyses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "radar_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_answers: {
+        Row: {
+          answer_value: number
+          answered_at: string
+          id: string
+          question_id: string
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          answer_value: number
+          answered_at?: string
+          id?: string
+          question_id: string
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          answer_value?: number
+          answered_at?: string
+          id?: string
+          question_id?: string
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "radar_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "radar_answers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "radar_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_leads: {
+        Row: {
+          age: number
+          commercial_status: string
+          company: string
+          completion_percentage: number
+          consent_at: string
+          consent_version: string
+          converted_user_id: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          job_title: string
+          last_activity_at: string
+          operational_status: string
+          questions_answered: number
+          segment: string
+          source: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          age: number
+          commercial_status?: string
+          company: string
+          completion_percentage?: number
+          consent_at: string
+          consent_version?: string
+          converted_user_id?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          job_title: string
+          last_activity_at?: string
+          operational_status?: string
+          questions_answered?: number
+          segment: string
+          source?: string
+          updated_at?: string
+          whatsapp: string
+        }
+        Update: {
+          age?: number
+          commercial_status?: string
+          company?: string
+          completion_percentage?: number
+          consent_at?: string
+          consent_version?: string
+          converted_user_id?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          job_title?: string
+          last_activity_at?: string
+          operational_status?: string
+          questions_answered?: number
+          segment?: string
+          source?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_leads_converted_user_id_fkey"
+            columns: ["converted_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_questions: {
+        Row: {
+          active: boolean
+          created_at: string
+          high_label: string
+          id: string
+          low_label: string
+          pillar: string
+          position: number
+          prompt: string
+          question_key: string
+          radar_version: string
+          reverse_scored: boolean
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          high_label: string
+          id?: string
+          low_label: string
+          pillar: string
+          position: number
+          prompt: string
+          question_key: string
+          radar_version: string
+          reverse_scored?: boolean
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          high_label?: string
+          id?: string
+          low_label?: string
+          pillar?: string
+          position?: number
+          prompt?: string
+          question_key?: string
+          radar_version?: string
+          reverse_scored?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      radar_reports: {
+        Row: {
+          attempts: number
+          created_at: string
+          error_message: string | null
+          generated_at: string | null
+          id: string
+          radar_version: string
+          session_id: string
+          snapshot: Json
+          status: string
+          storage_path: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          error_message?: string | null
+          generated_at?: string | null
+          id?: string
+          radar_version: string
+          session_id: string
+          snapshot?: Json
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          error_message?: string | null
+          generated_at?: string | null
+          id?: string
+          radar_version?: string
+          session_id?: string
+          snapshot?: Json
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_reports_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "radar_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_scores: {
+        Row: {
+          calculated_at: string
+          capacity_score: number
+          construction_score: number
+          created_at: string
+          execution_score: number
+          governance_score: number
+          id: string
+          normalized_scores: Json
+          perception_score: number
+          raw_answers: Json
+          score_version: string
+          session_id: string
+          sim_performance_score: number
+          strongest_pillar: string
+          weakest_pillar: string
+        }
+        Insert: {
+          calculated_at?: string
+          capacity_score: number
+          construction_score: number
+          created_at?: string
+          execution_score: number
+          governance_score: number
+          id?: string
+          normalized_scores?: Json
+          perception_score: number
+          raw_answers?: Json
+          score_version?: string
+          session_id: string
+          sim_performance_score: number
+          strongest_pillar: string
+          weakest_pillar: string
+        }
+        Update: {
+          calculated_at?: string
+          capacity_score?: number
+          construction_score?: number
+          created_at?: string
+          execution_score?: number
+          governance_score?: number
+          id?: string
+          normalized_scores?: Json
+          perception_score?: number
+          raw_answers?: Json
+          score_version?: string
+          session_id?: string
+          sim_performance_score?: number
+          strongest_pillar?: string
+          weakest_pillar?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_scores_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "radar_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_question: number
+          id: string
+          last_activity_at: string
+          lead_id: string
+          radar_version: string
+          result_token_hash: string
+          session_secret_hash: string
+          started_at: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_question?: number
+          id?: string
+          last_activity_at?: string
+          lead_id: string
+          radar_version?: string
+          result_token_hash: string
+          session_secret_hash: string
+          started_at?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_question?: number
+          id?: string
+          last_activity_at?: string
+          lead_id?: string
+          radar_version?: string
+          result_token_hash?: string
+          session_secret_hash?: string
+          started_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_sessions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "radar_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_settings: {
+        Row: {
+          active_version: string
+          campaign_active: boolean
+          created_at: string
+          cta_text: string
+          id: boolean
+          updated_at: string
+          updated_by: string | null
+          video_url: string | null
+          whatsapp_group_url: string
+        }
+        Insert: {
+          active_version?: string
+          campaign_active?: boolean
+          created_at?: string
+          cta_text?: string
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+          video_url?: string | null
+          whatsapp_group_url?: string
+        }
+        Update: {
+          active_version?: string
+          campaign_active?: boolean
+          created_at?: string
+          cta_text?: string
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+          video_url?: string | null
+          whatsapp_group_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       relationship_alerts: {
         Row: {
           attention_level: string
@@ -4378,6 +4924,53 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      utm_attribution: {
+        Row: {
+          created_at: string
+          id: string
+          landing_page: string | null
+          lead_id: string
+          referrer: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          landing_page?: string | null
+          lead_id: string
+          referrer?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          landing_page?: string | null
+          lead_id?: string
+          referrer?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utm_attribution_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "radar_leads"
             referencedColumns: ["id"]
           },
         ]
