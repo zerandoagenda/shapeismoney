@@ -89,6 +89,6 @@
 ## Radar da Performance
 - [x] Criar dados versionados, segurança, perguntas 1.0 e configuração inicial
 - [x] Implementar score determinístico, análise estruturada e geração de PDF
-- [ ] Criar experiência pública com identificação, autosave, resultado e WhatsApp
-- [ ] Criar funil, lista de leads, Lead 360 e configurações administrativas
+- [x] Criar experiência pública com identificação, autosave, resultado e WhatsApp
+- [x] Criar funil, lista de leads, Lead 360 e configurações administrativas
 - [ ] Validar E2E, isolamento, falhas, PDF e responsividade

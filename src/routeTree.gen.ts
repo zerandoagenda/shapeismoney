@@ -35,6 +35,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSimSelectRouteImport } from './routes/_authenticated/sim-select'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
 import { Route as AuthenticatedWeeklyReviewRouteImport } from './routes/_authenticated/weekly-review'
+import { Route as RadarIndexRouteImport } from './routes/radar.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminBusinessRouteImport } from './routes/_authenticated/admin.business'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
@@ -205,6 +206,11 @@ const AuthenticatedWeeklyReviewRoute =
     path: '/weekly-review',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const RadarIndexRoute = RadarIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RadarRoute,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -438,6 +444,7 @@ export interface FileRoutesByFullPath {
   '/sim-select': typeof AuthenticatedSimSelectRoute
   '/training': typeof AuthenticatedTrainingRouteWithChildren
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/radar/': typeof RadarIndexRoute
   '/admin/business': typeof AuthenticatedAdminBusinessRoute
   '/admin/clients': typeof AuthenticatedAdminClientsRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
@@ -479,7 +486,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/privacy': typeof PrivacyRoute
-  '/radar': typeof RadarRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/check-ins': typeof AuthenticatedCheckInsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -500,6 +506,7 @@ export interface FileRoutesByTo {
   '/sim-select': typeof AuthenticatedSimSelectRoute
   '/training': typeof AuthenticatedTrainingRouteWithChildren
   '/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/radar': typeof RadarIndexRoute
   '/admin/business': typeof AuthenticatedAdminBusinessRoute
   '/admin/clients': typeof AuthenticatedAdminClientsRoute
   '/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
@@ -563,6 +570,7 @@ export interface FileRoutesById {
   '/_authenticated/sim-select': typeof AuthenticatedSimSelectRoute
   '/_authenticated/training': typeof AuthenticatedTrainingRouteWithChildren
   '/_authenticated/weekly-review': typeof AuthenticatedWeeklyReviewRoute
+  '/radar/': typeof RadarIndexRoute
   '/_authenticated/admin/business': typeof AuthenticatedAdminBusinessRoute
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRoute
   '/_authenticated/admin/experiences': typeof AuthenticatedAdminExperiencesRoute
@@ -627,6 +635,7 @@ export interface FileRouteTypes {
     | '/sim-select'
     | '/training'
     | '/weekly-review'
+    | '/radar/'
     | '/admin/business'
     | '/admin/clients'
     | '/admin/experiences'
@@ -668,7 +677,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/forgot-password'
     | '/privacy'
-    | '/radar'
     | '/reset-password'
     | '/check-ins'
     | '/dashboard'
@@ -689,6 +697,7 @@ export interface FileRouteTypes {
     | '/sim-select'
     | '/training'
     | '/weekly-review'
+    | '/radar'
     | '/admin/business'
     | '/admin/clients'
     | '/admin/experiences'
@@ -751,6 +760,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sim-select'
     | '/_authenticated/training'
     | '/_authenticated/weekly-review'
+    | '/radar/'
     | '/_authenticated/admin/business'
     | '/_authenticated/admin/clients'
     | '/_authenticated/admin/experiences'
@@ -981,6 +991,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/weekly-review'
       preLoaderRoute: typeof AuthenticatedWeeklyReviewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/radar/': {
+      id: '/radar/'
+      path: '/'
+      fullPath: '/radar/'
+      preLoaderRoute: typeof RadarIndexRouteImport
+      parentRoute: typeof RadarRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -1425,10 +1442,12 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface RadarRouteChildren {
+  RadarIndexRoute: typeof RadarIndexRoute
   RadarResultTokenRoute: typeof RadarResultTokenRoute
 }
 
 const RadarRouteChildren: RadarRouteChildren = {
+  RadarIndexRoute: RadarIndexRoute,
   RadarResultTokenRoute: RadarResultTokenRoute,
 }
 
