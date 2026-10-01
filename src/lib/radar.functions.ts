@@ -154,8 +154,21 @@ export const getRadarAdminData = createServerFn({ method: "GET" }).middleware([r
 
 export const getRadarLead360 = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ leadId: z.string().uuid() }).parse(input)).handler(async ({ data, context }) => {
   await requireStaff(context); const admin = await adminClient();
-  const { data: lead } = await admin.from("radar_leads").select("*,utm_attribution(*),radar_sessions(*,radar_answers(*,radar_questions(*)),radar_scores(*),radar_ai_analyses(*),radar_reports(*))").eq("id", data.leadId).single();
-  const [{ data: events }, { data: history }] = await Promise.all([admin.from("lead_events").select("*").eq("lead_id", data.leadId).order("created_at", { ascending: false }), admin.from("lead_status_history").select("*").eq("lead_id", data.leadId).order("created_at", { ascending: false })]); return { lead, events: events ?? [], history: history ?? [] };
+  const { data: lead, error: leadError } = await admin.from("radar_leads").select("*,utm_attribution(*)").eq("id", data.leadId).single();
+  if (leadError || !lead) throw new Error("Não foi possível abrir os dados deste lead.");
+  const { data: sessions, error: sessionError } = await admin.from("radar_sessions").select("*").eq("lead_id", data.leadId).order("created_at", { ascending: false });
+  if (sessionError) throw new Error("Não foi possível carregar a avaliação deste lead.");
+  const session = sessions?.[0] ?? null;
+  const [{ data: answers, error: answersError }, { data: score }, { data: analysis }, { data: report }, { data: events }, { data: history }] = await Promise.all([
+    session ? admin.from("radar_answers").select("*,radar_questions(id,position,prompt,pillar,low_label,high_label)").eq("session_id", session.id).order("answered_at") : Promise.resolve({ data: [], error: null }),
+    session ? admin.from("radar_scores").select("*").eq("session_id", session.id).maybeSingle() : Promise.resolve({ data: null }),
+    session ? admin.from("radar_ai_analyses").select("*").eq("session_id", session.id).maybeSingle() : Promise.resolve({ data: null }),
+    session ? admin.from("radar_reports").select("*").eq("session_id", session.id).maybeSingle() : Promise.resolve({ data: null }),
+    admin.from("lead_events").select("*").eq("lead_id", data.leadId).order("created_at", { ascending: false }),
+    admin.from("lead_status_history").select("*").eq("lead_id", data.leadId).order("created_at", { ascending: false }),
+  ]);
+  if (answersError) throw new Error("Não foi possível carregar as respostas deste lead.");
+  return { lead, session, answers: answers ?? [], score, analysis, report, events: events ?? [], history: history ?? [] };
 });
 
 export const updateRadarLeadStatus = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ leadId: z.string().uuid(), status: z.enum(statuses), reason: z.string().max(500).optional() }).parse(input)).handler(async ({ data, context }) => {
