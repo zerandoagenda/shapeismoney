@@ -59,6 +59,7 @@ import { Route as AuthenticatedTrainingAssessmentRouteImport } from './routes/_a
 import { Route as RadarResultTokenRouteImport } from './routes/radar.result.$token'
 import { Route as AuthenticatedAdminClientExperienceStudentIdRouteImport } from './routes/_authenticated/admin.client-experience.$studentId'
 import { Route as AuthenticatedAdminLibraryExercisesRouteImport } from './routes/_authenticated/admin.library.exercises'
+import { Route as AuthenticatedAdminRadarIndexRouteImport } from './routes/_authenticated/admin.radar.index'
 import { Route as AuthenticatedAdminRadarLeadIdRouteImport } from './routes/_authenticated/admin.radar.$leadId'
 import { Route as AuthenticatedAdminRadarSettingsRouteImport } from './routes/_authenticated/admin.radar.settings'
 import { Route as AuthenticatedAdminRelationshipStudentIdRouteImport } from './routes/_authenticated/admin.relationship.$studentId'
@@ -345,6 +346,12 @@ const AuthenticatedAdminLibraryExercisesRoute =
     path: '/exercises',
     getParentRoute: () => AuthenticatedAdminLibraryRoute,
   } as any)
+const AuthenticatedAdminRadarIndexRoute =
+  AuthenticatedAdminRadarIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminRadarRoute,
+  } as any)
 const AuthenticatedAdminRadarLeadIdRoute =
   AuthenticatedAdminRadarLeadIdRouteImport.update({
     id: '/$leadId',
@@ -478,6 +485,7 @@ export interface FileRoutesByFullPath {
   '/admin/training/exercises': typeof AuthenticatedAdminTrainingExercisesRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
   '/admin/training/photo-protocol': typeof AuthenticatedAdminTrainingPhotoProtocolRoute
+  '/admin/radar/': typeof AuthenticatedAdminRadarIndexRoute
   '/admin/students/': typeof AuthenticatedAdminStudentsIndexRoute
   '/admin/training/': typeof AuthenticatedAdminTrainingIndexRoute
 }
@@ -517,7 +525,6 @@ export interface FileRoutesByTo {
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/perception': typeof AuthenticatedAdminPerceptionRoute
   '/admin/production': typeof AuthenticatedAdminProductionRoute
-  '/admin/radar': typeof AuthenticatedAdminRadarRouteWithChildren
   '/admin/relationship': typeof AuthenticatedAdminRelationshipRouteWithChildren
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -539,6 +546,7 @@ export interface FileRoutesByTo {
   '/admin/training/exercises': typeof AuthenticatedAdminTrainingExercisesRoute
   '/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
   '/admin/training/photo-protocol': typeof AuthenticatedAdminTrainingPhotoProtocolRoute
+  '/admin/radar': typeof AuthenticatedAdminRadarIndexRoute
   '/admin/students': typeof AuthenticatedAdminStudentsIndexRoute
   '/admin/training': typeof AuthenticatedAdminTrainingIndexRoute
 }
@@ -604,6 +612,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/training/exercises': typeof AuthenticatedAdminTrainingExercisesRoute
   '/_authenticated/admin/training/knowledge': typeof AuthenticatedAdminTrainingKnowledgeRoute
   '/_authenticated/admin/training/photo-protocol': typeof AuthenticatedAdminTrainingPhotoProtocolRoute
+  '/_authenticated/admin/radar/': typeof AuthenticatedAdminRadarIndexRoute
   '/_authenticated/admin/students/': typeof AuthenticatedAdminStudentsIndexRoute
   '/_authenticated/admin/training/': typeof AuthenticatedAdminTrainingIndexRoute
 }
@@ -669,6 +678,7 @@ export interface FileRouteTypes {
     | '/admin/training/exercises'
     | '/admin/training/knowledge'
     | '/admin/training/photo-protocol'
+    | '/admin/radar/'
     | '/admin/students/'
     | '/admin/training/'
   fileRoutesByTo: FileRoutesByTo
@@ -708,7 +718,6 @@ export interface FileRouteTypes {
     | '/admin/operations'
     | '/admin/perception'
     | '/admin/production'
-    | '/admin/radar'
     | '/admin/relationship'
     | '/admin/reports'
     | '/admin/settings'
@@ -730,6 +739,7 @@ export interface FileRouteTypes {
     | '/admin/training/exercises'
     | '/admin/training/knowledge'
     | '/admin/training/photo-protocol'
+    | '/admin/radar'
     | '/admin/students'
     | '/admin/training'
   id:
@@ -794,6 +804,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/training/exercises'
     | '/_authenticated/admin/training/knowledge'
     | '/_authenticated/admin/training/photo-protocol'
+    | '/_authenticated/admin/radar/'
     | '/_authenticated/admin/students/'
     | '/_authenticated/admin/training/'
   fileRoutesById: FileRoutesById
@@ -1160,6 +1171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminLibraryExercisesRouteImport
       parentRoute: typeof AuthenticatedAdminLibraryRoute
     }
+    '/_authenticated/admin/radar/': {
+      id: '/_authenticated/admin/radar/'
+      path: '/'
+      fullPath: '/admin/radar/'
+      preLoaderRoute: typeof AuthenticatedAdminRadarIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRadarRoute
+    }
     '/_authenticated/admin/radar/$leadId': {
       id: '/_authenticated/admin/radar/$leadId'
       path: '/$leadId'
@@ -1289,12 +1307,14 @@ const AuthenticatedAdminLibraryRouteWithChildren =
 interface AuthenticatedAdminRadarRouteChildren {
   AuthenticatedAdminRadarLeadIdRoute: typeof AuthenticatedAdminRadarLeadIdRoute
   AuthenticatedAdminRadarSettingsRoute: typeof AuthenticatedAdminRadarSettingsRoute
+  AuthenticatedAdminRadarIndexRoute: typeof AuthenticatedAdminRadarIndexRoute
 }
 
 const AuthenticatedAdminRadarRouteChildren: AuthenticatedAdminRadarRouteChildren =
   {
     AuthenticatedAdminRadarLeadIdRoute: AuthenticatedAdminRadarLeadIdRoute,
     AuthenticatedAdminRadarSettingsRoute: AuthenticatedAdminRadarSettingsRoute,
+    AuthenticatedAdminRadarIndexRoute: AuthenticatedAdminRadarIndexRoute,
   }
 
 const AuthenticatedAdminRadarRouteWithChildren =
