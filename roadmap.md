@@ -107,8 +107,15 @@
 
 ## Master Product Rebuild — execução aprovada
 - [x] Auditar especificação contra dados, automações, aluno e Admin existentes
+- [x] Publicar matriz de cobertura, arquitetura proposta, gaps, compatibilidade, riscos e critérios de aceite
 - [x] Entregar Today First com prioridade, agenda, Performance Strip e SIM Pulse reais
 - [x] Reduzir navegação móvel para Hoje, Treino, Evolução e Perfil
+- [ ] Criar fundação nutricional autorizada, versionada e protegida por revisão
+- [ ] Implantar readiness conjunto e SLA oficial de 48 horas após requisitos completos
+- [ ] Executar Training e Nutrition em paralelo com jobs idempotentes
+- [ ] Criar Review Engine e gate humano de publicação conjunta
 - [ ] Entregar Workout Player imersivo com última execução, descanso e dificuldades
 - [ ] Proteger registros de séries contra conexão instável
-- [ ] Evoluir alimentação, evolução, engines, Admin, PWA e E2E por fases
+- [ ] Criar alimentação orientada à execução integrada ao Today
+- [ ] Criar Cycle Review e próximo protocolo versionado
+- [ ] Completar Client 360, Admin, PWA e E2E por fases
