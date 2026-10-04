@@ -49,5 +49,8 @@ export function readPerformance(signal: PerformanceSignal): PerformanceReading {
 
 export function changeFromFirst(values: number[]) {
   if (values.length < 2) return null;
-  return values[values.length - 1] - values[0];
+  const first = values[0];
+  const last = values.at(-1);
+  if (first === undefined || last === undefined) return null;
+  return last - first;
 }

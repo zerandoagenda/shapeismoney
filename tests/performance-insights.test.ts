@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { adherencePercent, changeFromFirst, readPerformance } from "./performance-insights";
+import { adherencePercent, changeFromFirst, readPerformance } from "../src/lib/performance-insights";
 
 describe("performance insights", () => {
   test("classifica adesão de 2 em 4 treinos como ponto de atenção", () => {
