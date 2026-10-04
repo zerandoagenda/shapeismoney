@@ -92,3 +92,9 @@
 - [x] Criar experiência pública com identificação, autosave, resultado e WhatsApp
 - [x] Criar funil, lista de leads, Lead 360 e configurações administrativas
 - [x] Validar E2E público, score, análise, PDF, CRM administrativo e responsividade
+
+## Performance semanal no Client 360
+- [x] Consolidar revisões semanais, sessões e cargas reais por aluno
+- [x] Exibir gráfico histórico, pontos fortes e pontos de atenção
+- [x] Mostrar todas as respostas e registros série por série
+- [ ] Validar Fábio em celular, tablet e desktop
