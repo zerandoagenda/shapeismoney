@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Activity, AlertTriangle, CheckCircle2, Dumbbell, Gauge, MessageSquareText } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, ChevronDown, Dumbbell, Gauge, MessageSquareText } from "lucide-react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { adherencePercent, average, readPerformance } from "@/lib/performance-insights";
 
 type WeeklyReview = Tables<"weekly_reviews">;
 type Session = Tables<"workout_sessions"> & { workouts: { name: string } | null };
 type SetLog = Tables<"exercise_set_logs"> & { workout_exercises: { exercise_library: { name: string } | null } | null };
+type Checkin = Tables<"daily_checkins">;
 
 const scoreFields = [
   ["nutrition", "Alimentação"], ["sleep", "Sono"], ["stress", "Estresse"], ["energy", "Energia"],
@@ -33,6 +36,7 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
   const [reviews, setReviews] = useState<WeeklyReview[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [setLogs, setSetLogs] = useState<SetLog[]>([]);
+  const [checkins, setCheckins] = useState<Checkin[]>([]);
   const [selectedWeek, setSelectedWeek] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -40,9 +44,10 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
     void (async () => {
       setLoading(true);
       const since = new Date(Date.now() - 120 * 86400000).toISOString();
-      const [reviewResult, sessionResult] = await Promise.all([
+      const [reviewResult, sessionResult, checkinResult] = await Promise.all([
         supabase.from("weekly_reviews").select("*").eq("user_id", studentId).order("week_start", { ascending: false }).limit(16),
         supabase.from("workout_sessions").select("*,workouts(name)").eq("user_id", studentId).gte("started_at", since).order("started_at", { ascending: false }),
+        supabase.from("daily_checkins").select("*").eq("user_id", studentId).gte("checkin_date", since.slice(0, 10)).order("checkin_date", { ascending: false }),
       ]);
       const nextSessions = (sessionResult.data ?? []) as Session[];
       const sessionIds = nextSessions.map((item) => item.id);
@@ -53,6 +58,7 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
       setReviews(nextReviews);
       setSessions(nextSessions);
       setSetLogs((logResult.data ?? []) as unknown as SetLog[]);
+      setCheckins(checkinResult.data ?? []);
       setSelectedWeek((current) => current || nextReviews[0]?.week_start || (nextSessions[0] ? mondayOf(nextSessions[0].started_at) : ""));
       setLoading(false);
     })();
@@ -63,6 +69,7 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
   const weekSessions = useMemo(() => selectedWeek ? sessions.filter((item) => inWeek(item.started_at, selectedWeek)) : [], [selectedWeek, sessions]);
   const weekSessionIds = useMemo(() => new Set(weekSessions.map((item) => item.id)), [weekSessions]);
   const weekLogs = useMemo(() => setLogs.filter((item) => weekSessionIds.has(item.session_id)), [setLogs, weekSessionIds]);
+  const weekCheckins = useMemo(() => selectedWeek ? checkins.filter((item) => inWeek(`${item.checkin_date}T12:00:00`, selectedWeek)) : [], [checkins, selectedWeek]);
   const chart = useMemo(() => [...reviews].reverse().map((item) => ({
     week: dayLabel(item.week_start),
     adesao: item.planned_workouts ? Math.round(item.completed_workouts / item.planned_workouts * 100) : 0,
@@ -76,7 +83,7 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
   if (!availableWeeks.length) return <div className="border-y border-border py-10"><p className="sim-kicker">Performance semanal</p><h2 className="mt-3 text-3xl">Ainda sem registros semanais</h2><p className="mt-3 text-sm text-muted-foreground">Quando o aluno concluir uma revisão ou iniciar um treino, respostas, forças, alertas, sessões e cargas aparecerão aqui.</p></div>;
 
   const completed = weekSessions.filter((item) => Boolean(item.completed_at));
-  const adherence = selected?.planned_workouts ? Math.round(selected.completed_workouts / selected.planned_workouts * 100) : null;
+  const adherence = selected ? adherencePercent(selected.completed_workouts, selected.planned_workouts) : null;
   const volume = weekLogs.reduce((total, item) => total + (item.load ?? 0) * (item.reps ?? 0), 0);
   const averageRpe = weekLogs.filter((item) => item.effort !== null).length ? weekLogs.filter((item) => item.effort !== null).reduce((total, item) => total + (item.effort ?? 0), 0) / weekLogs.filter((item) => item.effort !== null).length : null;
   const strengths = selected ? scoreFields.filter(([key]) => key !== "stress" && (selected[key] ?? 0) >= 4).map(([, label]) => label) : [];
@@ -86,6 +93,13 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
     ...((selected.pain ?? 0) >= 4 ? [`Dor ${selected.pain}/10`] : []),
     ...(adherence !== null && adherence < 70 ? [`Adesão ${adherence}%`] : []),
   ] : [];
+  const reading = readPerformance({
+    adherence,
+    energy: selected?.energy ?? average(weekCheckins.map((item) => item.energy)),
+    sleep: selected?.sleep ?? average(weekCheckins.map((item) => item.sleep_quality)),
+    stress: selected?.stress ?? average(weekCheckins.map((item) => item.stress)),
+    pain: selected?.pain ?? average(weekCheckins.map((item) => item.pain)),
+  });
   const exerciseGroups = new Map<string, SetLog[]>();
   for (const log of weekLogs) {
     const name = log.workout_exercises?.exercise_library?.name ?? "Exercício não identificado";
@@ -95,7 +109,9 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
   return <div>
     <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="sim-kicker">Performance semanal</p><h2 className="mt-3 text-4xl">Leitura para acompanhamento</h2></div><Select value={selectedWeek} onValueChange={setSelectedWeek}><SelectTrigger className="w-full sm:w-64" aria-label="Semana analisada"><SelectValue /></SelectTrigger><SelectContent>{availableWeeks.map((week) => <SelectItem key={week} value={week}>Semana de {weekLabel(week)}</SelectItem>)}</SelectContent></Select></div>
 
-    <div className="mt-7 grid gap-px border border-border bg-border sm:grid-cols-2 xl:grid-cols-5">
+    <div className={`mt-7 grid gap-4 border-l-2 py-4 pl-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center ${reading.tone === "attention" ? "border-destructive" : "border-primary"}`}><div><p className="sim-kicker">Leitura rápida</p><p className="mt-2 text-2xl">{reading.label}</p><p className="mt-1 text-sm text-muted-foreground">{reading.summary}</p></div><p className="text-xs text-muted-foreground sm:text-right">{weekCheckins.length} check-ins diários<br/>{weekSessions.length} sessões na semana</p></div>
+
+    <div className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-2 xl:grid-cols-5">
       <Metric label="Adesão" value={adherence === null ? "—" : `${adherence}%`} detail={`${selected?.completed_workouts ?? 0} de ${selected?.planned_workouts ?? 0} previstos`} />
       <Metric label="Sessões registradas" value={String(completed.length)} detail={`${weekSessions.length} iniciadas`} />
       <Metric label="Volume registrado" value={volume ? `${Math.round(volume).toLocaleString("pt-BR")} kg` : "—"} detail={`${weekLogs.length} séries`} />
@@ -108,11 +124,11 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-1"><Signal title="Pontos fortes" icon={CheckCircle2} items={strengths} empty="Nenhum sinal forte conclusivo nesta semana."/><Signal title="Pontos de atenção" icon={AlertTriangle} items={attention} empty="Nenhum ponto crítico registrado nesta semana."/></div>
     </section>
 
-    <section className="mt-10"><div className="flex items-center gap-3"><MessageSquareText className="size-4 text-primary"/><div><p className="sim-kicker">Revisão completa</p><h3 className="mt-2 text-3xl">Tudo o que o aluno respondeu</h3></div></div>{selected ? <div className="mt-6 grid gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">{scoreFields.map(([key, label]) => <Answer key={key} label={label} value={selected[key] === null ? "Não informado" : `${selected[key]}/5`} />)}{contextFields.map(([key, label]) => <Answer key={key} label={label} value={answer(selected[key])} />)}</div> : <p className="mt-5 border-y border-border py-8 text-sm text-muted-foreground">O aluno treinou nesta semana, mas ainda não enviou a revisão semanal.</p>}</section>
+    <DetailSection icon={MessageSquareText} kicker="Revisão completa" title="Tudo o que o aluno respondeu" defaultOpen={false}>{selected ? <div className="grid gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">{scoreFields.map(([key, label]) => <Answer key={key} label={label} value={selected[key] === null ? "Não informado" : `${selected[key]}/5`} />)}{contextFields.map(([key, label]) => <Answer key={key} label={label} value={answer(selected[key])} />)}</div> : <p className="border-y border-border py-8 text-sm text-muted-foreground">O aluno treinou nesta semana, mas ainda não enviou a revisão semanal.</p>}</DetailSection>
 
-    <section className="mt-10"><div className="flex items-center gap-3"><Activity className="size-4 text-primary"/><div><p className="sim-kicker">Sessões da semana</p><h3 className="mt-2 text-3xl">Execução e resposta</h3></div></div><div className="mt-5 divide-y divide-border border-y border-border">{weekSessions.map((session) => <div key={session.id} className="grid gap-3 py-5 sm:grid-cols-[minmax(0,1fr)_repeat(4,minmax(80px,auto))]"><div><p>{session.workouts?.name ?? "Sessão de treino"}</p><p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(session.started_at))}{session.client_comment ? ` · ${session.client_comment}` : ""}</p></div><SessionValue label="Conclusão" value={session.completion_percent === null ? "—" : `${session.completion_percent}%`}/><SessionValue label="Duração" value={session.duration_minutes === null ? "—" : `${session.duration_minutes} min`}/><SessionValue label="RPE" value={answer(session.session_rpe)}/><SessionValue label="Dor" value={answer(session.session_pain)}/></div>)}{!weekSessions.length && <p className="py-8 text-sm text-muted-foreground">Nenhuma sessão registrada nesta semana.</p>}</div></section>
+    <DetailSection icon={Activity} kicker="Sessões da semana" title="Execução e resposta" defaultOpen><div className="divide-y divide-border border-y border-border">{weekSessions.map((session) => <div key={session.id} className="grid gap-3 py-5 sm:grid-cols-[minmax(0,1fr)_repeat(4,minmax(80px,auto))]"><div><p>{session.workouts?.name ?? "Sessão de treino"}</p><p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(session.started_at))}{session.client_comment ? ` · ${session.client_comment}` : ""}</p></div><SessionValue label="Conclusão" value={session.completion_percent === null ? "—" : `${session.completion_percent}%`}/><SessionValue label="Duração" value={session.duration_minutes === null ? "—" : `${session.duration_minutes} min`}/><SessionValue label="RPE" value={answer(session.session_rpe)}/><SessionValue label="Dor" value={answer(session.session_pain)}/></div>)}{!weekSessions.length && <p className="py-8 text-sm text-muted-foreground">Nenhuma sessão registrada nesta semana.</p>}</div></DetailSection>
 
-    <section className="mt-10"><div className="flex items-center gap-3"><Dumbbell className="size-4 text-primary"/><div><p className="sim-kicker">Histórico de cargas</p><h3 className="mt-2 text-3xl">Série por série</h3></div></div><div className="mt-5 space-y-4">{[...exerciseGroups.entries()].map(([name, logs]) => <article key={name} className="border-y border-border py-5"><div className="flex flex-wrap items-end justify-between gap-3"><h4 className="text-xl">{name}</h4><span className="sim-kicker">{logs.length} séries registradas</span></div><div className="mt-4 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">{[...logs].sort((a,b) => a.created_at.localeCompare(b.created_at) || a.set_number - b.set_number).map((log) => <div key={log.id} className="bg-background p-4"><p className="sim-kicker">Série {log.set_number}</p><p className="mt-2 text-lg">{log.load === null ? "—" : `${log.load} kg`} · {log.reps === null ? "—" : `${log.reps} reps`}</p><p className="mt-1 text-xs text-muted-foreground">RPE {answer(log.effort)} · Dor {answer(log.pain)} · Técnica {log.technique_ok === null ? "—" : log.technique_ok ? "OK" : "Atenção"}</p></div>)}</div></article>)}{!weekLogs.length && <p className="border-y border-border py-8 text-sm text-muted-foreground">O aluno ainda não registrou cargas nesta semana.</p>}</div></section>
+    <DetailSection icon={Dumbbell} kicker="Histórico de cargas" title="Série por série" defaultOpen={false}><div className="space-y-4">{[...exerciseGroups.entries()].map(([name, logs]) => <article key={name} className="border-y border-border py-5"><div className="flex flex-wrap items-end justify-between gap-3"><h4 className="text-xl">{name}</h4><span className="sim-kicker">{logs.length} séries registradas</span></div><div className="mt-4 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">{[...logs].sort((a,b) => a.created_at.localeCompare(b.created_at) || a.set_number - b.set_number).map((log) => <div key={log.id} className="bg-background p-4"><p className="sim-kicker">Série {log.set_number}</p><p className="mt-2 text-lg">{log.load === null ? "—" : `${log.load} kg`} · {log.reps === null ? "—" : `${log.reps} reps`}</p><p className="mt-1 text-xs text-muted-foreground">RPE {answer(log.effort)} · Dor {answer(log.pain)} · Técnica {log.technique_ok === null ? "—" : log.technique_ok ? "OK" : "Atenção"}</p></div>)}</div></article>)}{!weekLogs.length && <p className="border-y border-border py-8 text-sm text-muted-foreground">O aluno ainda não registrou cargas nesta semana.</p>}</div></DetailSection>
   </div>;
 }
 
@@ -120,3 +136,4 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
 function Answer({ label, value }: { label: string; value: string }) { return <div className="min-w-0 bg-background p-4"><p className="text-[9px] uppercase text-muted-foreground">{label}</p><p className="mt-2 break-words text-sm leading-6">{value}</p></div>; }
 function SessionValue({ label, value }: { label: string; value: string }) { return <div><p className="text-[9px] uppercase text-muted-foreground">{label}</p><p className="mt-1 text-sm">{value}</p></div>; }
 function Signal({ title, icon: Icon, items, empty }: { title: string; icon: typeof Gauge; items: string[]; empty: string }) { return <div className="border-l border-primary pl-5"><div className="flex items-center gap-2"><Icon className="size-4 text-primary"/><p className="sim-kicker">{title}</p></div>{items.length ? <ul className="mt-4 space-y-2 text-sm">{items.map((item) => <li key={item}>— {item}</li>)}</ul> : <p className="mt-4 text-sm text-muted-foreground">{empty}</p>}</div>; }
+function DetailSection({ icon: Icon, kicker, title, defaultOpen, children }: { icon: typeof Gauge; kicker: string; title: string; defaultOpen: boolean; children: React.ReactNode }) { return <Collapsible defaultOpen={defaultOpen} className="mt-8 border-t border-border pt-5"><CollapsibleTrigger className="group flex w-full items-center justify-between gap-4 text-left"><div className="flex min-w-0 items-center gap-3"><Icon className="size-4 shrink-0 text-primary"/><div className="min-w-0"><p className="sim-kicker">{kicker}</p><h3 className="mt-2 text-2xl sm:text-3xl">{title}</h3></div></div><ChevronDown className="size-5 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180"/></CollapsibleTrigger><CollapsibleContent className="mt-5">{children}</CollapsibleContent></Collapsible>; }

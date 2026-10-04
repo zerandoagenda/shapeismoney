@@ -12,3 +12,4 @@
 - Derive workout timers and progress from persisted session records so execution remains continuous across navigation.
 - Keep public Radar lead data behind server functions with hashed session/result tokens; never grant anonymous table access.
 - Keep Client 360 performance analysis read-only and derive weekly insights from persisted reviews, sessions, and set logs to preserve source-of-truth data.
+- Share deterministic performance-reading rules between staff and member views so both explain the same persisted evidence.
