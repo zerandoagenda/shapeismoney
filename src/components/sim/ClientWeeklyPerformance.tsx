@@ -26,6 +26,7 @@ const contextFields = [
 const weekLabel = (value: string) => new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T12:00:00Z`));
 const dayLabel = (value: string) => new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(new Date(value));
 const inWeek = (value: string, weekStart: string) => { const time = new Date(value).getTime(); const start = new Date(`${weekStart}T00:00:00`).getTime(); return time >= start && time < start + 7 * 86400000; };
+const mondayOf = (value: string) => { const date = new Date(value); const day = date.getDay(); date.setDate(date.getDate() - (day === 0 ? 6 : day - 1)); return date.toISOString().slice(0, 10); };
 const answer = (value: unknown) => value === null || value === undefined || value === "" ? "Não informado" : String(value);
 
 export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
@@ -52,12 +53,13 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
       setReviews(nextReviews);
       setSessions(nextSessions);
       setSetLogs((logResult.data ?? []) as unknown as SetLog[]);
-      setSelectedWeek((current) => current || nextReviews[0]?.week_start || "");
+      setSelectedWeek((current) => current || nextReviews[0]?.week_start || (nextSessions[0] ? mondayOf(nextSessions[0].started_at) : ""));
       setLoading(false);
     })();
   }, [studentId]);
 
   const selected = reviews.find((item) => item.week_start === selectedWeek) ?? null;
+  const availableWeeks = useMemo(() => [...new Set([...reviews.map((item) => item.week_start), ...sessions.map((item) => mondayOf(item.started_at))])].sort().reverse(), [reviews, sessions]);
   const weekSessions = useMemo(() => selectedWeek ? sessions.filter((item) => inWeek(item.started_at, selectedWeek)) : [], [selectedWeek, sessions]);
   const weekSessionIds = useMemo(() => new Set(weekSessions.map((item) => item.id)), [weekSessions]);
   const weekLogs = useMemo(() => setLogs.filter((item) => weekSessionIds.has(item.session_id)), [setLogs, weekSessionIds]);
@@ -71,7 +73,7 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
   })), [reviews]);
 
   if (loading) return <div className="border-y border-border py-10 text-sm text-muted-foreground">Carregando performance semanal…</div>;
-  if (!reviews.length) return <div className="border-y border-border py-10"><p className="sim-kicker">Performance semanal</p><h2 className="mt-3 text-3xl">Ainda sem revisão semanal</h2><p className="mt-3 text-sm text-muted-foreground">Quando o aluno concluir a primeira revisão, respostas, forças, alertas, treinos e cargas aparecerão aqui.</p></div>;
+  if (!availableWeeks.length) return <div className="border-y border-border py-10"><p className="sim-kicker">Performance semanal</p><h2 className="mt-3 text-3xl">Ainda sem registros semanais</h2><p className="mt-3 text-sm text-muted-foreground">Quando o aluno concluir uma revisão ou iniciar um treino, respostas, forças, alertas, sessões e cargas aparecerão aqui.</p></div>;
 
   const completed = weekSessions.filter((item) => Boolean(item.completed_at));
   const adherence = selected?.planned_workouts ? Math.round(selected.completed_workouts / selected.planned_workouts * 100) : null;
@@ -91,7 +93,7 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
   }
 
   return <div>
-    <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="sim-kicker">Performance semanal</p><h2 className="mt-3 text-4xl">Leitura para acompanhamento</h2></div><Select value={selectedWeek} onValueChange={setSelectedWeek}><SelectTrigger className="w-full sm:w-64" aria-label="Semana analisada"><SelectValue /></SelectTrigger><SelectContent>{reviews.map((item) => <SelectItem key={item.id} value={item.week_start}>Semana de {weekLabel(item.week_start)}</SelectItem>)}</SelectContent></Select></div>
+    <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="sim-kicker">Performance semanal</p><h2 className="mt-3 text-4xl">Leitura para acompanhamento</h2></div><Select value={selectedWeek} onValueChange={setSelectedWeek}><SelectTrigger className="w-full sm:w-64" aria-label="Semana analisada"><SelectValue /></SelectTrigger><SelectContent>{availableWeeks.map((week) => <SelectItem key={week} value={week}>Semana de {weekLabel(week)}</SelectItem>)}</SelectContent></Select></div>
 
     <div className="mt-7 grid gap-px border border-border bg-border sm:grid-cols-2 xl:grid-cols-5">
       <Metric label="Adesão" value={adherence === null ? "—" : `${adherence}%`} detail={`${selected?.completed_workouts ?? 0} de ${selected?.planned_workouts ?? 0} previstos`} />
@@ -106,7 +108,7 @@ export function ClientWeeklyPerformance({ studentId }: { studentId: string }) {
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-1"><Signal title="Pontos fortes" icon={CheckCircle2} items={strengths} empty="Nenhum sinal forte conclusivo nesta semana."/><Signal title="Pontos de atenção" icon={AlertTriangle} items={attention} empty="Nenhum ponto crítico registrado nesta semana."/></div>
     </section>
 
-    <section className="mt-10"><div className="flex items-center gap-3"><MessageSquareText className="size-4 text-primary"/><div><p className="sim-kicker">Revisão completa</p><h3 className="mt-2 text-3xl">Tudo o que o aluno respondeu</h3></div></div><div className="mt-6 grid gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">{selected && scoreFields.map(([key, label]) => <Answer key={key} label={label} value={selected[key] === null ? "Não informado" : `${selected[key]}/5`} />)}{selected && contextFields.map(([key, label]) => <Answer key={key} label={label} value={answer(selected[key])} />)}</div></section>
+    <section className="mt-10"><div className="flex items-center gap-3"><MessageSquareText className="size-4 text-primary"/><div><p className="sim-kicker">Revisão completa</p><h3 className="mt-2 text-3xl">Tudo o que o aluno respondeu</h3></div></div>{selected ? <div className="mt-6 grid gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">{scoreFields.map(([key, label]) => <Answer key={key} label={label} value={selected[key] === null ? "Não informado" : `${selected[key]}/5`} />)}{contextFields.map(([key, label]) => <Answer key={key} label={label} value={answer(selected[key])} />)}</div> : <p className="mt-5 border-y border-border py-8 text-sm text-muted-foreground">O aluno treinou nesta semana, mas ainda não enviou a revisão semanal.</p>}</section>
 
     <section className="mt-10"><div className="flex items-center gap-3"><Activity className="size-4 text-primary"/><div><p className="sim-kicker">Sessões da semana</p><h3 className="mt-2 text-3xl">Execução e resposta</h3></div></div><div className="mt-5 divide-y divide-border border-y border-border">{weekSessions.map((session) => <div key={session.id} className="grid gap-3 py-5 sm:grid-cols-[minmax(0,1fr)_repeat(4,minmax(80px,auto))]"><div><p>{session.workouts?.name ?? "Sessão de treino"}</p><p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(session.started_at))}{session.client_comment ? ` · ${session.client_comment}` : ""}</p></div><SessionValue label="Conclusão" value={session.completion_percent === null ? "—" : `${session.completion_percent}%`}/><SessionValue label="Duração" value={session.duration_minutes === null ? "—" : `${session.duration_minutes} min`}/><SessionValue label="RPE" value={answer(session.session_rpe)}/><SessionValue label="Dor" value={answer(session.session_pain)}/></div>)}{!weekSessions.length && <p className="py-8 text-sm text-muted-foreground">Nenhuma sessão registrada nesta semana.</p>}</div></section>
 
