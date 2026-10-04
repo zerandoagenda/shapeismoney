@@ -98,3 +98,9 @@
 - [x] Exibir gráfico histórico, pontos fortes e pontos de atenção
 - [x] Mostrar todas as respostas e registros série por série
 - [x] Validar Fábio em celular, tablet e desktop
+
+## Performance unificada por aluno
+- [x] Criar leitura rápida semanal no Client 360 com check-ins, sessões, adesão e alertas
+- [x] Organizar respostas, sessões e cargas em blocos de detalhe expansíveis
+- [x] Recriar a Performance do aluno com resumo, gráfico e cinco pilares
+- [ ] Validar admin e aluno em celular, tablet e desktop
