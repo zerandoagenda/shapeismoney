@@ -97,4 +97,4 @@
 - [x] Consolidar revisões semanais, sessões e cargas reais por aluno
 - [x] Exibir gráfico histórico, pontos fortes e pontos de atenção
 - [x] Mostrar todas as respostas e registros série por série
-- [ ] Validar Fábio em celular, tablet e desktop
+- [x] Validar Fábio em celular, tablet e desktop
