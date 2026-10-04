@@ -107,8 +107,8 @@
 
 ## Master Product Rebuild — execução aprovada
 - [x] Auditar especificação contra dados, automações, aluno e Admin existentes
-- [ ] Entregar Today First com prioridade, agenda, Performance Strip e SIM Pulse reais
-- [ ] Reduzir navegação móvel para Hoje, Treino, Evolução e Perfil
+- [x] Entregar Today First com prioridade, agenda, Performance Strip e SIM Pulse reais
+- [x] Reduzir navegação móvel para Hoje, Treino, Evolução e Perfil
 - [ ] Entregar Workout Player imersivo com última execução, descanso e dificuldades
 - [ ] Proteger registros de séries contra conexão instável
 - [ ] Evoluir alimentação, evolução, engines, Admin, PWA e E2E por fases
