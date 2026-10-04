@@ -13,3 +13,4 @@
 - Keep public Radar lead data behind server functions with hashed session/result tokens; never grant anonymous table access.
 - Keep Client 360 performance analysis read-only and derive weekly insights from persisted reviews, sessions, and set logs to preserve source-of-truth data.
 - Share deterministic performance-reading rules between staff and member views so both explain the same persisted evidence.
+- Build the member experience around a Today First projection of persisted plans, habits, check-ins, meals, and sessions; never create a parallel daily-state source of truth.
