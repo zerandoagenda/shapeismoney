@@ -104,3 +104,11 @@
 - [x] Organizar respostas, sessões e cargas em blocos de detalhe expansíveis
 - [x] Recriar a Performance do aluno com resumo, gráfico e cinco pilares
 - [x] Validar admin e aluno em celular, tablet e desktop
+
+## Master Product Rebuild — execução aprovada
+- [x] Auditar especificação contra dados, automações, aluno e Admin existentes
+- [x] Entregar Today First com prioridade, agenda, Performance Strip e SIM Pulse reais
+- [x] Reduzir navegação móvel para Hoje, Treino, Evolução e Perfil
+- [ ] Entregar Workout Player imersivo com última execução, descanso e dificuldades
+- [ ] Proteger registros de séries contra conexão instável
+- [ ] Evoluir alimentação, evolução, engines, Admin, PWA e E2E por fases
