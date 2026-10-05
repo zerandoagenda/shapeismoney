@@ -124,4 +124,4 @@
 - [x] Criar e confirmar a conta da aluna com primeiro acesso direcionado à anamnese
 - [x] Mapear todos os exercícios na biblioteca sem equivalências silenciosas
 - [x] Publicar Fixação A/B
-- [ ] Validar visualmente o primeiro acesso com a conta da aluna
+- [x] Validar visualmente o primeiro acesso com a conta da aluna
