@@ -121,6 +121,7 @@
 - [ ] Completar Client 360, Admin, PWA e E2E por fases
 
 ## Pamela — cadastro e treino de fixação
-- [ ] Criar e confirmar a conta da aluna com primeiro acesso direcionado à anamnese
-- [ ] Mapear todos os exercícios na biblioteca sem equivalências silenciosas
-- [ ] Publicar Fixação A/B e validar o acesso inicial
+- [x] Criar e confirmar a conta da aluna com primeiro acesso direcionado à anamnese
+- [x] Mapear todos os exercícios na biblioteca sem equivalências silenciosas
+- [x] Publicar Fixação A/B
+- [ ] Validar visualmente o primeiro acesso com a conta da aluna
