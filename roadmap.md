@@ -119,3 +119,8 @@
 - [ ] Criar alimentação orientada à execução integrada ao Today
 - [ ] Criar Cycle Review e próximo protocolo versionado
 - [ ] Completar Client 360, Admin, PWA e E2E por fases
+
+## Pamela — cadastro e treino de fixação
+- [ ] Criar e confirmar a conta da aluna com primeiro acesso direcionado à anamnese
+- [ ] Mapear todos os exercícios na biblioteca sem equivalências silenciosas
+- [ ] Publicar Fixação A/B e validar o acesso inicial
